@@ -1,0 +1,48 @@
+/*  https://cdn.datatables.net/keytable/2.12.1/css/keyTable.dataTables.css */
+
+
+table.dataTable tbody th.hoverable:hover,
+table.dataTable tbody td.hoverable:hover {
+  outline: 2px solid #848ca3;
+  outline-offset: -2px;
+  cursor: pointer; 
+}
+
+
+table.dataTable tbody th.focus,
+table.dataTable tbody td.focus,
+table.dataTable tbody th.hoverable.focus:hover,
+table.dataTable tbody td.hoverable.focus:hover,
+table.dataTable tbody th.hoverable:active,
+table.dataTable tbody td.hoverable:active {
+  outline: 3px solid rgb(67, 94, 177);
+  outline-offset: -3px;
+  background-color: white;
+}
+
+
+
+
+table.dataTable tbody tr.selected th.focus,
+table.dataTable tbody tr.selected td.focus {
+  outline-color: rgb(0, 51, 204);
+}
+
+div.dtk-focus-alt table.dataTable tbody th.focus,
+div.dtk-focus-alt table.dataTable tbody td.focus {
+  outline: 2px solid #ff8b33;
+  outline-offset: -2px;
+}
+
+html.dark table.dataTable tbody th.focus,
+html.dark table.dataTable tbody td.focus {
+  outline-color: rgb(13, 110, 253);
+}
+html.dark table.dataTable tbody tr.selected th.focus,
+html.dark table.dataTable tbody tr.selected td.focus {
+  outline-color: #0143a3;
+}
+html.dark div.dtk-focus-alt table.dataTable tbody th.focus,
+html.dark div.dtk-focus-alt table.dataTable tbody td.focus {
+  outline-color: #ff8b33;
+}

@@ -1,0 +1,188 @@
+<table id="enrollment_qualifications-table-{{ cpyg_id }}" style="width:100%"
+class="hover compact">
+    <thead>
+        <tr>
+            <th>Student</th>
+            <th>Subject qualification</th>
+            <th class="text-center"><i class="fa-solid fa-user-check fs-6"></i></th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+<script>
+    $(document).ready(function() {
+        function adjustTableScrollHeight() {
+            const margin = 320;
+            return Math.max($(window).height() - margin, 340) + 'px';
+        }
+        let table = new DataTable('#enrollment_qualifications-table-{{ cpyg_id }}', {
+            ajax: {
+                url: '{{ url_data }}', 
+                dataSrc: 'data'
+            },
+            columns: [
+                { data: 'student' },
+                { data: 'qualification' },
+                {
+                    data: 'is_active',
+                    render: function (data) {
+                        return `
+                            <div class="dropdown">
+                                <button class="btn btn-transparent student-toggle" data-bs-toggle="dropdown">
+                                    ${data ? '<i class="fa-solid fa-toggle-on"></i>' : '<i class="fa-solid fa-toggle-off"></i>'}
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li><a class="dropdown-item student-assign" href="#" data-status="on">
+                                        <i class="fa-solid fa-toggle-on me-2 fs-6"></i> Assign checkpoint
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item student-assign" href="#" data-status="off">
+                                        <i class="fa-solid fa-toggle-off me-2 fs-6"></i> Unassign checkpoint
+                                        <div class="fst-italic"">Checkpoint data will be lost.</div>
+                                    </a></li>
+                                </ul>
+                            </div>
+                        `;
+                    },
+                    createdCell: function (td, cellData, rowData, row, col) {
+                        $(td).addClass('text-center');
+                    }
+                }
+            ],
+            columnDefs: [{ orderable: false, targets: [2] }],
+            deferRender: true,
+            stateSave: false,
+            rowId: 'id',
+            order: [[0, 'asc']],  
+            orderFixed: [1, 'asc'],
+            //scrollCollapse: true,
+            //scrollY: adjustTableScrollHeight(),
+            rowGroup: {
+                dataSrc: 'qualification',
+                startRender: function(rows, group) {
+                    let allActive = rows.data().toArray().every(row => row.is_active);
+                    let toggleIcon = allActive ? '<i class="fa-solid fa-toggle-on"></i>' : '<i class="fa-solid fa-toggle-off"></i>';
+                    let count = rows.count();
+                    return $('<tr/>')
+                        .append(`
+                            <th colspan="2">
+                            <div class="d-flex justify-content-between align-items-center">
+                            <span>
+                            <i class="fa-solid fa-book mx-1"></i>
+                            ${group}
+                            </span>
+                            <span>
+                            <i class="fa-solid fa-users-line mx-1"></i>
+                            ${count}
+                            </span>
+                            </div>
+                            </th>
+                            <th colspan="1" class="text-center">
+                                <div class="dropdown">
+                                    <button class="btn btn-transparent toggle-group" data-bs-toggle="dropdown">
+                                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                                    </button>
+                                    <ul class="dropdown-menu">
+                                        <li><button class="dropdown-item group-assign" hx-post="" data-qualification="${group}" data-status="on">
+                                            <i class="fa-solid fa-toggle-on me-2 fs-6"></i> Assign checkpoint to this subject
+                                        </button></li>
+                                        <li><hr class="dropdown-divider"></li>
+                                        <li><a class="dropdown-item group-assign" href="#" data-qualification="${group}" data-status="off">
+                                            <i class="fa-solid fa-toggle-off me-2 fs-6"></i> Unassign checkpoint from this subject
+                                            <div class="fst-italic"">Checkpoint data will be lost.</div>
+                                        </a></li>
+                                        
+                                        <li></li>
+                                    </ul>
+                                </div>
+                            </th>`);
+                }
+            },
+        });
+
+        // Handle individual assign/unassign
+        $(document).on('click', '.student-assign', function(e) {
+            e.preventDefault();
+            let newStatus = $(this).data('status') === 'on';
+            let button = $(this).closest('.dropdown').find('.student-toggle');
+            let cell = button.closest('td');
+            let row = table.row(button.closest('tr'));
+            let rowData = row.data();
+            
+            if (rowData) {
+                rowData.is_active = newStatus;
+        
+                // Update icons 
+                button.html(newStatus ? '<i class="fa-solid fa-toggle-on"></i>' 
+                : '<i class="fa-solid fa-toggle-off"></i>');
+                cell.attr('data-order', newStatus ? 1 : 0); 
+                
+                // Mark row for redraw without full reload
+                row.data(rowData).invalidate(); 
+
+                // Send AJAX POST request
+                $.ajax({
+                    url: rowData.url_update,
+                    type: 'POST',
+                    data: JSON.stringify({ target_id: rowData.id, status: newStatus }), 
+                    contentType: 'application/json',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' }, 
+                    success: function(response) {
+                    },
+                    error: function(xhr, status, error) {
+                        $('#error-modal').modal('show');
+                    }
+                });
+          
+            }
+        
+        });
+
+        $(document).on('click', '.group-assign', function (e) {
+            e.preventDefault();
+            let qualificationName = $(this).data('qualification');
+            let newStatus = $(this).data('status') === 'on';
+            // Update icon of matching rows
+            table.rows().every(function () {
+                let rowData = this.data();
+                if (rowData.qualification === qualificationName) {
+                    rowData.is_active = newStatus; 
+    
+                    let rowNode = this.node();
+                    if (rowNode) {
+                        let cell = $(rowNode).find('td:last');
+                        let button = cell.find('.student-toggle');
+                        button.html(newStatus ? '<i class="fa-solid fa-toggle-on"></i>'
+                        : '<i class="fa-solid fa-toggle-off"></i>');
+                    }
+                    this.data(rowData).invalidate();
+                }
+            });
+        
+            /// Send a single AJAX request
+            let firstRow = table.rows().data().toArray().find(
+                row => row.qualification === qualificationName);
+
+            if (firstRow) {
+                let groupedId = firstRow.qualification_id; 
+                let url_update = firstRow.url_update; 
+
+                $.ajax({
+                    url: url_update,
+                    type: 'POST',
+                    data: JSON.stringify({ 
+                        grouped_target_id: groupedId,  
+                        status: newStatus
+                    }), 
+                    contentType: 'application/json',
+                    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
+                    success: function (response) {
+                    },
+                    error: function (xhr, status, error) {
+                        $('#error-modal').modal('show');
+                    }
+                });
+            }
+        });
+    });     

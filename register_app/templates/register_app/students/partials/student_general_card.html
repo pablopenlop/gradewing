@@ -1,0 +1,71 @@
+<div class="card">
+    <div class="card-header">
+        <div class="ubar py-0">
+            <div class="col-9 d-flex align-items-center">
+                <span class="title mx-2">General details</span>
+                {% comment %} 
+                <h4 class="h4  my-0">|</h4>
+                <span class="mx-2 my-0 fst-italic"></span> 
+                {% endcomment %}
+            </div>
+            <div class="col-3 text-end">
+                <button class="btn btn-light btn-round"
+                    data-bs-toggle="modal"  
+                    data-bs-target="#form-modal"
+                    hx-get="{{ student.url_general_form }}" 
+                    hx-target="#form-container"
+                    >
+                    <i class="fas fa-edit"></i>
+                </button>
+                
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-2">
+    
+        <table class="table align-middle table-borderless">
+            <tbody>
+                <tr>
+                    <td colspan="2">
+                        <h5>{{ student.full_name }}</h5>
+                    </td>
+                </tr>
+                    
+                <tr style="vertical-align: top;">
+                    <td>
+                        <span>
+                            <i class="fa-solid fa-venus-mars me-2"></i> 
+                            {{ student.get_gender_display }}
+                        </span>
+                    </td>
+                    <td rowspan="2">   
+                        <p class="mb-1">{{ student.tags.count }} permanent student tag{{ student.tags.count|pluralize }} assigned</p>
+
+                        {% for tag in student.tags.all %}  
+                        <span class="badge rounded-pill badge-dark-secondary my-1">
+                            <i class="fa-solid fa-thumbtack me-1"></i>
+                            {{ tag }}
+                        </span>
+                        {% endfor %}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        {% if student.email %}
+                        <span>
+                            <i class="fa-regular fa-envelope me-2"></i> 
+                            {{ student.email }}
+                        </span>
+                        {% endif %}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        
+
+
+    </div>
+</div>
+
+
+

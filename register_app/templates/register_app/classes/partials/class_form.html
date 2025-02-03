@@ -1,0 +1,139 @@
+<form id="class-form" 
+      action="{% url 'class-form-save' %}">
+    {% csrf_token %}
+    <div class="modal-header">
+        <h5 class="modal-title">
+            {% if  form.instance.pk %} 
+                Edit teaching class  
+            {% else %} 
+                Create teaching class   
+            {% endif %}
+            
+        </h5>
+        <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+            <i class="fa-solid fa-x"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-4">
+                <div class="form-floating restricted mb-3">
+                    {{ form.id }}
+                    <label for="{{ form.id.id_for_label }}">{{form.id.label}}</label>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-floating restricted mb-3">
+                    {{ form.period }}
+                    <label for="{{ form.period.id_for_label }}">{{form.period.label}}</label>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-floating restricted mb-3">
+                    {{ form.qualification }}
+                    <label for="{{ form.qualification.id_for_label }}">{{form.qualification.label}}</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="form-floating mb-3">
+                    <input readonly type="text" id="id_period_display" class="form-control"  value="{{ period_name }}">
+                    <label for="id_period_display">Academic period <i class="fa-solid fa-lock ms-1"></i></label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="form-floating mb-3">
+                    <input readonly type="text" id="id_qualification_display" class="form-control"  value="{{ qualification_name }}">
+                    <label for="id_qualification_display">Qualification <i class="fa-solid fa-lock ms-1"></i></label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="form-floating mb-3">
+                    {{ form.name }}
+                    <label for="{{ form.name.id_for_label }}">{{form.name.label}}</label>
+                </div>
+            </div>
+
+            <div class="col-6">
+                <div class="form-floating mb-3">
+                    {{ form.yeargroup }}
+                    <label for="{{ form.yeargroup.id_for_label }}">{{form.yeargroup.label}}</label>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-3 align-items-center">
+            <label class="form-label mx-3" for="{{ form.teachers.id_for_label }}">{{form.teachers.label}}</label>
+            <div class="col-12">
+                {{ form.teachers }}
+            </div>
+        </div>
+        <div class="row mb-3 align-items-center">
+            <label class="form-label mx-3" for="{{ form.enrollment_qualifications.id_for_label }}">{{form.enrollment_qualifications.label}}</label>
+            <div class="col-12">
+                {{ form.enrollment_qualifications }}
+            </div>
+        </div>
+
+        {% include 'partials/form_error_alert.html' %}
+
+
+    </div>
+
+    <div class="modal-footer justify-content-end">
+        <div class="d-flex justify-content-center">
+            <button class="mx-1 btn btn-light"  type="button" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="mx-1 btn btn-primary"  {% if not form.instance.pk %}disabled{% endif %}>
+            {% if form.instance.pk %} 
+                Save
+            {% else %} 
+                Create
+            {% endif %}
+            </button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+
+        // Char counter
+        $('[maxlength]').maxlength();
+
+        // TEACHERS SELECTSIZE
+        var $select1 = $('#id_teachers');
+        var required = $select1.prop('required');    
+        var selectized2 = $select1.selectize({
+            placeholder: 'Select teachers...',
+            maxItems: 50, 
+            plugins: ["remove_button"],
+            onItemAdd: function(value, $item) {
+                this.focus(); // Ensure the input retains focus after adding an item
+            },
+        });
+        if (required === true) {
+            $select1.addClass('required');
+        }
+
+        // STUDENTS SELECTSIZE
+        var $select2 = $('#id_enrollment_qualifications');
+        var required = $select2.prop('required');    
+        var selectized2 = $select2.selectize({
+            placeholder: 'Select students...',
+            maxItems: 50, 
+            plugins: ["remove_button"],
+            onItemAdd: function(value, $item) {
+                this.focus(); // Ensure the input retains focus after adding an item
+            },
+        });
+        if (required === true) {
+            $select2.addClass('required');
+        }
+    });
+</script>
+
+

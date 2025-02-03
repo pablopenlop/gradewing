@@ -1,0 +1,256 @@
+
+<style>
+    #students-table tbody tr:not(.dtrg-group) {
+        cursor: pointer;
+    }
+</style>
+<table id="students-table" style="width:100%"
+class="hover">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Tags</th>
+            <th>Period</th>
+            <th>Yeargroup</th>
+            <th>Programme</th>
+            <th>Taught qualifications</th>
+            
+        </tr>
+    </thead>
+    <tbody>
+        {% for student in students %}
+            {% if student.enrollments.all %}
+                {% for enrollment in student.enrollments.all %}
+                    <tr id="{{ student.id }}-{{ enrollment.id }}"
+                        hx-get="{% url 'student-infocard' student.id %}" 
+                        hx-target="#student-infocard-container" 
+                        hx-swap="innerHTML" 
+                        >
+                        <td></td>
+                        <td>
+                            {{ enrollment.student.catalog_name }}
+                        </td>
+                        <td>
+                            <div>
+                                {% for tag in student.tags.all %}  
+                                <span class="badge rounded-pill badge-dark-secondary my-1">
+                                    <i class="fa-solid fa-thumbtack me-1"></i>
+                                    {{ tag }}
+                                </span>
+                                {% endfor %}
+                                {% for tag in enrollment.tags.all %}  
+                                <span class="badge rounded-pill badge-dark-secondary my-1">
+                                    {{ tag }}
+                                </span>
+                                {% endfor %}
+                            </div>
+                        </td>
+                        <td>{{ enrollment.period }}</td>
+                        <td>{{ enrollment.yeargroup }}</td>
+                        <td>
+                            {% if not enrollment.get_programmes %} 
+                                <i class="text-muted">n/a</i>
+                            {% else %}
+                            <div>
+                                {% for programme in enrollment.get_programmes %} 
+                                    <span style="display: block;">
+                                        {{ programme }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if not enrollment.qualifications %} 
+                                <i class="text-muted">n/a</i>
+                            {% else %}
+                            <div>
+                                {% for qualification in enrollment.qualifications.all %} 
+                                    <span style="display: block;">
+                                        <i class="fa-solid fa-award me-2"></i> {{ qualification }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+            {% else %}
+
+                <tr id="{{ student.id }}"
+                    hx-get="{% url 'student-infocard' student.id %}" 
+                    hx-target="#student-infocard-container" 
+                    hx-swap="innerHTML" 
+                    >
+                    <td></td>
+                    <td>{{ student.catalog_name }}</td>
+                    <td>
+                        <div>
+                            {% for tag in student.tags.all %}  
+                            <span class="badge rounded-pill badge-dark-secondary my-1">
+                                <i class="fa-solid fa-thumbtack me-1"></i>
+                                {{ tag }}
+                            </span>
+                            {% endfor %}
+                        </div>
+                    </td>
+                    <td>
+                        <i class="text-muted">Unenrolled</i>
+                    </td>
+                    <td>
+                        <i class="text-muted">n/a</i>
+                    </td>
+                    <td>
+                        <i class="text-muted">n/a</i>
+                    </td>
+                    <td>
+                        <i class="text-muted">n/a</i>
+                    </td>
+                </tr>
+            {% endif %}
+        
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function() {
+        function adjustTableScrollHeight() {
+            const margin = 300
+            let newHeight = Math.max($(window).height()-margin, 400); 
+            return newHeight
+        }
+
+        function initialiseSelect(){
+            var firstRow = table.row(':eq(0)', { page: 'current' });    // Get the first row using DataTables API
+            if (firstRow.length > 0) {
+                firstRow.select();                                      // Select the first row using DataTables API
+                var firstRowNode = firstRow.node();                     // Get the DOM node of the first row
+                var $firstRow = $(firstRowNode);                        // Wrap the DOM node in jQuery to obtain a jQuery object
+                htmx.trigger($firstRow[0], 'click');
+            }
+        }
+
+        var columnDefs = [
+            { visible: false, targets: [6] }, 
+            { orderable: false, targets: [0, 2, 5, 6] },
+            {
+                className: 'dt-control', 
+                orderable: false,
+                data: null,
+                defaultContent: '', 
+                targets: 0, 
+            }
+        ];
+        var orderFixed = [3, 'desc'];
+        var rowGroup_dataSrc =  [3];
+        var order = [[3, 'asc'], [1, 'asc']];
+        
+        
+
+        let table = new DataTable('#students-table', {
+            select: {
+                info: false,
+                style: 'single',
+                toggleable: false,
+            },
+            
+            rowId: 'id',
+            deferRender: true,
+            orderFixed: orderFixed,
+            order: order,
+            scrollCollapse: true,
+            scrollY: adjustTableScrollHeight() + 'px',
+            rowGroup: {
+                dataSrc: rowGroup_dataSrc
+            },
+            columnDefs: columnDefs,
+            layout: {
+                topStart: {
+                    buttons: ['pageLength', 
+                    {
+                        extend: 'colvis',
+                        text: 'Show columns...',
+                        columns: ':not(:eq(6))'
+                    }
+                    ]
+                },
+            }, 
+            stateSave: true,
+        });
+
+        // Add event listener for opening and closing details
+        table.on('click', 'td.dt-control', function (e) {
+            let tr = e.target.closest('tr');
+            let row = table.row(tr);
+        
+            if (row.child.isShown()) {
+                row.child.hide();
+            }
+            else {
+                row.child(format(row.data())).show();
+            }
+        });
+
+        // Format function for row details
+        function format(rowData) {
+            return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+                '<tr>' +
+                    '<td><b>Taught qualifications</b></td>' +
+                '</tr>' +
+                '<tr>' +
+                    '<td>' + rowData[6] + '</td>' +
+                '</tr>' +
+            '</table>';
+        }
+       
+
+
+
+        let outsideElement = $('#period-select');
+        console.log(outsideElement)
+        initializeDropdownFilter(table, 3, 'period-select');
+       
+
+        // Get the selected row
+        let selectedRow = table.row({ selected: true });
+        if (selectedRow.any()) {
+            
+            let selectedRowNode = selectedRow.node();
+            console.log(selectedRowNode)
+            htmx.trigger(selectedRowNode, 'click');
+            htmx.process(selectedRowNode);
+        } else {
+            initialiseSelect();
+        }
+
+
+        //initialiseSelect(); // Call the function if no row is selected
+        
+    
+
+
+        $('#hamburger-btn').on('click', function () {
+            setTimeout(function() {
+                table.draw();  // Redraw the DataTable
+            }, 300); 
+        });
+
+        
+      
+    });
+
+
+</script>
+
+  {% comment %} <span class="badge badge-dark-secondary my-1 me-1 p-2">
+                                        <i class="fa-solid fa-thumbtack me-1" style="font-size: 0.8em; vertical-align: super;"></i>
+
+                                        {{ tag }}
+                                    </span> {% endcomment %}
+                                
+                                    {% comment %} <span class="badge badge-dark-secondary my-1 me-1 p-2">
+                                            <i class="fa-solid fa-clock-rotate-left me-1" style="font-size: 0.8em; vertical-align: super;"></i>
+                                            {{ tag }}
+                                        </span> {% endcomment %}

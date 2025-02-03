@@ -1,0 +1,125 @@
+
+<table id="teachers-table" style="width:100%;"
+class="hover compact">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Academic Period</th>
+            <th>Tags</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="teachers-table-body">
+        {% for teacher in teachers %}
+        <tr>
+            <td>{{ teacher }}</td>
+            
+            
+            
+            <td>{{ teacher.email }}</td>
+            <td>
+                {% if not teacher.periods.count %}  
+                <i class="text-muted">Unassigned</i>
+                {% else %}
+                    {% for period in teacher.periods.all %}  
+                        <span class="badge badge-lightblue my-1 me-1">{{ period }}</span>
+                    {% endfor %}
+                {% endif %}
+            </td>
+            <td>
+                {% for tag in teacher.tags.all %}  
+                <span class="badge rounded-pill badge-dark-secondary my-1">
+                    {{ tag }}
+                </span>
+                {% endfor %}
+            </td>
+            <td class="py-0 text-end">
+                <button class="btn btn-round my-0 btn-transparent p-0 mx-2" type="button" 
+                    name ="options-button"
+                    data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                </button>
+
+                <div class="dropdown-menu">
+                    <button class="dropdown-item" 
+                        data-bs-toggle="modal"  
+                        data-bs-target="#teacher-form-modal"
+                        hx-get="{% url 'teacher-form' teacher.id %}" 
+                        hx-target="#teacher-form-container" 
+                        hx-swap="innerHTML">
+                        <i class="fa-regular fa-edit me-2"></i> Edit details
+                    </button>
+                
+                    <button class="dropdown-item" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#teacher-delete-modal" 
+                        onclick="document.getElementById('delete-teacher_id').value = 
+                                {{ teacher.id }}">
+                        <i class="fa-regular fa-trash-can me-2"></i> 
+                        Delete
+                    </button>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function() {
+        function adjustTableScrollHeight() {
+            const margin = 300
+            let newHeight = Math.max($(window).height()-margin, 400); 
+            return newHeight
+        }
+
+        let table = new DataTable('#teachers-table', {
+            order: [0, 'asc'],
+            scrollCollapse: true,
+            scrollY: adjustTableScrollHeight() + 'px',
+            scroller: true,
+
+            columnDefs: [
+                { visible: false, targets: [] }, 
+                { orderable: false, targets: [2,3,4] } 
+                ],
+
+            drawCallback: function() {
+                var api = this.api();
+                var rowCount = api.rows({page: 'current'}).count();
+                
+                for (var i = 0; i < 5 - (rowCount === 0 ? 1 : rowCount); i++) {
+                    $('#teachers-table tbody').append(
+                        $("<tr>")
+                            .attr("style", "pointer-events: none")
+                            .append("<td>&nbsp;</td>")
+                            .append("<td></td>")
+                            .append("<td></td>")
+                            .append("<td></td>")
+                    );
+                }
+            },
+              
+            layout: {
+                topStart: {
+                    buttons: ['pageLength'],
+                },
+            }, 
+            stateSave: true,            
+        });
+        // datatables.dropdown_filter.js
+        initializeDropdownFilter(table, 2, 'period-select');
+
+
+
+
+      
+});
+
+   
+
+</script>
+
+
+

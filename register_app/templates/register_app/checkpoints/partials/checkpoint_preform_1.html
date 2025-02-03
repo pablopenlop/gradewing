@@ -1,0 +1,61 @@
+
+<form id="checkpoint-preform-1" 
+      hx-post="{% url 'checkpoint-preform-2' %}" 
+      hx-target="this" 
+      hx-swap="outerHTML">
+    {% csrf_token %}
+    <div class="modal-header">
+        <h5 class="modal-title">
+            Create checkpoint  
+        </h5>
+        <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+            <i class="fa-solid fa-x"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-6">
+                <div class="form-floating mb-3">
+                    {{ form.period }}
+                    <label for="{{ form.period.id_for_label }}">{{form.period.label}}</label>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-floating mb-3">
+                    {{ form.scope }}
+                    <label for="{{ form.scope.id_for_label }}">{{form.scope.label}}</label>
+                </div>
+            </div>
+        </div>
+
+    <div class="accordion" id="accordion-help">
+        <div class="accordion-item">
+          <h2 class="accordion-header">
+            <button class="accordion-button collapsed text-muted" type="button" data-bs-toggle="collapse" data-bs-target="#collapse-scope">
+                <h5 class="mt-0 mb-0"><i class="fa-solid fa-circle-info me-3 flex-shrink-0"></i></h5>
+                <span class="title">Scope</span>
+            </button>
+          </h2>
+          <div id="collapse-scope" class="accordion-collapse collapse" data-bs-parent="#accordion-help">
+            <div class="accordion-body text-muted">
+                {{ form.scope.help_text|safe }}
+            </div>
+          </div>
+        </div>
+      </div>
+    
+    </div>
+
+
+    <div class="modal-footer justify-content-end">
+        <div class="d-flex justify-content-center">
+            <button class="mx-1 btn btn-light"  type="button" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="mx-1 btn btn-primary">
+                Next
+                <i class="fa-solid fa-arrow-right ms-2"></i>
+            </button>
+        </div>
+    </div>
+</form>
+
+

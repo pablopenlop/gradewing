@@ -1,0 +1,377 @@
+<div class="modal-header">
+    <h5 class="modal-title">Qualification exam result</h5>
+    <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+        <i class="fa-solid fa-x"></i>
+    </button>
+</div>
+
+    <div class="modal-body">
+        <div class="d-flex align-items-center text-muted mb-2">
+            <i class="fa-solid fa-user-graduate mx-3"></i>
+            <span> {{sq.programme.student.full_name}}</span>
+        </div>
+
+        <div class="flex-row d-flex align-items-center text-muted mb-3">
+            <i class="fa-solid fa-award mx-3"></i>
+            <span><b> {{sq.qualification}}</b></span>
+        </div>
+        <ul class="list-group list-group-flush m-0 p-0">
+                <li class="list-group-item p-0 mb-1">
+
+        <div class="row">
+            <div class="col-6">
+                <div class="form-floating mb-3 restricted">
+                    {{qualification_form.id}}
+                    <label for="{{ qualification_form.id.id_for_label }}">
+                        {{ qualification_form.id.label}}
+                    </label>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-floating mb-3 restricted">
+                    {{qualification_form.student_qualification}}
+                    <label for="{{ qualification_form.student_qualification.id_for_label }}">
+                        {{ qualification_form.student_qualification.label}}
+                    </label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="form-floating mb-3">
+                    {{ qualification_form.series }}
+                    <label for="{{ qualification_form.series.id_for_label }}">
+                        {% if sq.qualification.has_no_examseries %}
+                            Month of award *
+                        {% else %}
+                            Examination series *
+                        {% endif  %}
+                    </label>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-floating mb-3">
+                    {{ qualification_form.year }}
+                    <label for="{{ qualification_form.year.id_for_label }}">
+                        {% if sq.qualification.has_no_examseries %}
+                            Year of award *
+                        {% else %}
+                            Examination year *
+                        {% endif  %}
+                </label>
+                </div>
+            </div>
+        </div>
+        <div class="d-flex justify-content-start align-items-center mb-2">
+            <div class="title mb-1">Overall</div>
+        </div>
+
+        <div class="row">
+            <div class="{% if sq.qualification.mark_secondary %}col-3{% else %}col-6{% endif %}">
+                <div class="form-floating mb-3">
+                    {{ qualification_form.grade }}
+                    <label for="{{ qualification_form.grade.id_for_label }}">
+                        {{ qualification_form.grade.label }} *
+                    </label>
+                </div>
+            </div>
+            <div class="{% if sq.qualification.mark_secondary %}col-5{% else %}col-6{% endif %}">
+                <div class="form-floating mb-3">
+                    {{ qualification_form.mark }}
+                    <label for="{{ qualification_form.mark.id_for_label }}">
+                        {{sq.qualification.get_mark_type_display}} / {{sq.qualification.mark}}
+                    </label>
+                </div>
+            </div>
+            {% if sq.qualification.mark_secondary %}
+            <div class="col-4">
+                <div class="form-floating mb-3">
+                    {{ qualification_form.mark_secondary }}
+                    <label for="{{ qualification_form.mark_secondary.id_for_label }}">
+                        {{sq.qualification.get_mark_secondary_type_display}} / {{sq.qualification.mark_secondary}}
+                    </label>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="form-check text-muted">
+                    {{ qualification_form.is_final }}
+                    <label class="p-0 my-1 mx-2" for="{{ qualification_form.is_final.id_for_label }}">
+                        Mark result as
+                        <span>
+                            <b type="button" 
+                                data-bs-toggle="tooltip" 
+                                data-bs-html="true"
+                                data-bs-placement="top"
+                                data-bs-title="{{ qualification_form.is_final.help_text }}"> 
+                                Final
+                            </b>
+                        </span> 
+                    </label>
+                </div>
+            </div>
+        </div>
+    </li>
+</ul>
+
+      
+
+        <!-- COMPONENTS -->
+        <div class="d-flex justify-content-start align-items-center mb-2">
+            <div class="title mb-1">Components</div>
+        </div>
+{% comment %}         <div class="title mb-1">Components</div> {% endcomment %}
+        <ul class="list-group list-group-flush">
+        {% for index, component, form in component_formset %}
+            <li class="list-group-item mb-1">
+                <div class="flex-row d-flex justify-content-between align-items-center text-muted">
+                    <div>
+                    <i class="fa-solid fa-file-lines mx-2"></i>
+                    <span>{{component}}</span>
+                    </div>
+                   
+
+                    <div class="dropdown" >
+                        <button name="lcer-status-btn" 
+                            id="id_lcer-{{index}}-status-btn"
+                            class="btn u-link dropdown-toggle" 
+                            data-bs-toggle="dropdown">
+                                <i class="fa-solid fa-check"></i>
+                        </button>
+                        <ul class="dropdown-menu dropdown-menu-end">
+                            <li>
+                                <button class="dropdown-item" type="button" 
+                                    name="lcer-status-opt-available"
+                                    id="id_lcer-{{index}}-status-opt-available">
+                                    <div class="justify-content-center d-flex align-items-center">
+                                        <i class="fa-solid fa-check me-2"></i> 
+                                        Grade available
+                                    </div>
+                                </button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item" type="button" 
+                                    name="lcer-status-opt-not_available"
+                                    id="id_lcer-{{index}}-status-opt-not_available">
+                                    <div class="justify-content-center d-flex align-items-center">
+                                        <i class="fa-solid fa-xmark me-2"></i> Grade not available
+                                    </div>
+                                </button>
+                            </li>
+                            <li>
+                                <button class="dropdown-item" type="button" 
+                                    name="lcer-status-opt-not_undertaken"
+                                    id="id_lcer-{{index}}-status-opt-not_undertaken">
+                                    <div class="justify-content-center  d-flex align-items-center">
+                                        <i class="fa-solid fa-ban me-2"></i> Not undertaken
+                                    </div>
+                                </button>
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form restricted mb-3">
+                            {{form.available}}
+                            <label for="{{ form.available.id_for_label }}">Available</label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form restricted mb-3">
+                            {{form.undertaken}}
+                            <label for="{{ form.undertaken.id_for_label }}">Undertaken</label>
+                        </div>
+                    </div>
+                </div>
+                <div class="row"><i class = "mx-3 mb-3" style="color: gray;" id ="lcer-{{index}}-status-message"></i>
+                </div>
+
+                <div id="lcer-{{ index }}-container">
+                    <div class="row mt-1">
+                        <div class="col-4">
+                            <div class="form-floating mb-3 restricted">
+                                {{form.id}}
+                                <label for="{{ form.id.id_for_label }}">{{ form.id.label }}</label>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-floating mb-3 restricted">
+                                {{form.component}}
+                                <label for="{{ form.component.id_for_label }}">{{ form.component.label }}</label>
+                            </div>
+                        </div>
+                        <div class="col-4">
+                            <div class="form-floating mb-3 restricted">
+                                {{form.student_qualification}}
+                                <label for="{{ form.student_qualification.id_for_label }}">
+                                    {{ form.student_qualification.label }}
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="{% if component.mark_adjusted %}col-4{% else %}col-6{% endif %}">
+                            <div class="form-floating mb-3">
+                                {{ form.grade }}
+                                <label for="{{ form.grade.id_for_label }}">
+                                    {{ form.grade.label }} *
+                                </label>
+                            </div>
+                        </div>
+                        <div class="{% if component.mark_adjusted %}col-4{% else %}col-6{% endif %}">
+                            <div class="form-floating mb-3">
+                                {{ form.mark }}
+                                <label for="{{ form.mark.id_for_label }}">
+                                    {{component.get_mark_type_display}} / {{component.mark}}
+                                </label>
+                            </div>
+                        </div>
+                        {% if component.mark_adjusted %}
+                        <div class="col-4">
+                            <div class="form-floating mb-3">
+                                {{ form.mark_adjusted }}
+                                <label for="{{ form.mark_adjusted.id_for_label }}">
+                                    {{component.get_mark_adjusted_type_display}} / {{component.mark_adjusted}}
+                                </label>
+                            </div>
+                        </div>
+                        {% endif %}
+                    </div>
+                </div>
+              
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div class="modal-footer">
+        <div class="row w-100 mb-3">
+            {% include 'partials/form_error_alert.html' %}
+        </div>
+        <div class="d-flex justify-content-end">
+            <button class="mx-2 btn btn-light"  
+                type="button" data-bs-dismiss="modal">Cancel
+            </button>
+            <button type="submit" class="btn btn-primary" id="save-family-btn" 
+                {% if form.errors or not form.instance.pk %}disabled{% endif %}>
+                Save
+            </button>
+        </div>
+    </div>
+    
+    
+
+    <script>
+
+
+   
+    $(document).ready(function() {
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        const yearInput = "#id_lqer-year"
+        let maxYear = $(yearInput).attr('max'); 
+        let minYear = $(yearInput).attr('min'); 
+        initializeYearPicker(yearInput);
+        enforceLimits(yearInput, minYear, maxYear);
+       $('input[name*="mark"]').each(function() {
+            let maxMark = $(this).attr('max') || 100; 
+            enforceLimits(this, 0, maxMark);
+        });
+    });
+{% comment %} 
+    $(document).ready(function() {
+        var index = 0
+        $('[name*="lcer-status-opt"]').on('click', function() {
+            let dropdown = $(this).closest('.dropdown');
+            let selectedText = $(this).text()
+            let dropdownButton = $(this).closest('.dropdown').find('.dropdown-toggle');
+            let selectedIcon = $(this).find('i').prop('outerHTML');
+            dropdownButton.html(selectedIcon);
+            let buttonId = dropdownButton.attr('id');
+            index = buttonId.match(/\d+/)[0];
+        });
+
+        $('[name="lcer-status-opt-available"]').on('click', function() {
+            $('#id_lcer-' + index + '-available').prop('checked', true);
+            $('#id_lcer-' + index + '-undertaken').prop('checked', true);
+            $('#lcer-' + index + "-container").show();
+        });
+        $('[name="lcer-status-opt-not_available"]').on('click', function() {
+            $('#id_lcer-' + index + '-available').prop('checked', false);
+            $('#id_lcer-' + index + '-undertaken').prop('checked', true);
+            $('#lcer-' + index + "-container").hide();
+        });
+        $('[name="lcer-status-opt-not_undertaken"]').on('click', function() {
+            $('#id_lcer-' + index + '-undertaken').prop('checked', false);
+            $('#id_lcer-' + index + '-available').prop('checked', false);
+            $('#lcer-' + index + "-container").hide();
+    
+        });
+    });
+     {% endcomment %}
+
+    function checkAndClickDropdown(totalItems) {
+        for (let i = 1; i <= totalItems; i++) {
+            let isAvailableChecked = $('#id_lcer-' + i + '-available').prop('checked');
+            let isUndertakenChecked = $('#id_lcer-' + i + '-undertaken').prop('checked');
+            let dropdownButtonId;
+            if (isAvailableChecked && isUndertakenChecked) {
+                dropdownButtonId = '#id_lcer-' + i + '-status-opt-available';
+            } else if (!isAvailableChecked && isUndertakenChecked) {
+                dropdownButtonId = '#id_lcer-' + i + '-status-opt-not_available';
+            } else if (!isUndertakenChecked) {
+                dropdownButtonId = '#id_lcer-' + i + '-status-opt-not_undertaken';
+            }
+            if (dropdownButtonId) {
+                $(dropdownButtonId).trigger('click');
+            }
+        }
+    }
+
+    function updateStatus(buttonId, available, undertaken, showContainer, message) {
+        $('#id_lcer-' + buttonId + '-available').prop('checked', available);
+        $('#id_lcer-' + buttonId + '-undertaken').prop('checked', undertaken);
+        $('#lcer-' + buttonId + '-container').toggle(showContainer);
+        $('#lcer-' + buttonId + '-status-message').toggle(!showContainer);
+        $('#lcer-' + buttonId + '-status-message').text(message);
+    }
+
+    
+    $(document).ready(function() {
+        let index = 0;
+        const totalItems = {{ sq.qualification.components.count }};
+
+        $('[name*="lcer-status-opt"]').on('click', function() {
+            let dropdown = $(this).closest('.dropdown');
+            let dropdownButton = dropdown.find('.dropdown-toggle');
+            let selectedIcon = $(this).find('i').prop('outerHTML');
+            dropdownButton.html(selectedIcon);
+            let buttonId = dropdownButton.attr('id')
+            index = buttonId.match(/\d+/)[0];
+        });
+    
+        $('[name="lcer-status-opt-available"]').on('click', function() {
+            let message = ""
+            updateStatus(index, true, true, true, message);
+
+        });
+        $('[name="lcer-status-opt-not_available"]').on('click', function() {
+            let message = "Grade not available"
+            updateStatus(index, false, true, false, message);
+        });
+        $('[name="lcer-status-opt-not_undertaken"]').on('click', function() {
+            let message = "Component not undertaken"
+            updateStatus(index, false, false, false, message);
+        });
+
+        checkAndClickDropdown(totalItems)
+    });
+
+    
+
+
+    
+    </script>

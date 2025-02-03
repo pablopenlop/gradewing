@@ -1,0 +1,31 @@
+
+<!-- HEADER BAR -->
+<div class="card card-title sticky-top mb-4">
+    <div class="ubar px-3" id ="menu-bar">
+        <div class="col-10 px-4 py-2">
+            <span class="title mx-2">{{edusystem.label}}</span><span class="title">|</span>
+            <span class="mx-2">Showing <b>{{family.label}}</b></span>        
+        </div>
+        <div class="col-2 text-end"></div>
+    </div>
+</div>
+
+
+<!-- MAIN CONTENT -->
+<div class="container-fluid">
+    <div class="row mx-1">
+        <div class="col-6">
+            <div class="card card-body">
+            <!-- QUALIFICATIONS TABLE -->
+            {% include 'subject_app/qualifications/partials/qualifications_table.html' %}
+            </div>
+        </div>
+        <div class="col-6">
+            <!-- QUALIFICATION INFO -->
+            <div id ="qualification-info-container">
+            </div>
+        </div>
+    </div>
+</div>
+
+

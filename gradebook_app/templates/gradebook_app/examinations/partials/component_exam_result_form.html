@@ -1,0 +1,161 @@
+
+
+
+<div class="modal-header">
+    <h5 class="modal-title">Component exam result</h5>
+    <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+        <i class="fa-solid fa-x"></i>
+    </button>
+</div>
+    <div class="modal-body">
+        <div class="d-flex align-items-center text-muted mb-2">
+            <i class="fa-solid fa-user-graduate mx-3"></i>
+            <span> {{sq.programme.student.full_name}}</span>
+        </div>
+
+        <div class="d-flex align-items-center text-muted mb-2">
+            <i class="fa-solid fa-award mx-3"></i>
+            <span> {{sq.qualification}}</span>
+        </div>
+
+        <div class="d-flex align-items-center text-muted mb-3">
+            <i class="fa-solid fa-file-lines mx-3"></i>
+            <span>{{component}}</span>
+  
+        </div>
+        <div class="form restricted mx-3 mb-3">     
+            {{ form.available }}
+            <label for="{{ form.available.id_for_label }}">{{ form.available.label }}</label>
+        </div>
+        <div class="row">            
+            <div class="col-4">
+                <div class="form-floating mb-3 restricted">
+                    {{form.id}}
+                    <label for="{{ form.id.id_for_label }}">{{ form.id.label }}</label>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-floating mb-3 restricted">
+                    {{form.component}}
+                    <label for="{{ form.component.id_for_label }}">{{ form.component.label }}</label>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-floating mb-3 restricted">
+                    {{form.student_qualification}}
+                    <label for="{{ form.student_qualification.id_for_label }}">{{ form.student_qualification.label }}</label>
+                </div>
+            </div>
+        </div>
+        
+        <div class="row">
+            <div class="col-6">
+                <div class="form-floating mb-3">
+                    {{ form.series }}
+                    <label for="{{ form.series.id_for_label }}">
+                        {% if sq.qualification.has_no_examseries %}
+                            Month of award *
+                        {% else %}
+                            Examination series *
+                        {% endif  %}
+                    </label>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-floating mb-3">
+                    {{ form.year }}
+                    <label for="{{ form.year.id_for_label }}">
+                        {% if sq.qualification.has_no_examseries %}
+                            Year of award *
+                        {% else %}
+                            Examination year *
+                        {% endif  %}
+                </label>
+                </div>
+            </div>
+        </div>
+      
+        <div class="row">
+            <div class="{% if component.mark_adjusted %}col-4{% else %}col-6{% endif %}">
+                <div class="form-floating mb-3">
+                    {{ form.grade }}
+                    <label for="{{ form.grade.id_for_label }}">{{ form.grade.label }} *</label>
+                </div>
+            </div>
+            <div class="{% if component.mark_adjusted %}col-4{% else %}col-6{% endif %}">
+                <div class="form-floating mb-3">
+                    {{ form.mark }}
+                    <label for="{{ form.mark.id_for_label }}">
+                        {{component.get_mark_type_display}} / {{component.mark}}
+                    </label>
+                </div>
+            </div>
+            {% if component.mark_adjusted %}
+            <div class="col-4">
+                <div class="form-floating mb-3">
+                    {{ form.mark_adjusted }}
+                    {% if form.mark_adjusted.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.mark_adjusted.errors.as_text|striptags }}
+                        </div>
+                    {% endif %}
+                    <label for="{{ form.mark_adjusted.id_for_label }}">
+                        {{component.get_mark_adjusted_type_display}} / {{component.mark_adjusted}}
+                    </label>
+                </div>
+            </div>
+            {% endif %}
+        </div>
+        <div class="row mb-3">
+            <div class="col-12">
+                <div class="form-check text-muted">
+                    {{ form.is_final }}
+                    <label class="p-0 my-1 mx-2" for="{{ form.is_final.id_for_label }}">
+                        Mark result as
+                        <span>
+                            <b type="button" 
+                                data-bs-toggle="tooltip" 
+                                data-bs-html="true"
+                                data-bs-placement="top" 
+                                data-bs-title="{{ form.is_final.help_text }}">
+                                Final
+                            </b>
+                        </span> 
+                    </label>
+                </div>
+            </div>
+        </div>
+
+
+        {% include 'partials/form_error_alert.html' %}
+
+    </div>
+
+       {% comment %}  <div class="alert alert-light alert-dismissible my-0 py-2 px-3" 
+            style="visibility: hidden;" role="alert" id ="cer-form-error-messages">
+            <i class="fa-solid fa-circle-exclamation me-3"></i><span></span>
+        </div> {% endcomment %}
+
+
+    <div class="modal-footer justify-content-end">
+        <div class="d-flex justify-content-center">
+            <button class="mx-2 btn btn-light"  
+                type="button" data-bs-dismiss="modal">Cancel
+            </button>
+        <button type="submit" class="btn btn-primary" id="save-family-btn" 
+            {% if form.errors or not form.instance.pk %}disabled{% endif %}>
+            Save
+        </button>
+    </div>
+    
+    
+<script>
+    
+    $(document).ready(function() {
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+        initializeYearPicker("#id_cer-year");
+        enforceLimits('#id_cer-mark', 0, {{ component.mark |default:0 }});
+        enforceLimits('#id_cer-mark_adjusted', 0, {{ component.mark_adjusted |default:0 }});
+    });
+</script>

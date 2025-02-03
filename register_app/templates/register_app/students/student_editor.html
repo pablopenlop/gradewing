@@ -1,0 +1,59 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_js %}
+    <script src="{% static 'register_app/js/students/students.editor.form.requests.js' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+
+    <!-- STUDENT HEADERBAR -->
+    <div class="card card-title sticky-top">
+        <div class="container text-center" style="max-width: 800px;">
+            <div class="row align-items-center justify-content-between p-2" >
+                <div class="col-auto d-flex align-items-center">
+                    <a class="btn btn-light btn-round me-2" 
+                        href="{% url 'students' %}">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+                    <h5 class="mb-0">Student profile editor</h5>
+                </div>
+                <div class="col-auto d-flex"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="main-container" style="max-width: 800px">
+
+    <!-- GENERAL DETAILS CARD -->
+    <div class="container-fluid p-0 m-0" id="general-card-container"
+            hx-get="{% url 'student-general-card' student_id %}"
+            hx-trigger="load, refresh" hx-target="this" hx-swap="innerHTML">
+    </div>
+
+    <!-- ENROLLMENTS CARD -->
+    <div class="container-fluid p-0 m-0" id="enrollments-card-container"
+            hx-get="{% url 'student-enrollments-card' student_id %}"
+            hx-trigger="load, refresh" hx-target="this" hx-swap="innerHTML">
+    </div>
+
+    <!-- QUALIFICATIONS CARD -->
+    <div class="container-fluid p-0 m-0" id="qualifications-card-container"
+            hx-get="{% url 'student-qualifications-card' student_id %}"
+            hx-trigger="load, refresh" hx-target="this" hx-swap="innerHTML">
+    </div>
+</div>
+
+
+<!-- FORM MODAL -->
+{% include 'partials/form_modal.html' %}
+
+<!-- DELETE  MODAL -->
+{% include 'partials/delete_modal.html' %}
+
+
+
+    
+{% endblock %}

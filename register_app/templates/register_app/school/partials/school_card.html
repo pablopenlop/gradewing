@@ -1,0 +1,79 @@
+{% load static %}
+<div class="card">
+    <div class="card-header">
+        <div class="ubar py-0" id="menu-bar">
+            <div class="col-9 d-flex align-items-center">
+                <span class="title mx-2">School</span>
+                <h4 class="h4  my-0">|</h4>
+                <span class="mx-2 my-0 fst-italic"> 
+                    Profile 
+                </span>
+            </div>
+            <div class="col-3 text-end">
+               
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-2">
+        <div class="row">
+            <div class="col-4 text-center">
+                <h4>{{ school.name }}</h4>
+                <div class="my-2">
+                {{ school.get_country_display }}
+                </div>
+                <button class="btn btn-light btn-round me-1" type="button"
+                    hx-get="{% url 'school-school-form'%}"
+                    data-bs-toggle="modal" 
+                    data-bs-target="#school-form-modal"
+                    hx-target="#school-form-container"
+                    hx-trigger="click"
+                    hx-swap="innerHTML">
+                <i class="fa-regular fa-pen-to-square"></i>
+                </button>
+            </div>
+
+            <div class="col-8 d-flex align-items-center justify-content-center">
+                <!-- Image Placeholder -->
+                <img src="{% static 'assets/icons/gradewing.png' %}" 
+                     alt="School Logo" 
+                     class="img-fluid" 
+                     style="max-width: 50%; height:  50%;">
+            
+                <!-- Buttons Container -->
+                <div class="text-center ms-5">
+                    <!-- Upload Logo Button -->
+                    <form method="POST" enctype="multipart/form-data" 
+                          {% comment %} action="{% url 'upload_logo' school.id %}" {% endcomment %}>
+                        {% csrf_token %}
+                        <div class="mb-2">
+                            <label for="logo-upload" class="btn u-link">
+                                <i class="fa-solid fa-upload me-2"></i>
+                                Upload logo
+                            </label>
+                            <input id="logo-upload" type="file" name="logo" style="display: none;" onchange="this.form.submit();">
+                        </div>
+                    </form>
+            
+                    <!-- Reset Button -->
+                    <form method="POST" 
+                          {% comment %} action="{% url 'reset_logo' school.id %}" {% endcomment %}>
+                        {% csrf_token %}
+                        <button type="submit" class="btn btn-outline-danger btn-sm btn-rounded py-2 px-3">
+                            <i class="fa-regular fa-trash-can me-2"></i>
+                            Delete logo
+                        </button>
+                    </form>
+                </div>
+            </div>
+            
+            
+
+
+
+
+
+
+        </div>
+    </div>
+</div>
+

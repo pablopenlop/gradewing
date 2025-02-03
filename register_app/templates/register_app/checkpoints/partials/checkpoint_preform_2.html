@@ -1,0 +1,122 @@
+
+<form id="checkpoint-preform-2" 
+      action="{% url 'checkpoint-save' %}" method="POST">
+    {% csrf_token %}
+    <div class="modal-header">
+        <h5 class="modal-title">
+            {% if  form.instance.pk %} 
+                Edit checkpoint  
+            {% else %} 
+                Create checkpoint   
+            {% endif %}
+        </h5>
+        <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+            <i class="fa-solid fa-x"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-4">
+                <div class="form-floating restricted mb-3">
+                    {{ form.period }}
+                    <label for="{{ form.period.id_for_label }}">{{form.period.label}}</label>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-floating restricted mb-3">
+                    {{ form.id }}
+                    <label for="{{ form.id.id_for_label }}">{{form.id.label}}</label>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-floating restricted mb-3">
+                    {{ form.scope }}
+                    <label for="{{ form.scope.id_for_label }}">{{form.scope.label}}</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="form-floating mb-3">
+                    <input readonly type="text" id="id_period_display" class="form-control"  value="{{ period_name }}">
+                    <label for="id_period_display">Academic period <i class="fa-solid fa-lock ms-1"></i></label>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-floating mb-3">
+                    <input readonly type="text" id="id_scope_display" class="form-control"  value="{{ scope_name }}">
+                    <label for="id_scope_display">Scope <i class="fa-solid fa-lock ms-1"></i></label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row">
+            <div class="col-6">
+                <div class="form-floating mb-3">
+                    {{ form.name }}
+                    <label for="{{ form.name.id_for_label }}">{{form.name.label}}</label>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-floating mb-3">
+                    {{ form.date }}
+                    <label for="{{ form.date.id_for_label }}">{{form.date.label}}</label>
+                    <div class="form-helptext mx-3 my-1" id="{{ form.date.auto_id }}_helptext">
+                        {{ form.date.help_text|safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+{% comment %} 
+        <div class="row">
+            <div class="col-12">
+                <div class="form-floating mb-3">
+                    {{ form.yeargroups }}
+                    <label for="{{ form.yeargroups.id_for_label }}">{{form.yeargroups.label}}</label>
+                    <div class="form-helptext mx-3 my-0" id="{{ form.yeargroups.auto_id }}_helptext">
+                        {{ form.yeargroups.help_text|safe }}
+                    </div>
+                </div>
+            </div>
+        </div> {% endcomment %}
+
+        {% include 'partials/form_error_alert.html' %}
+
+       
+    </div>
+
+    <div class="modal-footer justify-content-end">
+        <div class="d-flex justify-content-center">
+            <button class="mx-1 btn btn-light" 
+                type="button" data-bs-dismiss="modal">
+                Cancel
+            </button>
+            <button type="submit" class="mx-1 btn btn-primary" disabled>
+            {% if  form.instance.pk %} 
+                Save
+            {% else %} 
+                Create
+            {% endif %}
+            </button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+
+         // Char counter
+         $('[maxlength]').maxlength();
+
+        // Yeargroups selectsize
+        {% comment %} var $select = $('#id_yeargroups');
+        var $select_wrapper = $('#id_yeargroups_wrapper');
+        var required = $select.prop('required');    
+        var selectized = $select.selectize({
+            placeholder: 'Select target year groups...',
+            plugins: ["remove_button"],
+        });
+        $select_wrapper.show();
+        $select.addClass('required'); {% endcomment %}
+    });
+</script>

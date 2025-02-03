@@ -1,0 +1,39 @@
+<table id="paperTable" style="width:100%" class="table table-borderless table-hover">
+    <thead>
+        <tr>
+            <th>Exam</th>
+            <th>Code</th>
+            <th>ID</th>
+            <th>Series</th>
+             
+        </tr>
+    </thead>
+    <tbody>
+        {% for paper in papers %}
+            <tr class="paper-row active-row">
+                <td>{{ paper.name }}
+                    <p class="text-footnote text-muted mb-0 mx-3">{{ paper.subject.title }}</p>
+                </td>
+                <td>{{ paper.code }}</td>
+                <td>{{ paper.id }} ({{ paper.subject.id}})</td>
+                <td>{{ paper.series }}</td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function() {
+        var table = $('#paperTable').DataTable({
+            "order": [[0, 'asc']],
+            "scrollCollapse": true,
+            "scrollY": '400px'
+        });
+        $('.paper-row').on('click', function() {
+            // Remove active class from all rows
+            $('.paper-row').removeClass('table-active');
+            // Add active class to the clicked row
+            $(this).addClass('table-active');
+        });
+    });
+</script>

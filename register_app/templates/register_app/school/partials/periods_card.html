@@ -1,0 +1,92 @@
+
+<div class="card" id="periods-card">
+    <div class="card-header">
+        <div class="ubar py-0" id="menu-bar">
+            <div class="col-9 d-flex align-items-center">
+                <span class="title mx-2">Academic Periods</span>
+                <h4 class="h4  my-0">|</h4>
+                <span class="mx-2 my-0 fst-italic"> {{ periods|length }} academic periods registered </span>
+            </div>
+            <div class="col-3 text-end">
+                <button class="btn u-link"
+                    data-bs-toggle="modal"  
+                    data-bs-target="#period-form-modal"
+                    hx-get="{% url 'school-period-form' 0 %}" 
+                    hx-target="#period-form-container">
+                    <i class="fa-solid fa-plus"></i>
+                    Add period
+                </button>
+                
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-2">
+    
+        <table class="table align-middle">
+            <tbody>
+                {% for period in periods %}
+                <tr>
+                    <td>
+                        <h5 class="my-0">{{ period.name }}</h5>
+                    </td>
+                    <td>
+                        {% if period.current %}
+                        <button class="btn u-link btn-rounded active" 
+                                style="pointer-events: none;" type="button">
+                            <i class="fa-solid fa-check mx-2"></i>
+                            <b class="text-em me-2">Current</b>
+                        </button>
+                        {% else %}
+                       <button class="btn u-link btn-rounded" 
+                                type="button"
+                                hx-post="{% url 'set-current-period' period.id %}" 
+                                hx-trigger="click" 
+                                hx-target="#periods-card-container" 
+                                hx-swap="innerHTML">
+                                <span class="mx-2">Set as current</span>
+                        </button>
+                        {% endif %}
+
+                    </td>
+                    <td>
+                        <span>{{ period.period }}</span>
+                    </td>
+                    <td class="text-center">
+                        <div class="dropdown">
+                            <button class="btn btn-light btn-round" type="button" name="options-button"
+                                id="options_{{ period.id }}" data-bs-toggle="dropdown" aria-expanded="false">
+                                <i class="fas fa-ellipsis-v"></i>
+                            </button>
+                            <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="options_{{ period.id }}">
+                                <li>
+                                    <button class="dropdown-item" 
+                                        data-bs-toggle="modal"  
+                                        data-bs-target="#period-form-modal"
+                                        hx-get="{% url 'school-period-form' period.id %}" 
+                                        hx-target="#period-form-container">
+                                        <i class="fas fa-edit me-2"></i> Edit period
+                                    </button>
+                                </li>
+                                {% if not period.current %}
+                                <li>
+                                    <button class="dropdown-item" data-bs-toggle="modal" 
+                                        data-bs-target="#delete-modal" 
+                                        hx-get="{% url 'school-period-delete-form' period.id %}" 
+                                        hx-target="#delete-form-container">
+                                        <i class="far fa-trash-alt me-2"></i> Delete period
+                                    </button>
+                                </li>
+                                {% endif %}
+                            </ul>
+                        </div>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+
+        
+
+    </div>
+</div>
+

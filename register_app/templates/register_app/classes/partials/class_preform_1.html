@@ -1,0 +1,52 @@
+
+<form id="class-preform-1" 
+      hx-post="{% url 'class-preform-2' %}" 
+      hx-target="this" 
+      hx-swap="outerHTML">
+    {% csrf_token %}
+    <div class="modal-header">
+        <h5 class="modal-title">
+            Create teaching class  
+        </h5>
+        <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+            <i class="fa-solid fa-x"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row mb-3 align-items-center">
+            <label class="form-label mx-3" for="{{ form.period.id_for_label }}">{{form.period.label}}</label>
+            <div class="col-12">
+                {{ form.period }}
+            </div>
+            <div class="form-helptext mx-3 my-2" id="{{ form.period.auto_id }}_helptext">
+                {{ form.period.help_text|safe }}
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer justify-content-end">
+        <div class="d-flex justify-content-center">
+            <button class="mx-1 btn btn-light"  type="button" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="mx-1 btn btn-primary" disabled>
+                Next
+                <i class="fa-solid fa-arrow-right ms-2"></i>
+            </button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+
+        // PERIOD SELECTSIZE
+        var $select = $('#id_period');
+        var required = $select.prop('required');    
+        var selectized = $select.selectize({
+            placeholder: 'Select an academic period ...',
+        });
+        if (required === true) {
+            $select.addClass('required');
+        }
+    });
+</script>
+

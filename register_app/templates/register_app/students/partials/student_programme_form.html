@@ -1,0 +1,59 @@
+<form id="{{ form.form_id }}" 
+    action="{{ form.action }}"  
+    method="POST">
+    {% csrf_token %}
+ 
+    <div class="modal-header">
+        <h5 class="modal-title">
+            Add programme   
+        </h5>
+        <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+            <i class="fa-solid fa-x"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="form-floating mb-3 restricted">
+                    {{ form.student }}
+                    <label for="{{ form.student.id_for_label }}">{{form.student.label}}</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="form-floating mb-3">
+                    {{ form.name }}
+                    <label for="{{ form.name.id_for_label }}">{{form.name.label}} *</label>
+                </div> 
+            </div>
+        </div>  
+        
+
+    </div>
+    <div class="modal-footer justify-content-end">
+        <div class="d-flex justify-content-center">
+            <button class="mx-1 btn btn-light" 
+                type="button" data-bs-dismiss="modal">Cancel
+            </button>
+            <button type="submit" class="mx-1 btn btn-primary" disabled>
+                Add
+            </button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+
+        //  Name SELECTSIZE
+        var $select = $('#id_name');
+        var required = $select.prop('required');    
+        var selectized = $select.selectize({
+            placeholder: 'Select a qualification programme...',
+        });
+        if (required === true) {
+            $select.addClass('required');
+        }
+    });
+</script>

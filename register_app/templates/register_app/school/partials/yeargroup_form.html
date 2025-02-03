@@ -1,0 +1,47 @@
+<form id="custom-yeargroup-form" 
+action="{% url 'rename-custom-yeargroup-form' yeargroup.id %}" method="POST">
+  {% csrf_token %}
+
+    <div class="modal-header">
+        <h6 class="modal-title">Rename year group</h6>
+        <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+            <i class="fa-solid fa-x"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="form-floating mb-3 restricted">
+            {{ form.id }}
+            <label for="{{ form.id.id_for_label }}">ID</label>
+        </div>
+        <div class="form-floating mb-3">
+            {{ form.custom_name }}
+            <label for="{{ form.custom_name.id_for_label }}">{{yeargroup.get_level_display}}</label>
+        </div>
+
+        {% comment %} <div class="alert alert-light my-0 py-2 px-3" style="display: none;" id="custom-yeargroup-form-error-alert" >
+            <div class="d-flex align-items-center">
+                <h5><i class="fa-solid fa-circle-exclamation me-3 flex-shrink-0"></i></h5>
+                <span class="flex-grow-1">A year group with this name already exists.</span>
+            </div>
+        </div> {% endcomment %}
+
+
+
+        {% include 'partials/form_error_alert.html' with stack=False %}
+
+        
+    </div>
+
+    <div class="modal-footer justify-content-end">
+        <div class="d-flex justify-content-center">
+            <button class="mx-1 btn btn-light"  type="button" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="mx-1 btn btn-primary">Save</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(() => {
+        $('[maxlength]').maxlength();
+    });
+</script>

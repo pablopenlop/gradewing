@@ -1,0 +1,258 @@
+<div class="card">
+    <div class="card-header">
+        <div class="ubar py-0">
+            <div class="col-9 d-flex align-items-center">
+                <span class="title mx-2">Checkpoint fields </span>
+                <h4 class="h4  my-0">|</h4>
+                <span class="mx-2 my-0">{{ checkpoint.checkpoint_fields.count }} 
+                    field{{ checkpoint.checkpoint_fields.count|pluralize }} registered</span>
+            </div>
+            <div class="col-3 text-end">
+
+            {% if checkpoint.can_add_fields %}
+                <div class="dropdown">
+                    <button class="btn u-link dropdown-toggle" data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-plus"></i> 
+                        Add field...
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                       
+                        <li >
+                            <button class="dropdown-item" 
+                                type="button"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#form-modal" 
+                                hx-get="{% url 'checkpoint-field-form' checkpoint.id 0 'categorical' %}" 
+                                hx-target="#form-container" 
+                                >
+                                Categorical
+                            </button>
+                        </li>
+                        <li >
+                            <button class="dropdown-item" 
+                                type="button"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#form-modal" 
+                                hx-get="{% url 'checkpoint-field-form' checkpoint.id 0 'comment' %}" 
+                                hx-target="#form-container" 
+                                >
+                                Comment
+                            </button>
+                        </li>
+                        <li >
+                            <button class="dropdown-item" 
+                                type="button"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#form-modal" 
+                                hx-get="{% url 'checkpoint-field-form' checkpoint.id 0 'grade' %}" 
+                                hx-target="#form-container" 
+                                >
+                                Grade
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item" 
+                                type="button"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#form-modal" 
+                                hx-get="{% url 'checkpoint-field-form' checkpoint.id 0 'mark' %}" 
+                                hx-target="#form-container" 
+                                >
+                                Mark
+                            </button>
+                        </li>
+                        <li >
+                            <button class="dropdown-item" 
+                                type="button"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#form-modal" 
+                                hx-get="{% url 'checkpoint-field-form' checkpoint.id 0 'grade' %}" 
+                                hx-target="#form-container" 
+                                >
+                                Mock examination
+                            </button>
+                        </li>
+                        <li>
+                            <button class="dropdown-item" 
+                                type="button"
+                                data-bs-toggle="modal" 
+                                data-bs-target="#form-modal" 
+                                hx-get="{% url 'checkpoint-field-form' checkpoint.id 0 'percentage' %}" 
+                                hx-target="#form-container" 
+                                >
+                                Percentage mark
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            {%endif%}
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-2">
+
+        {% if not checkpoint.checkpoint_fields.count %}
+        <div class="alert alert-warning my-0 py-2">
+            <div class="d-flex align-items-center">
+                <!-- Icon Column -->
+                <div class="me-3">
+                    <i class="fa-solid fa-triangle-exclamation fa-2x"></i>
+                </div>
+                <!-- Message and Close Button -->
+                <div class="d-flex flex-grow-1 align-items-center justify-content-between">
+                    <span>
+                        The checkpoint should contain at least one field.
+                        <a href="#" class="alert-link ms-2"
+                        data-bs-toggle="modal"  
+                        data-bs-target="#form-modal"
+                        hx-get="{% url 'checkpoint-field-form' checkpoint.id 0 'grade' %}" 
+                        hx-target="#form-container"
+                        >
+                        <i class="fa-solid fa-plus"></i> 
+                        Add grade field
+                        </a>
+                    </span>
+                    <div class="flex-grow-0">
+                        <button type="button" 
+                            class="btn btn-outline-warning btn-round btn-transparent ms-2" 
+                            style="width: 25px; height: 25px;"
+                            onclick="this.closest('.alert').style.display='none';">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+
+
+        <table id="checkpoint-fields-table" class="hover" style="width:100%">
+            <thead>
+                <tr>
+                    <th></th>
+                    <th>#</th>
+                    <th class="text-nowrap">Field name</th>
+                    <th class="text-nowrap">Field type</th>
+                    <th>Rules</th>
+                    <th></th>
+
+                </tr>
+            </thead>
+            <tbody>
+                {% for field in checkpoint.checkpoint_fields.all %}
+                <tr>
+                    <td></td>
+                    <td class="py-0 text-center">{{ field.index}}</td>
+                  
+                    <td class="text-nowrap">{{ field.name }}</td>
+                    <td class="text-nowrap">{{ field.get_kind_display }}</td>
+                    <td>{{ field.rules }}</td>
+                    <td class="py-0 text-end">
+                        <button class="btn btn-round my-0 btn-transparent p-0 mx-2" type="button" 
+                            name ="options-button"
+                            data-bs-toggle="dropdown">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
+        
+                        <div class="dropdown-menu">
+                            <button class="dropdown-item" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#form-modal" 
+                            hx-get="{% url 'checkpoint-field-form' checkpoint.id field.id field.kind %}" 
+                            hx-target="#form-container">
+                                <i class="fa-regular fa-edit me-2"></i> Edit details
+                            </button>
+                        
+                            <button class="dropdown-item" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#field-delete-modal" 
+                                onclick="document.getElementById('delete-field_id').value = 
+                                        {{ field.id }}">
+                                <i class="fa-regular fa-trash-can me-2"></i> 
+                                Delete
+                            </button>
+                        </div> 
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+
+
+        <table class="table align-middle">
+            <tbody>
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
+
+
+
+<script>
+$(document).ready(function() {
+
+    let table = new DataTable('#checkpoint-fields-table', {
+        columnDefs: [
+            {
+                className: 'reorder',
+                render: () => '<i class="fa-solid fa-arrows-up-down"></i>',
+                targets: 0
+            },
+            { orderable: false, targets: '_all'}, {visible: false, targets: [] }
+        ],
+        order: [[1, 'asc']],
+        rowReorder: {
+            dataSrc: 1,
+            snapX: 10,
+        },
+        layout: {
+            topStart: null,
+            topEnd: null,
+            bottomStart: null,
+            bottomEnd: null,
+        }, 
+    });
+     
+    table.on('row-reorder', function (e, diff, edit) {
+        let result = 'Reorder started on row: ' + edit.triggerRow.data()[1] + '<br>';
+        let reorderData = []; // Array to store reorder information
+    
+        for (var i = 0, ien = diff.length; i < ien; i++) {
+            let rowData = table.row(diff[i].node).data();
+            result +=
+                `Position ${diff[i].oldData} updated to be ${diff[i].newData}<br>`;
+            // Add relevant data for the AJAX request
+            reorderData.push({
+                old_position: diff[i].oldData,
+                new_position: diff[i].newData
+            });
+        }
+        
+        // Include the checkpoint ID in the request
+        const checkpointId = "{{ checkpoint.id }}"; 
+    
+        // Send the reorder data to the server via AJAX
+        $.ajax({
+            url: "{% url 'checkpoint-reorder-fields' %}", 
+            type: 'POST',
+            data: JSON.stringify({
+                checkpoint_id: checkpointId, 
+                reorder: reorderData 
+            }),
+            contentType: 'application/json',
+            headers: {
+                'X-CSRFToken': $('input[name="csrfmiddlewaretoken"]').val()
+            },
+            success: function (response) {
+            },
+            error: function (xhr, status, error) {
+            }
+        });
+    });
+    
+
+});
+</script>

@@ -1,0 +1,55 @@
+<table id="subjectTable" style="width:100%" class="table table-borderless table-hover">
+    <thead>
+        <tr>
+            <th>Subject</th>
+            <th>Code</th>
+       
+            <th>Qualification</th>
+            <th>Suite</th>
+            <th>Board</th>
+            <th>ID</th>
+            <th>Series</th>
+       
+        </tr>
+    </thead>
+    <tbody>
+        {% for subject in subjects %}
+            <tr class="subject-row active-row" hx-get="{% url 'subject-detail' subject.id %}" 
+            hx-target="#subject-details" hx-swap="innerHTML">
+                <td>{{ subject.subject }}</td>
+                <td>{{ subject.code }}</td>
+                <td>{{ subject.get_kind_display }}</td>
+                <td>{{ subject.get_suite_display }}</td>
+                <td>{{ subject.get_board_display }}</td>
+                <td>{{ subject.id }} 
+                    {{ subject.sub_qualification.id }} 
+                    {{ subject.super_qualification.id }}
+                </td>
+                <td>
+                    {{ subject.series}}
+                    {% for series in subject.get_series %} 
+                    <span class="badge mb-1">{{series.label}}</span>
+                    {% endfor %} 
+                </td>
+     
+                
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function() {
+        var table = $('#subjectTable').DataTable({
+            "order": [[0, 'asc']],
+            "scrollCollapse": true,
+            "scrollY": '400px'
+        });
+        $('.subject-row').on('click', function() {
+            // Remove active class from all rows
+            $('.subject-row').removeClass('table-active');
+            // Add active class to the clicked row
+            $(this).addClass('table-active');
+        });
+    });
+</script>

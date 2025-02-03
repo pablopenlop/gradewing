@@ -1,0 +1,88 @@
+<div class="card">
+    <div class="card-header">
+        <div class="ubar py-0" id="menu-bar">
+            <div class="col-9 d-flex align-items-center">
+                <span class="title mx-2">Tags</span>
+                <h4 class="h4  my-0">|</h4>
+                <span class="mx-2 my-0 fst-italic"> 
+                    {{ student_tags|length}} student tags  and {{ teacher_tags|length}} teacher tags registered </span>
+            </div>
+            <div class="col-3 text-end">
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-2">
+        <table class="table align-middle">
+            <tbody>
+                <tr>
+                    <td class="text-nowrap">
+                        <h6 class="my-0">Student tags</h6>
+                    </td>
+                    <td>
+                        {% for tag in student_tags %}
+                        <span class="dropdown">
+                            <button class="btn mb-2 me-1 btn-light btn-light-permanent btn-sm dropdown-toggle" 
+                            type="button" aria-expanded="false"
+                            data-bs-auto-close="outside" 
+                            data-bs-toggle="dropdown" 
+                            hx-get="{% url 'tag-actions-form' "student" tag.id %}" 
+                            hx-target="#student-tag-actions-form-container-{{tag.id}}">
+                                {{ tag }}
+                            </button>
+                            <ul class="dropdown-menu" style="width: 200px" 
+                                id="student-tag-actions-form-container-{{tag.id}}">
+                            </ul>
+                          </span>
+                        {% endfor %}
+                    </td>
+                    <td class="text-end">
+                        <button class="btn u-link" type="button"
+                            data-bs-toggle="modal"  
+                            data-bs-target="#tags-form-modal"
+                            hx-get="{% url 'new-tags-form' "student" %}" 
+                            hx-target="#tags-form-container">
+                            <i class="fa-solid fa-plus"></i>
+                            Add student tags 
+                        </button>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="text-nowrap">
+                        <h6 class="my-0">Teacher tags</h6>
+                    </td>
+                    <td>
+                        {% for tag in teacher_tags %}
+                        <span class="dropdown">
+                            <button class="btn mb-2 me-1 btn-light btn-light-permanent btn-sm dropdown-toggle" 
+                            type="button" aria-expanded="false"
+                            data-bs-auto-close="outside" 
+                            data-bs-toggle="dropdown" 
+                            hx-get="{% url 'tag-actions-form' "teacher" tag.id %}" 
+                            hx-target="#teacher-tag-actions-form-container-{{tag.id}}">
+                                {{ tag }}
+                            </button>
+                            <ul class="dropdown-menu" style="width: 200px" 
+                                id="teacher-tag-actions-form-container-{{tag.id}}">
+                            </ul>
+                          </span>
+                        {% endfor %}
+                    </td>
+                    <td class="text-end">
+                        <button class="btn u-link" type="button"
+                            data-bs-toggle="modal"  
+                            data-bs-target="#tags-form-modal"
+                            hx-get="{% url 'new-tags-form' "teacher" %}" 
+                            hx-target="#tags-form-container">
+                            <i class="fa-solid fa-plus"></i>
+                            Add teacher tags 
+                        </button>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+                    
+        
+    </div>
+</div>
+

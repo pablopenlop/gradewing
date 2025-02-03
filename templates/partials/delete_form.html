@@ -1,0 +1,21 @@
+<form id="{{ form.form_id }}" method="POST" action="{{ form.action }}">
+    {% csrf_token %}
+    <div class="modal-header">
+        <h5 class="modal-title">{{ form.title }}</h5>
+        <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+            <i class="fa-solid fa-x"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        {{ form.body }} This action cannot be undone.
+        <div class="form-floating my-3 restricted">
+            <input class="form-control" id="delete_id" value="{{ form.delete_id }}" 
+            name="delete_id">
+            <label for="delete_id">ID</label>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+        <button type="submit" class="btn btn-primary">Delete</button>
+    </div>
+</form>

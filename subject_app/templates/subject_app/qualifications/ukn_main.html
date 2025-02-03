@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_js %}
+    <script src="{% static 'subject_app/js/qualifications/qualifications.main.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<!-- NAV TABS BAR -->
+<div class="sticky-top mx-0">
+    <div class="col-12 mt-1">
+        <ul class="nav nav-tabs mx-0">
+            <li class="nav-item mx-3" 
+            style="visibility: hidden; width: 20px;">
+            </li>
+            <li class="nav-item mx-1">
+                <button class="nav-link active" 
+                    name="family-nav-tabs" 
+                    hx-get="{% url 'family-main-content' 'ukn.al' %}"
+                    hx-target="#family-main-content" 
+                    hx-trigger="load, click"
+                    hx-swap="innerHTML">
+                    GCE A Levels
+                </button>
+            </li>
+            <li class="nav-item mx-1">
+                <button class="nav-link" 
+                    name="family-nav-tabs" 
+                    hx-get="{% url 'family-main-content' 'ukn.aaq' %}"
+                    hx-target="#family-main-content" 
+                    hx-swap="innerHTML">
+                    AAQs
+                </button>
+            </li>
+            <li class="nav-item mx-1">
+                <button class="nav-link" 
+                    name="family-nav-tabs" 
+                    hx-get="{% url 'family-main-content' 'ukn.agq.l3' %}"
+                    hx-target="#family-main-content" 
+                    hx-swap="innerHTML">
+                    Level 3 AGQs 
+                </button>
+            </li>
+            <li class="nav-item mx-1">
+                <button class="nav-link" 
+                    name="family-nav-tabs" 
+                    hx-get="{% url 'family-main-content' 'ukn.epq' %}"
+                    hx-target="#family-main-content" 
+                    hx-swap="innerHTML">
+                    EPQs
+                </button>
+            </li>
+            <li class="nav-item mx-1">
+                <button class="nav-link" 
+                    name="family-nav-tabs" 
+                    hx-get="{% url 'family-main-content' 'ukn.gcse' %}"
+                    hx-target="#family-main-content" 
+                    hx-swap="innerHTML">
+                    GCSEs
+                </button>
+            </li>
+            <li class="nav-item mx-1">
+                <button class="nav-link" 
+                    name="suite-nav-tabs" 
+                    hx-get="{% url 'family-main-content' 'ukn.vtq.l12' %}"
+                    hx-target="#family-main-content" 
+                    hx-swap="innerHTML">
+                    Level 1/2 VTQs
+                </button>
+            </li>
+            <li class="nav-item mx-1">
+                <button class="nav-link" 
+                    name="family-nav-tabs" 
+                    hx-get="{% url 'family-main-content' 'ukn.pq.l12' %}"
+                    hx-target="#family-main-content" 
+                    hx-swap="innerHTML">
+                    Level 1/2 PQs 
+                </button>
+            </li>
+        </ul>
+    </div>
+    </div>
+    <!-- MAIN CONTENT -->
+    <div id="family-main-content" style="visibility: hidden;">
+    </div>
+
+{% endblock %}
+

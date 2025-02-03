@@ -1,0 +1,111 @@
+from django.urls import path
+from gradebook_app.views import examination_views
+from gradebook_app.views import checkpoint_views
+urlpatterns = [
+    path(
+        'checkpoints/',
+        checkpoint_views.checkpoints, 
+        name='gradebook-checkpoints'
+    ),
+    path(
+        'checkpoints/headerbar/',
+        checkpoint_views.checkpoints_headerbar, 
+        name='gradebook-checkpoints-headerbar'
+    ),
+    path(
+        'checkpoints/data/',
+        checkpoint_views.checkpoints_data, 
+        name='gradebook-checkpoints-data'
+    ),
+    path(
+        'checkpoints/table/',
+        checkpoint_views.checkpoints_table, 
+        name='gradebook-checkpoints-table'
+    ),
+    path(
+        'checkpoints/<int:checkpoint_id>/space/',
+        checkpoint_views.checkpoint_space, 
+        name='gradebook-checkpoint-space'
+    ),
+    path(
+        'checkpoints/<int:checkpoint_id>/space/table/',
+        checkpoint_views.checkpoint_space_table, 
+        name='gradebook-checkpoint-space-table'
+    ),
+    path(
+        'checkpoints/<int:checkpoint_id>/space/data/',
+        checkpoint_views.checkpoint_space_data, 
+        name='gradebook-checkpoint-space-data'
+    ),
+   
+    
+    
+    
+    # EXAMINATIONS
+    path(
+        'examinations/',
+        examination_views.examinations, 
+        name='gradebook-examinations'
+    ),
+    path(
+        'examinations/headerbar/',
+        examination_views.examinations_headerbar, 
+        name='examinations-headerbar'
+    ),
+    path(
+        'examinations/table/<int:period_id>/',
+        examination_views.examinations_table, 
+        name='examinations-table'
+    ),
+    path(
+        'examinations/data/<int:period_id>/',
+        examination_views.examinations_data, 
+        name='examinations-data'
+    ),
+    path(
+        'examinations/infocard/<int:pk>/', 
+        examination_views.examination_infocard, 
+        name='gradebook-examination-infocard'
+    ),
+    path(
+        'examinations/qualification-entry/form/<int:sq_id>/<int:qee_id>/', 
+        examination_views.modular_qualification_exam_result_form, 
+        name='qualification-exam-result-form'
+    ),
+    path(
+        'examinations/qualification-exam-result/save/', 
+        examination_views.save_qualification_exam_result, 
+        name='save-qualification-exam-result'
+    ),
+    path(
+        'examinations/qualification-exam-result/delete/', 
+        examination_views.delete_qualification_exam_result, 
+        name='delete-qualification-exam-result'
+    ),
+    path(
+        'examinations/component-exam-result/form/<int:sq_id>/<int:component_id>/<int:cee_id>/', 
+        examination_views.component_exam_result_form, 
+        name='component-exam-result-form'
+    ),
+    path(
+        'examinations/component-exam-result/save/', 
+        examination_views.save_component_exam_result, 
+        name='save-component-exam-result'
+    ),
+    path(
+        'examinations/component-exam-result/delete/', 
+        examination_views.delete_component_exam_result, 
+        name='delete-component-exam-result'
+    ),
+    path(
+        'examinations/linear-qualification-entry/form/<int:sq_id>/<int:qer_id>/', 
+        examination_views.linear_qualification_exam_result_form, 
+        name='linear-qualification-exam-result-form'
+    ),
+     path(
+        'examinations/linear-qualification-exam-result/save/', 
+        examination_views.save_linear_qualification_exam_result, 
+        name='save-linear-qualification-exam-result'
+    ),
+
+]

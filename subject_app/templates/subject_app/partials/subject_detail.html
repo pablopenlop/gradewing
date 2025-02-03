@@ -1,0 +1,49 @@
+
+<h6>{{ subject.title }}</h6>
+<p>First asssessment: {{ subject.first_assessment }}</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Component</th>
+            <th>Code</th>
+            <th>Mark</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for component in subject.components.all %}
+            <tr>
+                <td>{{ component.name }}</td>
+                <td>{{ component.code }}</td>
+                <td>{{ component.mark }}</td>
+            </tr>
+        {% endfor %}
+        
+    </tbody>
+</table>
+
+<p><b>Maximum Mark:</b> {{ subject.mark }}</p>
+
+<p>Progresses from</p>
+<h6>{{ subject.sub_qualification.title }}</h6>
+<p>First asssessment: {{ subject.first_assessment }}</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Component</th>
+            <th>Code</th>
+            <th>Mark</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for component in subject.sub_qualification.components.all %}
+            <tr>
+                <td>{{ component.name }}</td>
+                <td>{{ component.code }}</td>
+                <td>{{ component.mark }}</td>
+            </tr>
+        {% endfor %}
+        
+    </tbody>
+</table>
+
+<p><b>Maximum Mark:</b> {{ subject.mark }}</p>

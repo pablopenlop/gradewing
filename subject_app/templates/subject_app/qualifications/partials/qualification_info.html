@@ -1,0 +1,58 @@
+
+<div id="info-card" class = "card card-body" 
+style="overflow-y: auto;">
+
+    <h5>{{ qualification.subject }} {{ qualification.get_level }}</h5>
+    <h5>{{ qualification.title }}</h5>
+    <p class="mb-1">First asssessment: <b>{{ qualification.first_assessment }}</b></p>
+    <i class="mb-3"> {{ qualification.get_group_display }}</i>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Component</th>
+                <th>Weighting</th>
+                <th>Mark</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for component in qualification.components.all %}
+                <tr>
+                    <td>
+                        {{ component.name }}
+                        {% if component.optional%} O {% endif %}
+                        {% if component.duration != "" %} 
+                            <p  class="mb-0" style="font-style: italic;"> 
+                                <i class="fa-regular fa-clock"></i> {{ component.duration }}
+                            </p>
+                        {% endif %}
+
+                    </td>
+                    
+                    <td>{{ component.weighting }}</td>
+                    <td>{{ component.mark }}</td>
+                </tr>
+            {% endfor %}
+            <tr>
+                <td>
+                    <b>TOTAL</b>
+
+                </td>
+                
+                <td></td>
+                <td><b>{{ qualification.mark }}</b></td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+
+
+<script>
+    function adjustContainerHeight() {
+        const margin = 200
+        let newHeight = Math.max($(window).height()-margin, 400); 
+        $('#info-card').css('max-height', newHeight + 'px');
+    }
+        adjustContainerHeight();
+
+</script>
+

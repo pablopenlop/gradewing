@@ -1,0 +1,48 @@
+<!-- EXAMINATIONS HEADER BAR -->
+<div class="ubar px-3">
+    <div class="col-12 px-4 py-2 d-flex align-items-center">
+        <span class="title mx-2 my-0">Examinations</span>
+        <h4 class="my-0">|</h4>
+        <div class="d-flex align-items-center">
+            <span class="ms-2" style="white-space: nowrap;">
+                Showing <b>all</b> exam results of students enrolled in academic period:
+            </span>
+            <select id="period-select" class="form-select ms-2">
+                {% for period in period_options %}
+                    <option value="{{ period.url }}">{{ period.name }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+            
+</div>
+
+
+<script>
+    $(document).ready(function () {
+        const $select = $('#period-select');
+
+        // Trigger HTMX request for the first option on page load
+        if ($select.find('option').length > 0) {
+            const firstOptionUrl = $select.find('option:first').val();
+            htmx.ajax('GET', firstOptionUrl, {
+                target: '#examinations-table-container',
+                swap: 'innerHTML'
+            });
+            delayLoading('#examinations-table-card');
+            delayLoading('#examinations-infocard-container');
+        }
+
+        // Trigger HTMX request when a new option is selected
+        $select.on('change', function () {
+            const selectedUrl = $(this).val();
+            htmx.ajax('GET', selectedUrl, {
+                target: '#examinations-table-container',
+                swap: 'innerHTML'
+            });
+            delayLoading('#examinations-table-card');
+            delayLoading('#examinations-infocard-container');
+        });
+    });
+</script>

@@ -1,0 +1,101 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+
+{% block extra_js %}
+    <script src="{% static 'register_app/js/table_handler.js' %}"></script>
+    
+    
+{% endblock %}
+
+
+
+{% block content %}
+
+    <style>
+        .subject-row:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+    </style>
+
+    
+    <div class="container-fluid" >
+
+        <div class="row gy-4">
+            <div class="col-lg-7">
+                <ul class="nav nav-tabs mb-3">
+                    <li class="nav-item">
+                        <a class="nav-link active" name="nav-tabs" href="#" hx-get="{% url 'subject-table' %}"
+                        hx-target="#tableContainer" hx-swap="innerHTML">Subjects</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" name="nav-tabs" href="#" hx-get="{% url 'paper-table' %}" hx-target="#tableContainer" hx-swap="innerHTML">Exam papers</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="col-lg-5">
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" name="action" value="add">Add subjects</button>
+                    <button type="submit" name="action" value="delete">Delete subjects</button>
+                    <button type="submit" name="action" value="add_areas">Add subject areas</button>
+                    <button type="submit" name="action" value="delete_areas">Delete subject areas</button>
+                    <button type="submit" name="action" value="test">Test subject loader</button>
+                    <button type="submit" name="action" value="yg">Yeargroups loader</button>
+                    <button type="submit" name="action" value="yg-delete">Yeargroups delete</button>
+                </form>
+                <div class="form-icon-container">
+                    <div class="form-floating mb-3"><input class="form-control form-icon-input" id="floatingInputIconExample" type="email" placeholder="name@example.com" /><label class="form-icon-label" for="floatingInputIconExample">Email address</label></div>
+                    <span class="fa-solid fa-envelope text-body fs-9 form-icon"></span>
+                  </div>
+            </div>
+        </div>
+ 
+        <div class="row gy-4" >
+            <div class="col-lg-7" id="tableContainer">
+                {% include 'subject_app/partials/subject_table.html' %}
+            </div>
+            <div class="col-lg-5 p-3" id="subject-details">
+         
+            </div>
+        </div>
+
+
+        <div class="row gy-4" >
+            {% for subject_area in subject_areas %}
+            <div>{{subject_area}}</div>
+            {% endfor %}
+            
+         
+            </div>
+        </div>
+
+        <div class="row gy-4" >
+            {% for yg in yeargroups %}
+            <div>{{yg}}</div>
+            {% endfor %}
+            
+         
+            </div>
+        </div>
+
+
+    </div>
+
+
+<script>
+    $(document).ready(function() {
+        $('[name=nav-tabs]').on('click', function() {
+            // Remove active class from all rows
+            $('[name=nav-tabs]').removeClass('active');
+            // Add active class to the clicked row
+            $(this).addClass('active');
+        });
+    });
+</script>
+
+
+{% endblock %}
+

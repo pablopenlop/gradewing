@@ -1,0 +1,124 @@
+<div class="card">
+    <div class="card-header">
+        <div class="ubar py-0">
+            <div class="col-8 d-flex align-items-center">
+                <span class="title mx-2">Targets </span>
+                <h4 class="h4  my-0">|</h4>
+                <span class="mx-2 my-0"> {{ checkpoint.yeargroups.count }}
+                    year group{{ checkpoint.yeargroups.count|pluralize }} targeted </span>
+            </div>
+            <div class="col-4 text-end">
+
+            {% if checkpoint.can_add_targets %}
+                <button class="btn u-link" type="button"
+                    data-bs-toggle="modal"  
+                    data-bs-target="#form-modal"
+                    hx-get="{{ checkpoint.url_form }}" 
+                    hx-target="#form-container">
+                    <i class="fa-solid fa-plus"></i> 
+                    Add year group
+                </button>
+            {%endif%}
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-2">
+
+        {% if not checkpoint.yeargroups.count %}
+        <!-- ALERT-->
+        <div class="alert alert-warning my-0 py-2">
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <i class="fa-solid fa-triangle-exclamation fa-2x"></i>
+                </div>
+                <div class="d-flex flex-grow-1 align-items-center justify-content-between">
+                    <span>
+                        The checkpoint should target at least one year group.
+                        <a href="#" class="alert-link ms-2"
+                        data-bs-toggle="modal"  
+                        data-bs-target="#form-modal"
+                        hx-get="{{ checkpoint.url_form }}" 
+                        hx-target="#form-container"
+                        >
+                        <i class="fa-solid fa-plus"></i> 
+                        Add yeargroup
+                        </a>
+                    </span>
+                    <div class="flex-grow-0">
+                        <button type="button" 
+                            class="btn btn-outline-warning btn-round btn-transparent ms-2" 
+                            style="width: 25px; height: 25px;"
+                            onclick="this.closest('.alert').style.display='none';">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+
+            {% for cpyg in checkpoint.checkpoint_yeargroups.all %}
+            <table class="table table-borderless"
+                style=" margin-bottom: 0px;">
+                    <tr style="vertical-align: middle;">
+                        <td colspace="2" class="text-nowrap fs-5">{{cpyg}}</td>
+                        <th class="text-nowrap"></th>
+                        <td class="py-0 text-end">
+                            <button class="btn btn-round my-0 btn-light p-0 mx-2" type="button"
+                                data-bs-toggle="dropdown">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                            </button>
+                            <div class="dropdown-menu">
+                                <button class="dropdown-item" 
+                                    data-bs-toggle="modal" 
+                                    data-bs-target="#delete-modal" 
+                                    hx-get="{{ cpyg.url_deleteform }}"
+                                    hx-target="#delete-form-container">
+                                    <i class="fa-regular fa-trash-can me-2"></i> 
+                                    Remove year group 
+                                </button>
+                            </div>  
+                        </td>
+                    </tr>
+                </table>
+
+                <!-- SUBJECT LANDMARK -->
+                {% if cpyg.no_targets_message %}
+                <div class="container text-center mb-3" style="width: 90%;">
+                    <!-- ALERT-->
+                    <div class="alert alert-warning my-0 py-2">
+                        <div class="d-flex align-items-center">
+                            <div class="me-3">
+                                <i class="fa-solid fa-triangle-exclamation fa-2x"></i>
+                            </div>
+                            <div class="d-flex flex-grow-1 align-items-center justify-content-between">
+                                <span>
+                                    {{ cpyg.no_targets_message }}
+                                </span>
+                                <div class="flex-grow-0">
+                                    <button type="button" 
+                                        class="btn btn-outline-warning btn-round btn-transparent ms-2" 
+                                        style="width: 25px; height: 25px;"
+                                        onclick="this.closest('.alert').style.display='none';">
+                                        <i class="fa-solid fa-xmark"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% else %}
+
+                <div class="container-fluid p-0 m-0 scrollspy-section"  
+                        hx-get="{{ cpyg.url_table }}"
+                        hx-target="this"
+                        hx-trigger="load, refresh"
+                        hx-swap="innerHTML">
+                </div>
+            {% endif %}
+        {% endfor %}
+    {% endif %}
+    </div>
+</div>
+
+

@@ -1,0 +1,24 @@
+{% if checkpoint.checkpoint_fields.all %}
+    <table class="table table-borderless">
+        <thead>
+            <tr>
+                <th class="px-3">#</th>
+                <th class="text-nowrap">Field name</th>
+                <th class="text-nowrap">Field type</th>
+                <th>Rules</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for field in checkpoint.checkpoint_fields.all %}
+            <tr>
+                <td class="px-3">{{ field.index}}</td>
+                <td class="text-nowrap">{{ field.name }}</td>
+                <td class="text-nowrap">{{ field.get_kind_display }}</td>
+                <td>{{ field.rules }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% else %}
+   <i class="px-3"> No fields have been registered yet.</i>
+{% endif %}

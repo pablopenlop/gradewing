@@ -1,0 +1,7 @@
+:root {
+    --bs-secondary: #d6d4d3; /* Your lighter secondary color */
+    --bs-secondary-rgb: 214, 212, 211; /* RGB values for the secondary color */
+    --bs-secondary-hover-bg: #c5bfbf; /* Hover background color for secondary buttons */
+    --bs-secondary-border: #c5bfbf; /* Hover border color for secondary buttons */
+}
+

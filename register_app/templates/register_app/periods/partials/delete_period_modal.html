@@ -1,0 +1,21 @@
+<!-- DELETE CONFIRMATION MODAL -->
+<div class="modal fade" id="deletePeriodModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete <span name="item-label"></span></h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                Are you sure you want to delete the selected period? This action cannot be undone.
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <form id="deletePeriodForm" method="post" action="{% url 'delete-period' %}">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger" value="4" name = "confirm-delete" id = "confirmDelete">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

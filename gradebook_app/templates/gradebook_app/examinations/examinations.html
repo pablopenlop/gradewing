@@ -1,0 +1,78 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_js %}
+    <script src="{% static 'gradebook_app/js/examinations/examinations.form.requests.js' %}"></script>
+    <script src="{% static 'gradebook_app/js/examinations/examinations.form.utils.js' %}"></script>
+    <script src="{% static 'gradebook_app/js/examinations/examinations.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<!-- HEADER BAR --> 
+<div class="card card-title sticky-top" id ="examinations-headerbar"
+    hx-get="{{ url_headerbar }}" 
+    hx-trigger="load, refresh">
+</div>
+
+<!-- MAIN CONTENT -->
+<div class="container-fluid">
+    <div class="row mx-1">
+        <div class="col-6">
+            <!-- EXAMINATIONS TABLE -->
+            <div class="card"  id="examinations-table-card">
+                <div class="card-body py-1" id="examinations-table-container"></div>
+            </div>
+        </div>
+        <div class="col-6">
+            <!-- QUALIFICATION INFO -->
+            <div id ="examinations-infocard-container">
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- QUALIFICATION EXAM RESULT FORM MODAL -->
+<form id="qualification-exam-result-form" action="{% url 'save-qualification-exam-result' %}" method="POST">
+    <div class="modal fade" id="qualification-exam-result-form-modal" data-bs-backdrop="static"
+    tabindex="-1">
+        {% csrf_token %}
+        <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable">
+            <div class="modal-content" id = "qualification-exam-result-form-container">
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- COMPONENT EXAM RESULT FORM MODAL -->
+<form id="component-exam-result-form" action="{% url 'save-component-exam-result' %}" method="POST">
+    <div class="modal fade" id="component-exam-result-form-modal" data-bs-backdrop="static"
+    tabindex="-1">
+        {% csrf_token %}
+        <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable">
+            <div class="modal-content" id = "component-exam-result-form-container">
+            </div>
+        </div>
+    </div>
+</form>
+
+<!-- LINEAR QUALIFICATION EXAM RESULT FORM MODAL -->
+<form id="linear-qualification-exam-result-form" action="{% url 'save-linear-qualification-exam-result' %}" method="POST">
+    <div class="modal fade" id="linear-qualification-exam-result-form-modal" data-bs-backdrop="static"
+    tabindex="-1">
+        {% csrf_token %}
+        <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable" >
+            <div class="modal-content" id = "linear-qualification-exam-result-form-container">
+            </div>
+        </div>
+    </div>
+</form>
+
+
+<!-- QUALIFICATION EXAM RESULT DELETE MODAL -->
+{% include 'gradebook_app/examinations/partials/qualification_exam_result_delete_modal.html' %}
+<!-- QUALIFICATION EXAM RESULT DELETE MODAL -->
+{% include 'gradebook_app/examinations/partials/component_exam_result_delete_modal.html' %}
+
+{% endblock %}

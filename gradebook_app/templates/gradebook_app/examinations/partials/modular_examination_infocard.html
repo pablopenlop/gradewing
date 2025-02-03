@@ -1,0 +1,269 @@
+
+{% load static %}
+<script src="{% static 'gradebook_app/js/examinations/examinations.infocard.js' %}"></script>
+
+<div id="info-card" class="card">
+    <div class="card-header">
+        <div class="d-flex flex-row justify-content-between align-items-center">
+            <span class="fs-6">{{ sq }}</span>
+            <div class="d-flex">
+                <button class="btn btn-light btn-round" 
+                    type="button" 
+                    data-bs-toggle="tooltip" 
+                    data-bs-placement="left" 
+                    data-bs-html="true"
+                    data-bs-title="<b>Modular Qualification.</b>
+                    Component (exam) and qualification (overall) results can be entered independently.">
+                    <i class="fa-solid fa-timeline"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="text-muted fs-6">
+            <i class="fa-solid fa-user-graduate me-2"></i>
+            {{sq.programme.student.full_name}} 
+        </div>
+        {% if not sq.is_external %}
+        <div class="text-muted">
+            <i class="fa-solid fa-calendar-check me-1 fs-6"></i>
+            Qualification studied in
+            {% for enrollment in sq.enrollments.all %}
+            <span class="me-1">
+                {{ enrollment.period }}
+                ({{ enrollment.yeargroup }})
+            </span>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-muted">
+            <i class="fa-solid fa-calendar-xmark me-1 fs-6"></i>
+            EXTERNAL / PRIOR QUALIFICATION
+        </div>
+        {% endif %}
+    </div> 
+    
+    <div class="card-body" id="info-card-body" style="overflow-y: auto;">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+            <div class="d-flex align-items-center">
+                <span class="title">Qualification</span>
+                <span class="h5 my-0 mx-2">|</span>
+                <span class="me-2">
+                    {{ sq.state }}
+                </span>
+            </div>
+            <button class="btn u-link" 
+                data-bs-toggle="modal" 
+                data-bs-target="#qualification-exam-result-form-modal" 
+                type="button"   
+                hx-get="{% url 'qualification-exam-result-form' sq.id 0 %}" 
+                hx-target="#qualification-exam-result-form-container"
+                >
+                <i class="fa-solid fa-plus"></i> 
+                Add result
+            </button>
+        </div>
+            
+        {% for qer in sq.exam_entries.all %}
+        <table class="table table-borderless mb-0 align-middle
+                {% if not qer.is_final %} text-black-50 {% endif %}"> 
+            <tr>
+                <td>
+                    <i class="fa-solid fa-award fs-5"></i>
+                </td>
+                <td>{{qer}}</span>
+                <td class="text-center">
+                    {% if qer.is_final %}
+                    <span class="badge rounded-pill badge-dark-secondary my-1">
+                        {{qer.state }}
+                    </span>
+                    {% else %}                    
+                    <span class="badge badge-lightgray rounded-pill my-1">
+                        {{qer.state }}
+                    </span>
+                    {% endif %}
+                </td>
+                <td class="text-end">
+                    <button class="btn btn-light btn-round p-0" type="button" 
+                        name ="options-button"
+                        data-bs-toggle="dropdown">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </button>
+                
+                    <div class="dropdown-menu">
+                        <button class="dropdown-item" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#qualification-exam-result-form-modal" 
+                            hx-get="{% url 'qualification-exam-result-form' sq.id qer.id %}" 
+                            hx-target="#qualification-exam-result-form-container">
+                            <i class="fa-regular fa-edit me-2"></i> Edit entry
+                        </button>
+                    
+                        <button class="dropdown-item" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#qualification-exam-result-delete-modal" 
+                            name ="qer-delete-btn" 
+                            value ="{{ qer.id }}" >
+                            <i class="fa-regular fa-trash-can me-2"></i> 
+                            Delete entry
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <table class="table table-borderless mb-0 {% if not qer.is_final %} text-black-50 {% endif %}">
+            <thead>
+                <tr class="text-center align-middle">
+                    <td>Series</td>
+                    <td>Grade</td>
+                    <td>{{sq.qualification.get_mark_type_display}}</td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="text-center align-middle">
+                    <th>
+                        {{qer.get_series_display}} {{qer.year}}
+                    </th>
+                    <th>{{qer.grade}}</th>
+                    <th>
+                        {% if  qer.mark %}{{qer.mark}} {% else %}- {% endif %}/ {{sq.qualification.mark}}
+                    </th>
+                    
+                    <th>
+                        {% if sq.qualification.mark_adjusted %}
+                            {{sq.qualification.get_mark_adjusted_type_display}}</th>
+                        {% endif %}
+                    </th>
+                
+                </tr>
+            </tbody>          
+        </table> 
+        {% endfor %}
+        <hr>
+        <div class="d-flex justify-content-between align-items-center mb-1">
+            <div class="d-flex align-items-center">
+                <span class="title my-0">Components</span>
+                <span class="h5 my-0 mx-2">|</span>
+                <span class="me-2">
+                    {{ sq.exam_component_entries.count }} result{{ sq.exam_component_entries.count|pluralize }} 
+                </span>
+    
+            </div>
+            <div class="dropdown">
+                <button id="add-component-exam-result" class="btn u-link dropdown-toggle" data-bs-toggle="dropdown">
+                    <i class="fa-solid fa-plus"></i> 
+                    Add result...
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end" 
+                id="cer-dropdown" 
+                style="overflow-y: auto; max-height: 12rem;">
+                    {% for component in sq.qualification.components.all %}
+                    <li >
+                        <button class="dropdown-item" 
+                            type="button"
+                            data-bs-toggle="modal" 
+                            data-bs-target="#component-exam-result-form-modal" 
+                            hx-get="{% url 'component-exam-result-form' sq.id component.id 0 %}" 
+                            hx-target="#component-exam-result-form-container" 
+                            >
+                            <div class="flex d-flex justify-content-between align-items-center"
+                            style="overflow-wrap: break-word; white-space: normal;"> 
+                            {{component}}
+                            {% if component.optional %}
+                            {% else %}
+                            <i class="fa-regular fa-m ms-3" style="color: gray;"></i>
+                            {% endif %}
+                            </div>
+                        </button>
+                    </li>
+                    {% endfor %}
+                    <li>
+                        <i class="dropdown-header">
+                            <i class="fa-regular fa-m mx-2"></i> Mandatory component
+                        </i>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    
+
+        {% for cer in sq.exam_component_entries.all %}
+
+        <table class="table table-borderless mb-0 align-middle
+        {% if not cer.is_final %} text-black-50 {% endif %}"> 
+            <tr>
+                <td class="text-start">
+                    <i class="fa-solid fa-file-lines fs-5"></i>
+                </td>
+                <td class="text-start">{{cer.component}}</td>
+                <td class="text-end">
+                    {% if cer.is_final %}
+                    <span class="badge rounded-pill badge-dark-secondary my-1">
+                        {{cer.state }}
+                    </span>
+                    {% else %}                    
+                    <span class="badge badge-lightgray rounded-pill my-1">
+                        {{cer.state }}
+                    </span>
+                    {% endif %}
+                </td>
+                <td class="text-end">
+                    <button class="btn btn-light btn-round p-0" type="button" 
+                        name ="options-button"
+                        data-bs-toggle="dropdown">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </button>
+                
+                    <div class="dropdown-menu">
+                        <button class="dropdown-item" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#component-exam-result-form-modal" 
+                            hx-get="{% url 'component-exam-result-form' sq.id cer.component.id cer.id %}" 
+                            hx-target="#component-exam-result-form-container"
+                            >
+                            <i class="fa-regular fa-edit me-2"></i> Edit result
+                        </button>
+                    
+                        <button class="dropdown-item" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#component-exam-result-delete-modal" 
+                            name ="cer-delete-btn" 
+                            value ="{{ cer.id }}" >
+                            <i class="fa-regular fa-trash-can me-2"></i> 
+                            Delete entry
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    
+        <table class="table table-borderless {% if not cer.is_final %} text-black-50 {% endif %}">
+            <thead>
+                <tr class="text-center align-middle">
+                    <td>Series</td>
+                    <td>Grade</td>
+                    <td>{{cer.component.get_mark_type_display}}</td>
+                    <td>{{cer.component.get_mark_adjusted_type_display}}</td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="text-center align-middle">
+                    <td>{{cer.get_series_display}} {{cer.year}}</td>
+                    <td>{{cer.grade}}</td>
+                    <td>
+                        {% if  cer.mark %}{{cer.mark}} {% else %}- {% endif %}/ {{cer.component.mark}}
+                    </td>
+                    <td>
+                        {% if cer.mark_adjusted %} {{cer.mark_adjusted}} {% else %}- {% endif %}/ {{cer.component.mark_adjusted}}
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        {% endfor %}
+    </div> 
+</div>
+
+
+
+
+

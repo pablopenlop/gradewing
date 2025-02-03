@@ -1,0 +1,524 @@
+body {
+    padding-top: 0px; /* To ensure the body content is not hidden behind the fixed top-bar */
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px; /* Adjust the font size as needed */
+}
+
+body {
+    overflow-y: hidden; /* Always show vertical scrollbar */
+    display: flex;
+    flex-direction: column;
+    height: 100vh; 
+}
+
+
+::-webkit-scrollbar {
+    width: 6px; /* Adjust scrollbar width */
+    height: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: transparent; /* Transparent rail */
+    background-color: transparent; /* Transparent rail */
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(0, 0, 0, 0.5); /* Adjust scrollbar thumb color */
+    border-radius: 6px; /* Rounded corners for thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: rgba(0, 0, 0, 0.7); /* Darker thumb on hover */
+}
+
+
+/* MAIN CONTENT CONTAINER */
+
+
+.main-content {
+    flex: 1; /* Take up the remaining space */
+    overflow-y: scroll; /* Enable scrolling for the main content */
+    box-sizing: border-box;
+    height: 100%; /
+
+}
+.main-content {
+    margin-top: 50px;
+    margin-left: 240px;
+    padding: 0px;
+    margin-right: 0px;
+    transition: margin-left 0.3s;
+    min-width: 768px;
+}
+.main-content.collapsed {
+    margin-left: 0px;
+    margin-right: 0px;
+    padding: 0px;
+}
+
+
+@media (max-width: 960px) {
+    #mainContent {
+        margin-left: 0px;
+    }
+}
+
+
+
+
+/* Apply body font styles to dropdown items */
+.dropdown-menu, .dropdown-item {
+    font-family: inherit;
+    font-size: inherit;
+    z-index: 1059 !important;
+}
+
+/* Apply body font styles to dropdown items */
+input, select {
+    font-family: 13px !important;
+    font-size: 13px !important;
+}
+
+
+/* Apply body font styles to dropdown items */
+.optgroup, .option, .item {
+    font-size: 13px !important
+}
+
+.restricted {
+    display: none !important; /* Hidden by default */
+}
+
+.restricted.show-restricted {
+    display: block !important; /* Visible when the class is toggled */
+    pointer-events: none; 
+}
+
+
+.form-label {
+    font-family: 12px !important;
+    font-size: 12px !important;
+    color: var(--bs-secondary-color);
+    margin-bottom: 0.25rem;
+}
+
+.form-helptext {
+    font-family: 12px !important;
+    font-size: 12px !important;
+    color: var(--bs-secondary-color);
+    margin-bottom: 0.25rem;
+    font-style: italic;
+}
+
+
+
+
+
+
+/* SIDEBAR */
+.sidebar {
+    width: 240px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    padding: 10px;
+    background-color: white;
+    overflow-y: scroll;
+    transition: width 0.3s, padding 0.3s;
+    white-space: nowrap;
+    z-index: 1050; /* Higher than other content */
+}
+
+.sidebar .nav-header,
+.sidebar .nav-link,
+.sidebar .collapse-item {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    transition: padding 0.3s;
+}
+.sidebar.collapsed .nav-header,
+.sidebar.collapsed .nav-link,
+.sidebar.collapsed .collapse-item {
+    padding: 10px; 
+}
+
+.sidebar.collapsed {
+    width: 0px;
+    padding-left: 0;
+    padding-right: 0px;
+}
+
+.sidebar .nav-header {
+    font-weight: bold;
+    color: #6c757d;
+    font-size: 0.8rem;
+    text-transform: uppercase;
+}
+.sidebar .nav-link {
+    color: #333;
+    border-radius: 20px;
+    font-size: 14px;
+    padding: 10px;
+    margin-bottom: 5px;
+}
+
+.sidebar .has-chevron {
+    justify-content: left;
+
+}
+.sidebar .nav-link i:first-child {
+    width: 20px;
+    text-align: center;
+}
+.sidebar .nav-link span {
+    margin-left: 10px;
+}
+.sidebar .nav-link:not(.nav-group):hover {
+    background-color: #e0e0e0; 
+    font-weight: bold;
+}
+.sidebar .nav-link:not(.nav-group).active {
+    background-color: #c2d3e4; 
+    font-weight: bold;
+}
+.sidebar .nav-link:not(.nav-group):active {
+    background-color: #c2d3e4; 
+    font-weight: bold;
+}
+.sidebar .submenu {
+    margin-left: 30px; 
+}
+.sidebar .collapse-item {
+    padding-left: 20px;
+}
+.sidebar.collapsed .collapse-item {
+    padding-left: 20px;
+}
+.sidebar .rotatable {
+    transform: rotate(0deg); /* Default rotation */
+    transition: transform 0.3s; /* Smooth transition for rotation */
+}
+
+.sidebar .rotatable.rotate-down {
+    transform: rotate(90deg); /* Rotated state */
+}
+
+
+/* TOP BAR #c2e1d9;*/
+.top-bar {
+    /* background-color: rgb(214, 229, 245);
+    background: rgb(214, 229, 245);  rgb(112, 172, 178); */
+    background: rgb(77, 139, 146); 
+    padding: 2px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    position: fixed;
+    top: 0;
+    left: 240px;
+    right: 0;
+    z-index: 1050;
+    transition: left 0.3s;
+}
+.top-bar .logo {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-left: 20px;
+}
+
+.top-bar.collapsed {
+    left: 0; /* When collapsed, move to 0px */
+}
+
+
+
+/* HEADER BAR */
+.header-bar {
+    background-color: #fff;
+    z-index: 1001;
+}
+
+
+
+
+
+
+
+
+/* UTILITTY BAR */
+.ubar {
+    /*background-color: #f1f3f4;*/
+    background-color: transparent;
+    padding: 5px;
+    font-size: 14px;
+    align-items: center;
+    display: flex;
+    z-index: 1000;
+
+}
+.title {
+    font-size: 14px;
+    font-weight: bold;
+    
+}
+
+.u-link {
+    border-radius: 5px;
+    font-size: 14px;
+    padding: 10px;
+    text-decoration: none;
+    white-space: nowrap;
+    cursor: pointer; 
+    color: rgb(44, 101, 216); 
+}
+
+.u-link:hover {
+    background-color: rgb(190, 210, 230);
+    border-color: rgb(190, 210, 230);
+    color: rgb(19, 84, 213) !important; 
+}
+
+.u-link:active, .u-link.active, .u-link.show {
+    background-color: rgb(163, 196, 230) !important; 
+    border-color: rgb(163, 196, 230) !important; 
+    color: rgb(29, 74, 164)  !important; 
+}
+
+
+.ubar-options {
+    background-color: #c2d3e4;
+}
+
+.ubar-options .u-link:hover {
+    background-color: #e0e0e0; 
+}
+
+
+.no-bullets {
+    list-style-type: none;
+}
+
+
+
+.card-body-flex {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    white-space: nowrap;
+}
+
+.card-period.active {
+    background-color: rgb(230, 230, 230) !important;
+    outline: 3px solid rgb(67, 94, 177);
+    outline-offset: -3px;
+
+}
+
+.card-period:hover {
+    background-color: rgb(230, 230, 230) !important;
+    
+    
+
+}
+
+.card-period:active {
+    background-color: rgb(210, 210, 210) !important;
+    outline: 3px solid rgb(67, 94, 177);
+    outline-offset: -3px;
+}
+
+
+.card-period:focus{
+    background-color: rgb(200, 200, 200)  !important;
+
+}
+
+.sticky-top {
+   top: 0px !important; 
+}
+
+.check-input-lg {
+    height: 1.25rem !important; 
+    width: 1.25rem !important; 
+}
+
+
+
+/* BUTTONS */
+.btn-round {
+    width: 40px; /* Set width */
+    height: 40px; /* Set height */
+    background-color: #fff;
+    border: 1px solid #fff !important;
+    border-radius: 50%;
+    display: inline-flex; /* Align the icon properly */
+    align-items: center; /* Center the icon vertically */
+    justify-content: center; /* Center the icon horizontally */
+    cursor: pointer; /* Pointer cursor on hover */
+    padding: 0; /* Remove default padding */
+}
+
+/*      Button Rounded      */
+.btn-rounded {
+    border-radius: 100px !important; }
+
+.btn-ellipsis {
+    width: 28px; /* Set width */
+    height: 28px; /* Set height */
+    border-radius: 50%;
+    display: inline-flex; /* Align the icon properly */
+    align-items: center; /* Center the icon vertically */
+    justify-content: center; /* Center the icon horizontally */
+    cursor: pointer; /* Pointer cursor on hover */
+    padding: 0px !important;
+    margin-top: 0px !important;
+}
+
+
+.badge {
+        font-weight: normal; /* Set font weight to normal */
+        font-size: inherit;  /* Inherit font size from the parent element */
+        color: black;  /* Inherit font size from the parent element */
+        background-color: rgb(214, 212, 211); 
+    }
+
+.badge-dark {
+    font-weight: normal; /* Set font weight to normal */
+    font-size: 12px;  /* Inherit font size from the parent element */
+    color: white;  /* Inherit font size from the parent element */
+    background-color: rgb(77, 139, 146); 
+}
+
+.badge-dark-outline {
+    font-weight: normal; /* Set font weight to normal */
+    font-size: inherit;  /* Inherit font size from the parent element */
+    color: black;        /* Text color remains white */
+    background: transparent !important;
+    background-color: transparent !important; /* Set background to transparent */
+    border: 2px solid rgb(77, 139, 146); /* 2px thick border with the specified color */
+    border-radius: 4px; /* Optional: Add a slight border radius for better appearance */
+}
+
+
+.badge-dark-secondary {
+    font-weight: normal; /* Set font weight to normal */
+    font-size: 12px;  /* Inherit font size from the parent element */
+    color: white;  /* Inherit font size from the parent element */
+    background-color: rgb(112, 172, 178); 
+}
+
+.badge-lightblue {
+    font-weight: normal; /* Set font weight to normal */
+    font-size: inherit;  /* Inherit font size from the parent element rgb(242, 246, 252);*/
+    color: black;  /* Inherit font size from the parent element  */
+    background-color: rgb(232, 243, 251); 
+}
+
+.badge-blue {
+    font-weight: normal; /* Set font weight to normal */
+    font-size: inherit;  /* Inherit font size from the parent element rgb(242, 246, 252);*/
+    color: black;  
+    background-color: rgb(192, 212, 226); 
+}
+
+.badge-lightgray {
+    font-weight: normal; /* Set font weight to normal */
+    font-size: 12px;  /* Inherit font size from the parent element rgb(242, 246, 252);*/
+    color: gray;  /* Inherit font size from the parent element  */
+    background-color: rgb(223, 222, 221); 
+}
+
+.icon-svg {
+    width: 1em; /* Same as Font Awesome's default size */
+    height: 1em; /* Maintain aspect ratio */
+    vertical-align: middle; /* Align with text */
+    margin-left: 0.25rem;
+    margin-right: 0.15rem;
+    fill: currentColor; /* Use the current text color for the SVG */
+    }
+
+.nav-tabs {
+    border-bottom: 1px solid black; /* Thicker bottom border in black */
+}
+
+.nav-tabs .nav-link.active {
+    border-color: black; /* Border color for active link */
+    border-bottom: 1px solid white; /* White bottom border for active link */
+    background-color: white;
+    font-weight: bold;
+}
+
+.nav-tabs .nav-link:hover {
+    font-weight: bold;
+    border-bottom: 1px solid transparent;
+}
+.nav-tabs .nav-link:active {
+    background-color:#e0e0e0; 
+}
+
+.text-footnote {
+    font-size: 12px;
+}
+
+
+.td-subheader {
+    padding: 0.25rem !important;
+    margin-top: 0 !important;
+    margin-bottom: 0 !important;
+    background-color: #f1f3f4 !important;
+}
+
+
+
+
+
+
+
+:root {
+
+
+    --bs-primary: rgb(34, 144, 255); 
+    --bs-primary-rgb: 33, 121, 210;
+    --bs-primary-hover-bg: rgb(35, 114, 193); 
+    --bs-primary-border: rgb(33, 121, 210); 
+    --bs-primary-active-bg: rgb(26, 89, 153); 
+    --bs-primary-active-border: rgb(26, 89, 153);
+    --bs-primary-disabled-bg: rgb(214, 212, 211); 
+    --bs-primary-disabled-border: rgb(214, 212, 211);
+    --bs-primary-disabled-color: rgb(90, 92, 95);
+}
+
+/* Ensure Bootstrap primary buttons use the overridden variables */
+.btn-primary {
+    background-color: var(--bs-primary) !important;
+    border-color: var(--bs-primary-border) !important;
+    
+}
+.btn-primary:hover {
+    background-color: var(--bs-primary-hover-bg) !important;
+    border-color: var(--bs-primary-hover-bg) !important;
+}
+.btn-primary:disabled, .btn-primary[disabled], .btn-primary.disabled {
+    background-color: var(--bs-primary-disabled-bg) !important;
+    border-color: var(--bs-primary-disabled-border) !important;
+    color: var(--bs-primary-disabled-color) !important;
+    
+}
+.btn-primary:active, .btn-primary.active {
+    background-color: var(--bs-primary-active-bg) !important;
+    border-color: var(--bs-primary-active-border) !important;
+}
+
+.btn-light-permanent {
+    background-color: rgb(230, 230, 230);   
+}
+.btn-transparent {
+    background: transparent;
+    border: none !important;
+    outline: none !important;
+}
+
+

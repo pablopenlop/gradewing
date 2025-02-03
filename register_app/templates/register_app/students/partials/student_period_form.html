@@ -1,0 +1,65 @@
+<form id="student-period-form" 
+        action="{% url 'save-student-period' %}"  
+        method="POST">
+    {% csrf_token %}
+
+    <div class="row">
+        <div class="col-6">
+            <div class="form-floating mb-3 restricted">
+                {{ form.id }}
+                <label for="{{ form.id.id_for_label }}">Enrollment ID</label>
+            </div>
+        </div>
+        <div class="col-6">
+            <div class="form-floating mb-3 restricted">
+                {{ form.student }}
+                <label for="{{ form.student.id_for_label }}">Student ID</label>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-7">
+            <div class="form-floating mb-3">
+                {{ form.period }}
+                <label for="{{ form.period.id_for_label }}">
+                    Academic Period
+                </label>
+            </div>
+        </div>
+        <div class="col-5">
+            <div class="form-floating mb-3">
+                {{ form.yeargroup }}
+                <label for="{{ form.yeargroup.id_for_label }}">Year Group</label>
+            </div>
+        </div>
+    </div>  
+
+    <div class="row mb-3 align-items-center">
+        <label class="form-label mx-3" for="{{ form.tags.id_for_label }}">{{form.tags.label}}</label>
+        <div class="col-12">
+            {{ form.tags }}
+        </div>
+    </div>
+  
+    <div class="d-flex justify-content-end">
+        <button type="submit" class="btn btn-primary" id="save-period-btn">
+        SAVE
+        </button>
+    </div>
+
+</form>
+
+
+<script>
+    $(document).ready(function() {
+        // Tags Selectsize
+        var $tags = $('#id_enrollment_tags'); 
+        var tags_ss = $tags.selectize({
+            plugins: ["remove_button"],
+            delimiter: ",",
+            placeholder: 'Assign temporary (period-bound) tags...',
+        });
+        var tags_ss_instance = tags_ss[0].selectize;
+        tags_ss_instance.refreshOptions(false);
+    });
+</script>

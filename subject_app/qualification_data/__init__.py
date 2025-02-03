@@ -1,0 +1,1 @@
+from choices import QT, MT, Ser, SG, Tier

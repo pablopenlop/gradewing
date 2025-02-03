@@ -1,0 +1,85 @@
+{% comment %} <form id="{{ form.form_id }}" 
+    action="{{ form.action }}" 
+    method="POST">
+  {% csrf_token %}
+    <div class="modal-header">
+        <h5 class="modal-title">
+            Add year group  
+        </h5>
+        <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+            <i class="fa-solid fa-x"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="form-floating mb-3 restricted">
+                    {{ form.id }}
+                    <label for="{{ form.id.id_for_label }}">{{form.id.label}}</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="form-floating mb-3">
+                    {{ form.yeargroups }}
+                    <label for="{{ form.yeargroups.id_for_label }}">{{form.yeargroups.label}}</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer justify-content-end">
+        <div class="d-flex justify-content-center">
+            <button class="mx-1 btn btn-light" type="button" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="mx-1 btn btn-primary">
+                Add  
+            </button>
+        </div>
+    </div>
+</form>
+ {% endcomment %}
+
+
+ <form id="{{ form.form_id }}" 
+    action="{{ form.action }}" 
+    method="POST">
+  {% csrf_token %}
+    <div class="modal-header">
+        <h5 class="modal-title">
+            Add year group  
+        </h5>
+        <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+            <i class="fa-solid fa-x"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="form-floating mb-3 restricted">
+                    {{ form.checkpoint }}
+                    <label for="{{ form.checkpoint.id_for_label }}">{{form.checkpoint.label}}</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="form-floating mb-3">
+                    {{ form.yeargroup }}
+                    <label for="{{ form.yeargroup.id_for_label }}">{{form.yeargroup.label}}</label>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer justify-content-end">
+        <div class="d-flex justify-content-center">
+            <button class="mx-1 btn btn-light" type="button" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="mx-1 btn btn-primary">
+                Add  
+            </button>
+        </div>
+    </div>
+</form>
+
+

@@ -1,0 +1,86 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_js %}
+    <script src="{% static 'js/form_control.js' %}"></script>
+    <script src="{% static 'register_app/js/periods/periods.js' %}"></script>
+    <script src="{% static 'register_app/js/periods/periods.requests.js' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+
+
+
+<!-- MENU BAR -->
+<div class="row ubar sticky-top mb-3" id ="menu-bar">
+    <div class="col-md-8 ">
+            <span class="title mx-2">Academic Periods</span><span class="title">|</span>
+            <span class="mx-2">Showing all academic periods</span>
+            
+    </div>
+        
+        <div class="col-md-4 text-end ">
+            <input type="hidden" id="active_id" name="active_id" value="{{current_period.id}}">
+            <button class="btn u-link" id="refresh_periods"
+                hx-get="{% url 'set-active-period'%}"
+                hx-include="#active_id"
+                hx-target="#periods-container"
+                hx-trigger="load, click"
+                hx-swap="innerHTML">
+                <b>R</b>
+            </button>
+
+            <button id="add-details-button" type="button" class="btn u-link"
+                data-bs-toggle="modal"  
+                data-bs-target="#period-modal"
+                hx-get="{% url 'period-form' %}" 
+                hx-target="#period-form-container">
+                <i class="fa-solid fa-plus"></i> 
+                Add new period 
+            </button>
+        </div>
+
+</div>
+
+            
+<div class="row gy-4">
+    <div class="col-md-5" style="max-height: 800px; overflow-y: auto;">
+        <!-- PERIOD CARDS -->
+        <div id ="periods-container">
+        </div>
+    </div>
+    <div class="col-md-7">
+        <!-- STUDENT DETAILS -->
+        <div id ="details-container" data-student_id="0" style="height: 600px; overflow-y: auto;">
+        </div>
+    </div>
+</div>
+
+<!-- DELETE PERIOD FORM MODAL -->
+{% include 'register_app/periods/partials/delete_period_modal.html' %}
+<div id = "period-id"></div>
+<!-- ADD PERIOD FORM MODAL -->
+<div class="modal fade" id="period-modal" data-bs-backdrop="static" data-bs-keyboard="false" 
+    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content" id="period-form-container">
+            <div class="modal-header">
+                <h5 class="modal-title">Add new academic period</h5>
+                <button class="btn btn-light btn-round" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-x"></i>
+                </button>
+            </div>
+            
+        </div>
+    </div>
+</div>
+
+
+
+
+
+
+{% endblock %}
+

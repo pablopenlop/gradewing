@@ -1,0 +1,133 @@
+
+<div class="card" id="yeargroups-card">
+    <div class="card-header">
+        <div class="ubar py-0" id="menu-bar">
+            <div class="col-9 d-flex align-items-center">
+                <span class="title mx-2">School Years</span>
+                <h4 class="h4  my-0">|</h4>
+                <span class="mx-2 my-0"> <i>Adopting the <b>{{school_system_label}}</b> naming convention </i></span>
+            </div>
+            <div class="col-3 text-end">
+            </div>
+        </div>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            {% for system in yearGroupPresets.systems %}
+            <div class="col-3 text-center">
+                <h4 class="ms-5 mb-3" 
+                {% if school_system == system.system %} style="font-weight: bold;" {% endif %}>
+                    {{ system.system.label }}
+                </h4>
+                <div class="d-flex align-items-center justify-content-center my-0">
+                    <ol class="linked-list mb-0"
+                    {% if school_system == system.system %} style="font-weight: bold;" {% endif %}>
+                        {% for yg in system.yeargroups %}
+                        <li class="linked-item ">
+                            <div class="linked-item-icon">
+                                <div class="linked-item-icon-content">{{ yg.level }}</div>
+                            </div>
+                            <span class="linked-item-text">
+                                {{ yg.name }}
+                            </span>
+                        </li>
+                        
+                        {% endfor %}
+                    </ol>
+                </div>
+                
+            </div>
+            {% endfor %}
+            <div class="col-3 text-center">
+                <h4 class="ms-5 mb-3"
+                    {% if school_system == yearGroupPresets.custom_system.system  %} 
+                    style="font-weight: bold;" 
+                    {% endif %}> 
+                    CUSTOM
+                </h4>
+                <div class="d-flex align-items-center justify-content-center my-0">
+                    <ol class="linked-list"
+                        {% if school_system == yearGroupPresets.custom_system.system  %} 
+                        style="font-weight: bold;" 
+                        {% endif %}
+                        >
+                        {% for yg in yeargroups %} 
+                        <li class="linked-item pb-0">
+                            <div class="linked-item-icon">
+                                <div class="linked-item-icon-content">{{ yg.index }}</div>
+                            </div>
+                            <span class="linked-item-text d-flex align-items-top">
+                                <span class="flex-grow-1 mb-2">
+                                    <span> {{ yg.custom_name }}</span>
+                                </span>
+                                <span class="ms-2">
+                                <span>
+                                    <button class="btn btn-round btn-light my-0 py-0" 
+                                        style="vertical-align: middle; position: relative; top:-8px"
+                                        data-bs-toggle="modal" 
+                                        data-bs-target="#custom-yeargroup-form-modal"
+                                        hx-get="{% url 'rename-custom-yeargroup-form' yg.id %}"
+                                        hx-target="#custom-yeargroup-form-container"
+                                        hx-trigger="click"
+                                        hx-swap="innerHTML">
+                                        <i class="fa-regular fa-pen-to-square"></i>
+                                    </button>
+                                </span>
+                            </span>
+                        </li>
+                        {% endfor %}
+                    </ol>
+                </div>
+            </div>
+        </div>
+           
+            <div class="row">
+                {% for system in yearGroupPresets.systems %}
+                <div class="col-3 text-center">
+                    <div class="d-grid gap-2">
+                        {% if school_system == system.system %}
+                        <button class="btn u-link btn-rounded active" 
+                                style="pointer-events: none;" type="button">
+                            <i class="fa-solid fa-check me-2"></i>
+                            <b class="text-em">{{ system.system.label }} names</b>
+                        </button>
+                        {% else %}
+                        <button class="btn u-link btn-rounded" 
+                                type="button"
+                                hx-post="{% url 'set-yeargroup-system' %}" 
+                                hx-trigger="click" 
+                                hx-target="#yeargroups-card-container" 
+                                hx-swap="innerHTML"
+                                hx-vals='{"system": "{{ system.system.value }}"}'>
+                            Set {{ system.system.label }} names
+                        </button>
+
+                        {% endif %}
+                    </div>
+                </div>
+                {% endfor %}
+                <div class="col-3 text-center">
+                    <div class="d-grid gap-2">
+                        {% if school_system == yearGroupPresets.custom_system.system %}
+                        <button class="btn u-link btn-rounded active" 
+                                style="pointer-events: none;" type="button">
+                            <i class="fa-solid fa-check me-2"></i>
+                            <b class="text-em">{{yearGroupPresets.custom_system.system.label}}</b>
+                        </button>
+                        {% else %}
+                       <button class="btn u-link btn-rounded" 
+                                type="button"
+                                hx-post="{% url 'set-yeargroup-system' %}" 
+                                hx-trigger="click" 
+                                hx-target="#yeargroups-card-container" 
+                                hx-swap="innerHTML"
+                                hx-vals='{"system": "{{yearGroupPresets.custom_system.system.value}}"}'>
+                            Set {{yearGroupPresets.custom_system.system.label}} names
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+    </div>
+</div>
+

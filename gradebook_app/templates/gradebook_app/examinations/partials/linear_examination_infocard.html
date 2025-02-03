@@ -1,0 +1,184 @@
+
+{% load static %}
+<script src="{% static 'gradebook_app/js/examinations/examinations.infocard.js' %}"></script>
+
+
+<div id="info-card" class="card">
+    <div class="card-header">
+        <div class="d-flex flex-row justify-content-between align-items-center">
+            <span class="fs-6">{{ sq }}</span>
+            <div class="d-flex">
+                <button class="btn btn-light btn-round me-2" 
+                        type="button" 
+                        data-bs-toggle="tooltip" 
+                        data-bs-placement="left" 
+                        data-bs-title="Linear qualification">
+                        <i class="fa-solid fa-grip-lines-vertical"></i>
+                </button>
+            </div>
+        </div>
+
+        <div class="text-muted fs-6">
+            <i class="fa-solid fa-user-graduate me-2"></i>
+            {{sq.programme.student.full_name}} 
+        </div>
+        {% if not sq.is_external %}
+        <div class="text-muted">
+            <i class="fa-solid fa-calendar-check me-1 fs-6"></i>
+            Qualification studied in
+            {% for enrollment in sq.enrollments.all %}
+            <span class="me-1">
+                {{ enrollment.period }}
+                ({{ enrollment.yeargroup }})
+            </span>
+            {% endfor %}
+        </div>
+        {% else %}
+        <div class="text-muted">
+            <i class="fa-solid fa-calendar-xmark me-1 fs-6"></i>
+            External / Prior qualification
+        </div>
+        {% endif %}
+    </div> 
+
+    <div class="card-body" id="info-card-body" style="overflow-y: auto;">
+        <div class="d-flex justify-content-between align-items-center mb-1">
+            <div class="d-flex align-items-center">
+                <span class="title">Qualification</span>
+                <span class="h5 my-0 mx-2">|</span>
+                <span class="me-2">
+                    {{ sq.state }}
+                </span>
+            </div>
+            <button class="btn u-link" 
+                data-bs-toggle="modal" 
+                data-bs-target="#linear-qualification-exam-result-form-modal" 
+                type="button"   
+                hx-get="{% url 'linear-qualification-exam-result-form' sq.id 0 %}" 
+                hx-target="#linear-qualification-exam-result-form-container"
+                >
+                <i class="fa-solid fa-plus"></i>
+                Add result
+            </button>
+        </div>
+
+        {% for qer in sq.exam_entries.all %}
+        <table class="table table-borderless mb-0 align-middle
+                {% if not qer.is_final %} text-black-50 {% endif %}"> 
+            <tr>
+                <td>
+                    <i class="fa-solid fa-award fs-5"></i>
+                </td>
+                <td>{{qer}}</span>
+                <td class="text-center">
+                    {% if qer.is_final %}
+                    <span class="badge rounded-pill badge-dark-secondary my-1">
+                        {{qer.state }}
+                    </span>
+                    {% else %}                    
+                    <span class="badge badge-lightgray rounded-pill my-1">
+                        {{qer.state }}
+                    </span>
+                    {% endif %}
+                </td>
+                <td class="text-end">
+                    <button class="btn btn-light btn-round p-0" type="button" 
+                        name ="options-button"
+                        data-bs-toggle="dropdown">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                    </button>
+            
+                    <div class="dropdown-menu">
+                        <button class="dropdown-item" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#linear-qualification-exam-result-form-modal" 
+                            hx-get="{% url 'linear-qualification-exam-result-form' sq.id qer.id %}" 
+                            hx-target="#linear-qualification-exam-result-form-container">
+                            <i class="fa-regular fa-edit me-2"></i> Edit entry
+                        </button>
+                    
+                        <button class="dropdown-item" 
+                            data-bs-toggle="modal" 
+                            data-bs-target="#qualification-exam-result-delete-modal" 
+                            name ="qer-delete-btn" 
+                            value ="{{ qer.id }}" >
+                            <i class="fa-regular fa-trash-can me-2"></i> 
+                            Delete entry
+                        </button>
+                    </div>
+                </td>
+            </tr>
+        </table>
+        <table class="table table-borderless mb-0 {% if not qer.is_final %} text-black-50 {% endif %}">
+            <thead>
+                <tr class="text-center align-middle">
+                    <td>Series</td>
+                    <td>Grade</td>
+                    <td>{{sq.qualification.get_mark_type_display}}</td>
+                    <td></td>
+                </tr>
+            </thead>
+            <tbody>
+                <tr class="text-center align-middle">
+                    <th>
+                        {{qer.get_series_display}} {{qer.year}}
+                    </th>
+                    <th>{{qer.grade}}</th>
+                    <th>
+                        {% if  qer.mark %}{{qer.mark}} {% else %}- {% endif %}/ {{sq.qualification.mark}}
+                    </th>
+                    
+                    <th>
+                        {% if sq.qualification.mark_adjusted %}
+                            {{ sq.qualification.get_mark_adjusted_type_display }}</th>
+                        {% endif %}
+                    </th>
+                
+                </tr>
+            </tbody>          
+        </table> 
+        <div class="px-4">
+            <table class="table table-borderless table-sm  {% if not qer.is_final %} text-black-50 {% endif %}">
+            {% for cer in qer.components.all %}
+                {% if forloop.counter == 1 %}
+                <thead>
+                    <tr class="align-middle">
+                        <td><i class="fa-solid fa-file-lines me-2 fs-6"></i> Component</td>
+                        <td class="text-center">Grade</td>
+                        <td class="text-center text-nowrap">{{cer.component.get_mark_type_display}}</td>
+                        <td class="text-center text-nowrap">
+                            {% if cer.component.mark_adjusted %}
+                                {{ cer.component.get_mark_adjusted_type_display }}</th>
+                            {% endif %}
+                        </td>
+                    </tr>
+                </thead>
+                {% endif %}
+                <tbody>
+                    <tr class="align-middle">
+                        <td>{{ cer.component }} {{ cer.state }}</td>
+                        <td class="text-center">{{cer.grade}}</td>
+                        <td class="text-center">
+                            {% if cer.component.mark %}
+                                {% if  cer.mark %}{{cer.mark}} 
+                                {% else %}- {% endif %}/ {{cer.component.mark}}
+                            {% endif %}
+                        </td>
+                        
+                        <td class="text-center">
+                            {% if cer.component.mark_adjusted%}
+                                {% if  cer.mark_adjusted %}{{cer.mark_adjusted}} 
+                                {% else %}- {% endif %}/ {{cer.component.mark_adjusted}}
+                            {% endif %}
+                        </td>
+                    </tr>
+                </tbody>
+            {% endfor %}
+            </table>
+        </div>
+     
+        {% endfor %}
+    </div>        
+</div>
+
+

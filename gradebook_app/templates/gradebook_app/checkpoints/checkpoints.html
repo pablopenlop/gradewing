@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_js %}
+    <script src="{% static 'datatables/js/datatables.dropdown_filter.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+    <!-- HEADER BAR -->
+    <div class="card card-title sticky-top" id ="checkpoints-headerbar"
+        hx-get="{{ url_headerbar }}" 
+        hx-trigger="load, refresh">
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="container-fluid" >
+        <div class="row mt-3 mx-1">
+            <div class="col-12">
+                <!-- CLASSES TABLE -->
+                <div class="card"  id="checkpoints-table-card">
+                    <div class="card-body py-1" id="checkpoints-table-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,154 @@
+<form id="{{ form.form_id }}" 
+    action="{{ form.action }}"  
+    method="POST">
+    {% csrf_token %}
+ 
+    <div class="modal-header">
+        <h5 class="modal-title">
+        {% if form.instance.pk %} 
+            Edit qualification
+        {% else %} 
+            Add qualification   
+        {% endif %}
+        </h5>
+        <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+            <i class="fa-solid fa-x"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-6">
+                <div class="form-floating mb-3 restricted">
+                    {{ form.id }}
+                    <label for="{{ form.id.id_for_label }}">{{form.id.label}}</label>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-floating mb-3 restricted">
+                    {{ form.programme }}
+                    <label for="{{ form.programme.id_for_label }}">{{form.programme.label}}</label>
+                </div>
+            </div>
+        </div>
+    
+        <div class="row">
+            <div class="col-12">
+           
+                <div class="form-floating mb-3">
+                    {{ form.qualification }}
+                    <label for="{{ form.qualification.id_for_label }}">{{form.qualification.label}} 
+                        {% if form.instance.pk %}
+                        <i class="fa-solid fa-lock ms-1"></i>
+                        {% else %}
+                        *
+                        {% endif %}
+                    </label>
+                </div> 
+     
+            </div>
+        </div>  
+
+        
+        <div class="row text-center">
+            <div class="dropdown-center mb-3">
+                <button id="state-btn" class="btn u-link btn-rounded dropdown-toggle" data-bs-toggle="dropdown">
+                </button>
+                <ul class="dropdown-menu dropdown-menu-end">
+                    <li><h6 class="dropdown-header">Mark qualification as...</h6></li>
+            
+                    <li>
+                        <button class="dropdown-item {% if not is_external %} selected {% endif %}" type="button">
+                            <span class="item-title"><i class="fa-solid fa-calendar-check me-2"></i> TAUGHT QUALIFICATION </span>
+                            <p class="my-0">Qualification is taught by the institution during at least one enrollment period.</p>
+                        </button>
+                        <button class="dropdown-item {% if is_external %} selected {% endif %}" name="external" type="button">
+                            <span class="item-title"><i class="fa-solid fa-calendar-xmark me-2"></i> EXTERNAL/PRIOR QUALIFICATION </span>
+                            <p class="my-0">Qualification studied or acquired (previously) outside the institution.</p>
+                        </button>
+                    </li>
+                            
+                </ul>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="form-floating mb-3" id="id_enrollments_form">
+                    {{ form.enrollments }}
+                    <label for="{{ form.enrollments.id_for_label }}">{{form.enrollments.label}} *</label>
+                </div> 
+            </div>
+        </div>  
+    </div>
+    <div class="modal-footer justify-content-end">
+        <div class="d-flex justify-content-center">
+            <button class="mx-1 btn btn-light" 
+                type="button" data-bs-dismiss="modal">Cancel
+            </button>
+            <button type="submit" class="mx-1 btn btn-primary" disabled>
+            {% if form.instance.pk %} 
+                Save
+            {% else %} 
+                Add
+            {% endif %}
+            </button>
+        </div>
+    </div>
+</form>
+{% if not form.instance.pk %}
+    <script>
+        $(document).ready(function() {
+            
+            //  Qualification SELECTSIZE
+            var $qualification = $('#id_qualification');  
+            var selectized = $qualification.selectize({
+                placeholder: 'Select a subject qualification...',
+            });
+            $qualification.addClass('required');
+        });
+    </script>
+{% endif %}
+
+<script>
+
+    
+    $(document).ready(function() {
+        
+        //  Enrollments SELECTSIZE
+        var $enrollments = $('#id_enrollments');  
+        var selectized = $enrollments.selectize({
+            placeholder: 'Select enrollment period(s)...',
+            plugins: ["remove_button"],
+        });
+        $enrollments.addClass('required');
+        var enrollmentsControl = $enrollments[0].selectize;
+
+
+        function handleDropdownState() {
+            $('.dropdown-item').removeClass('selected');
+            $(this).addClass('selected');
+    
+            // Update the button content
+            const selectedTitle = $(this).find('.item-title').html();
+            $('#state-btn').html(selectedTitle);
+    
+    
+            if ($(this).attr('name') === 'external') {
+                enrollmentsControl.clear();
+                $('#id_enrollments_form').hide()
+                $enrollments.removeClass('required');
+            } else {
+                $('#id_enrollments_form').show()
+                $enrollments.addClass('required');
+            }
+        }
+
+        $('.dropdown-item').click(handleDropdownState);
+        $('.dropdown-item.selected').click();
+        
+
+
+    });
+
+</script>
+
+

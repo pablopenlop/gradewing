@@ -1,0 +1,45 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_js %}
+    <script src="{% static 'datatables/js/datatables.dropdown_filter.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+    <!-- HEADERBAR -->
+    <div class="card card-title stickyaa-topaa">
+        <div class="container text-center" style="max-width: 800px;">
+            <div class="row align-items-center justify-content-between p-2" >
+                <div class="col-auto d-flex align-items-center">
+                    <a class="btn btn-light btn-round me-2" 
+                        href="{{ url_back }}">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+                    <h5 class="mb-0">Checkpoint gradebook</h5>
+                </div>
+                <div class="col-auto d-flex"></div>
+            </div>
+        </div>
+    </div>
+     {{checkpoint}}
+    <!-- MAIN CONTENT -->
+    <div class="container-fluid" >
+        <div class="row mt-3 mx-1">
+            <div class="col-12">
+                <!-- CHECKPOINT ENTRY TABLE -->
+                <div class="card"  id="checkpoint-table-card">
+                    <div class="card-body py-1" id="checkpoint-table-container"
+                        hx-get="{{ url_table }}"
+                        hx-trigger="load, refresh" hx-target="this" hx-swap="innerHTML">
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+<!-- FORM MODAL -->
+{% include 'partials/form_modal_small.html' %}
+
+{% endblock %}

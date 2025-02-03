@@ -1,0 +1,192 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_js %}
+<script src="{% static 'register_app/js/school/school.form.requests.js' %}"></script>
+<script src="{% static 'register_app/js/school/yeargroups.form.requests.js' %}"></script>
+<script src="{% static 'register_app/js/school/periods.form.requests.js' %}"></script>
+<script src="{% static 'register_app/js/school/tags.form.requests.js' %}"></script>
+
+
+{% endblock %}
+
+{% block content %}
+    
+
+<nav id="school-navbar" class="card card-title sticky-top">
+    <ul class="nav p-1">
+        <li class="nav-item mx-2">
+            <a class="btn u-link active" href="#school-card-container">
+                <i class="fa-solid fa-building-columns me-2 fs-6"></i> School
+            </a>
+            
+        </li>
+        <li class="nav-item mx-2">
+            <a class="btn u-link" href="#yeargroups-card-container">
+                <i class="fa-solid fa-people-roof me-2 fs-6"></i> Year groups
+            </a>
+            
+        </li>
+        <li class="nav-item mx-2">
+            <a class="btn u-link" href="#periods-card-container">
+                <i class="fa-regular fa-calendar me-2 fs-6"></i> Periods
+            </a>
+           
+        </li>
+        <li class="nav-item mx-2">
+            <a class="btn u-link" href="#tags-card-container">
+                <i class="fa-solid fa-tags me-2 fs-6"></i> Tags
+            </a>
+           
+        </li>
+    </ul>
+</nav>
+
+    <div class="scrollspy-example px-5" >
+        <!-- SCHOOL CARD -->
+        <div class="container-fluid p-0 m-0 scrollspy-section"  
+            id="school-card-container"
+            hx-get="{% url 'school-school-card'%}"
+            hx-target="this"
+            hx-trigger="load, refresh"
+            hx-swap="innerHTML"> 
+        </div>
+
+        
+        <!-- YEARGROUPS CARD -->
+        <div class="container-fluid p-0 m-0 scrollspy-section"  
+            id="yeargroups-card-container"
+            hx-get="{% url 'school-yeargroups-card'%}"
+            hx-target="this"
+            hx-trigger="load, refresh"
+            hx-swap="innerHTML">
+        </div>
+
+        <!-- PERIODS CARD -->
+        <div class="container-fluid p-0 m-0 scrollspy-section"  
+            id="periods-card-container"
+            hx-get="{% url 'school-periods-card'%}"
+            hx-target="this"
+            hx-trigger="load, refresh"
+            hx-swap="innerHTML">
+        </div>
+
+        <!-- TAGS CARD -->
+        <div class="container-fluid p-0 m-0 scrollspy-section"  
+        id="tags-card-container"
+            hx-get="{% url 'school-tags-card'%}"
+            hx-target="this"
+            hx-trigger="load, refresh"
+            hx-swap="innerHTML">
+        </div>
+    </div>
+
+    <div class="container-fluid p-0 m-0"  style="height: 400px;"></div>
+
+
+
+
+
+
+
+
+
+
+<!-- YEARGROUP FORM MODAL -->
+<div class="modal fade" id="school-form-modal" data-bs-backdrop="static" data-bs-keyboard="false" 
+tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content p-3" id ="school-form-container">
+        </div>
+    </div>
+</div>
+
+
+<!-- YEARGROUP FORM MODAL -->
+<div class="modal fade" id="custom-yeargroup-form-modal" data-bs-backdrop="static" data-bs-keyboard="false" 
+tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content p-3" id ="custom-yeargroup-form-container">
+        </div>
+    </div>
+</div>
+
+
+<!-- PERIOD FORM MODAL -->
+<div class="modal fade" id="period-form-modal" data-bs-backdrop="static" data-bs-keyboard="false" 
+tabindex="-1">
+    <div class="modal-dialog modal-sm">
+        <div class="modal-content p-3" id ="period-form-container">
+        </div>
+    </div>
+</div>
+
+<!-- DELETE MODAL -->
+{% include 'partials/delete_modal.html' %}
+
+<!-- TAGS FORM MODAL -->
+<div class="modal fade" id="tags-form-modal" data-bs-backdrop="static" data-bs-keyboard="false" 
+tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content p-3" id ="tags-form-container">
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+
+$(document).ready(function () {
+    let mainContent = $('.main-content');
+    let navLinks = $('#school-navbar a'); // Target <a> elements inside nav items
+    let headerOffset = 120; // Adjust for sticky navbar height
+    let spyOffset = 100; // 
+
+    // Smooth Scrolling on Click
+    navLinks.on('click', function (event) {
+        event.preventDefault(); // Prevent default anchor jump
+        let targetId = $(this).attr('href').substring(1); // Extract target ID
+        let targetElement = $('#' + targetId);
+
+        if (targetElement.length) {
+            let targetPosition = targetElement.position().top;
+            let scrollTop = mainContent.scrollTop();
+            let offsetPosition = scrollTop + targetPosition - headerOffset;
+
+            // Smooth scroll inside .main-content
+            mainContent.animate({ scrollTop: offsetPosition }, 300, function () {
+                history.replaceState(null, null, `#${targetId}`);
+            });
+        }
+    });
+
+    // ScrollSpy Behavior: Update Active <a> on Scroll
+    mainContent.on('scroll', function () {
+        let scrollPosition = mainContent.scrollTop();
+
+        $('.scrollspy-section').each(function () {
+            let sectionId = $(this).attr('id');
+            let sectionTop = $(this).position().top + mainContent.scrollTop() - headerOffset;
+            let sectionHeight = $(this).outerHeight();
+
+            if (scrollPosition >= sectionTop -spyOffset && scrollPosition < sectionTop + sectionHeight) {
+                navLinks.removeClass('active'); // Remove active class from all <a> elements
+                $(`#school-navbar a[href="#${sectionId}"]`).addClass('active'); // Add active to current section's link
+            }
+        });
+    });
+});
+
+    
+    
+    
+    
+    
+</script>
+      
+  
+{% endblock %}
+
+  

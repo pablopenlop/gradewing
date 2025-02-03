@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_js %}
+    <script src="{% static 'subject_app/js/qualifications/qualifications.main.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<!-- NAV TABS BAR -->
+
+<div class="sticky-top mx-0">
+    <div class="col-12 mt-1 mx-0">
+        <ul class="nav nav-tabs mx-0">
+            <li class="nav-item mx-3" 
+            style="visibility: hidden; width: 20px;">
+            </li>
+            <li class="nav-item mx-1">
+                <button class="nav-link active" 
+                    name="family-nav-tabs" 
+                    hx-get="{% url 'family-main-content' 'ib.dp' %}"
+                    hx-target="#family-main-content" 
+                    hx-trigger="load, click"
+                    hx-swap="innerHTML">
+                    IB DP
+                </button>
+            </li>
+            <li class="nav-item mx-1">
+                <button class="nav-link" 
+                    name="family-nav-tabs" 
+                    hx-get="{% url 'family-main-content' 'ib.cp' %}"
+                    hx-target="#family-main-content" 
+                    hx-swap="innerHTML">
+                    IB CP
+                </button>
+            </li>
+            <li class="nav-item mx-1">
+                <button class="nav-link" 
+                    name="family-nav-tabs" 
+                    hx-get="{% url 'family-main-content' 'ib.myp' %}"
+                    hx-target="#family-main-content" 
+                    hx-swap="innerHTML">
+                    IB MYP
+                </button>
+            </li>
+        </ul>
+    </div>
+    </div>
+    <!-- MAIN CONTENT -->
+    <div id="family-main-content" style="visibility: hidden;">
+    </div>
+
+
+{% endblock %}
+

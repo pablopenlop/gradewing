@@ -1,0 +1,62 @@
+
+<form id="class-preform-2" 
+      hx-post="{% url 'class-form' 0 %}" 
+      hx-target="this" 
+      hx-swap="outerHTML">
+    {% csrf_token %}
+    <div class="modal-header">
+        <h5 class="modal-title">
+            Create teaching class  
+        </h5>
+        <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+            <i class="fa-solid fa-x"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="col-12">
+            <div class="form-floating restricted mb-3">
+                {{ form.period }}
+                <label for="{{ form.period.id_for_label }}">{{form.period.label}}</label>
+            </div>
+        </div>
+        <div class="col-12">
+            <div class="form-floating mb-3">
+                <input readonly type="text" id="id_period_display" class="form-control"  value="{{ period_name }}">
+                <label for="id_period_display">Academic period <i class="fa-solid fa-lock ms-1"></i></label>
+            </div>
+        </div>
+
+
+        <div class="row mb-3 align-items-center">
+            <label class="form-label mx-3" for="{{ form.qualification.id_for_label }}">{{form.qualification.label}}</label>
+            <div class="col-12">
+                {{ form.qualification }}
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer justify-content-end">
+        <div class="d-flex justify-content-center">
+            <button class="mx-1 btn btn-light"  type="button" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="mx-1 btn btn-primary" disabled>
+                Next
+                <i class="fa-solid fa-arrow-right ms-2"></i>
+            </button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+
+        // PERIOD SELECTSIZE
+        var $select = $('#id_qualification');
+        var required = $select.prop('required');    
+        var selectized = $select.selectize({
+            placeholder: 'Select a qualification...',
+        });
+        if (required === true) {
+            $select.addClass('required');
+        }
+    });
+</script>

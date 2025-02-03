@@ -1,0 +1,42 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_js %}
+    <script src="{% static 'register_app/js/students/students.form.requests.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<!-- HEADER BAR --> 
+<div class="card card-title sticky-top" id ="students-headerbar"
+    hx-get="{{ url_headerbar }}" 
+    hx-trigger="load, refresh">
+</div>
+
+
+
+<!-- MAIN CONTENT -->
+<div class="container-fluid" >
+    <div class="row mt-3 mx-1">
+        <div class="col-7">
+            <!-- STUDENTS TABLE -->
+            <div class="card"  id="students-table-card">
+                <div class="card-body py-1" id="students-table-container"></div>
+            </div>
+        </div>
+        <div class="col-5">
+            <!-- QUALIFICATION INFO -->
+            <div id ="student-infocard-container"></div>
+        </div>
+    </div>
+</div>
+
+
+<!-- FORM MODAL -->
+{% include 'partials/form_modal.html' %}
+
+<!-- DELETE MODAL -->
+{% include 'partials/delete_modal.html' %}
+
+{% endblock %}

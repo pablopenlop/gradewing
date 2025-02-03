@@ -1,0 +1,83 @@
+
+<div class="card">
+    <div class="card-header">
+        <div class="ubar py-0">
+            <div class="col-9 d-flex align-items-center">
+                <span class="title mx-2">General details </span>
+                <h4 class="h4  my-0">|</h4>
+                <span class="mx-2 my-0 fst-italic"> Checkpoint state:</span>
+
+                <div class="dropdown" id ="state-dropdown">
+                    <button  class="btn u-link btn-rounded dropdown-toggle" data-bs-toggle="dropdown">
+                    </button>
+                    <ul class="dropdown-menu dropdown-menu-end">
+                        <li><h6 class="dropdown-header">Set state to...</h6></li>
+                        {% for value, label, helptext, icon in states %}
+                        <li>
+                            <button class="dropdown-item {% if checkpoint.state == value %} selected {% endif %}">
+                                <span class="item-title">{{ icon }} {{ label }} </span>
+                                <p class="my-0">{{ helptext }}</p>
+                            </button>
+                        </li>
+                        {% endfor %}                        
+                    </ul>
+                </div>
+
+
+            </div>
+            <div class="col-3 text-end">
+                <button class="btn btn-light btn-round"
+                    data-bs-toggle="modal"  
+                    data-bs-target="#form-modal"
+                    hx-get="{% url 'checkpoint-form' checkpoint.id %}" 
+                    hx-target="#form-container"
+                    >
+                    <i class="fas fa-edit"></i>
+                </button>
+                
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-2">
+    
+        <table class="table align-middle table-borderless">
+
+
+            <tbody>
+            <td>
+                <h5>{{ checkpoint.name }}</h5>
+                {{ checkpoint.get_scope_display}}
+            </td>            
+            <td>
+                <h5>{{ checkpoint.date }}</h5>
+                {{ checkpoint.period }}
+            </td>
+            </tbody>
+        </table>
+
+
+    </div>
+</div>
+
+
+<script>
+$(document).ready(function () {
+    // Select the specific dropdown by ID
+    const dropdown = $('#state-dropdown');
+    const activeItem = dropdown.find('.dropdown-item.selected');
+    if (activeItem.length) {
+        const activeTitle = activeItem.find('.item-title').html();
+        dropdown.find('.btn.dropdown-toggle').html(activeTitle);
+    }
+
+    dropdown.find('.dropdown-item').click(function () {
+        dropdown.find('.dropdown-item').removeClass('selected');
+        $(this).addClass('selected');
+        const selectedTitle = $(this).find('.item-title').html();
+        dropdown.find('.btn.dropdown-toggle').html(selectedTitle);
+    });
+});
+</script>
+
+
+

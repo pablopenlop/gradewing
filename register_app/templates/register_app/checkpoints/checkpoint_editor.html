@@ -1,0 +1,63 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_js %}
+    <script src="{% static 'register_app/js/checkpoints/checkpoint.editor.form.requests.js' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+
+    <!-- EDITOR HEADERBAR -->
+    <div class="card card-title sticky-top">
+        <div class="container text-center" style="max-width: 800px;">
+            <div class="row align-items-center justify-content-between p-2" >
+                <div class="col-auto d-flex align-items-center">
+                    <a class="btn btn-light btn-round me-2" 
+                        href="{% url 'checkpoints' %}">
+                        <i class="fa-solid fa-arrow-left"></i>
+                    </a>
+                    <h5 class="mb-0">Checkpoint editor</h5>
+                </div>
+                <div class="col-auto d-flex"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container" id="main-container" style="max-width: 1000px">
+
+    <!-- DETAILS CARD -->
+    <div class="container-fluid p-0 m-0" id="details-card-container"
+            hx-get="{% url 'checkpoint-details-card' checkpoint_id %}"
+            hx-trigger="load, refresh" hx-target="this" hx-swap="innerHTML">
+    </div>
+
+    <!-- FIELDS CARD -->
+    <div class="container-fluid p-0 m-0" id="fields-card-container"
+            hx-get="{% url 'checkpoint-fields-card' checkpoint_id %}"
+            hx-trigger="load, refresh" hx-target="this" hx-swap="innerHTML">
+    </div>
+
+    <!-- TARGETS CARD -->
+    <div class="container-fluid p-0 m-0" id="targets-card-container" 
+            hx-get="{% url 'checkpoint-targets-card' checkpoint_id %}"
+            hx-trigger="load, refresh" hx-target="this" hx-swap="innerHTML">
+    </div>
+</div>
+
+<!-- FORM MODAL -->
+{% include 'partials/form_modal.html' %}
+
+
+<!-- DELETE MODAL -->
+{% include 'partials/delete_modal.html' %}
+
+
+<!-- DELETE TEACHING CLASS MODAL -->
+{% include 'register_app/checkpoints/partials/checkpoint_field_delete_modal.html' %}
+
+
+
+    
+{% endblock %}

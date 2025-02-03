@@ -1,0 +1,145 @@
+<style>
+    #class_enrollments-table tbody tr:not(.dtrg-group) {
+        cursor: pointer;
+    }
+    #class_enrollments-table tbody td:hover {
+        background-color:rgb(220, 220, 220); /* Change this to your preferred hover color */
+        cursor: pointer; /* Optional: change the cursor to indicate interactivity */
+    }
+    /* Disable pointer events on fixed-start cells */
+    #class_enrollments-table tbody td.dtfc-fixed-start  {
+        pointer-events: none;
+    }
+</style>
+<!-- Your table HTML -->
+<table id="class_enrollments-table" style="width:100%" class="hover">
+    <thead>
+        <tr id="header-row">
+    
+            <!-- Dynamic headers will be appended here -->
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+
+
+<script>
+$(document).ready(function() {
+    // URL to fetch the JSON data from your Django view
+    const urlData = '{{ url_data }}';
+    
+    // First, fetch the JSON data so we can inspect a sample row and determine dynamic keys
+    $.getJSON(urlData, function(response) {
+        const data = response.data || [];
+        
+        // Define your static columns (keys should match those in your JSON)
+        const staticColumns = [
+            { data: 'student', title: 'Student'},
+            { data: 'teaching_class', title: 'Teaching class' },
+            { data: 'class_yeargroup', title: 'Year group' },
+            { data: 'teachers', title: 'Teacher' },
+            { data: 'qualification', title: 'Qualification' }
+        ];
+        
+        // List of keys already used in static columns (plus any additional ones you don't want as dynamic)
+        const staticKeys = ['id', 'student', 'teaching_class', 'class_yeargroup', 'teaching_class_id', 'teachers', 'qualification'];
+        
+        // Determine dynamic keys by inspecting the first row (if it exists)
+        let dynamicKeys = [];
+        if(data.length > 0) {
+            const firstRow = data[0];
+            for (const key in firstRow) {
+                if (firstRow.hasOwnProperty(key) && !staticKeys.includes(key)) {
+                    dynamicKeys.push(key);
+                }
+            }
+        }
+        
+        const dynamicColumns = dynamicKeys.map(function(key) {
+            return {
+                data: key,
+                title: key,
+                className: "text-center", // Center the cell content
+                render: function(data, type, row) {
+                    // Determine the content to display:
+                    let displayContent = (!data || data.value === null)
+                        ? '<i class="fa-solid fa-pen-to-square"></i>'
+                        : data.value;
+                    
+                    // Return the HTML for a Bootstrap dropdown, with the toggle button filling the cell.
+                    return `${displayContent}`;
+                },
+                createdCell: function(td, cellData, rowData, row, col) {
+                    // Add the dropdown toggle classes and attributes to the <td>
+                    $(td)
+                        .attr({
+                            "data-bs-toggle": "modal",
+                            "data-bs-target": "#form-modal-small",
+                            "hx-get": cellData.url_form,
+                            "hx-target": "#form-modal-small",
+                        });
+                    htmx.process(td);  
+                }
+                
+                
+            };
+        });
+        
+        
+        
+        // Combine static and dynamic columns
+        const columns = staticColumns.concat(dynamicColumns);
+
+        // Update the header row in the table: append a new <th> for each dynamic key
+        dynamicKeys.forEach(function(key) {
+            $('#header-row').append('<th class="text-nowrap">' + key + key+ '</th>');
+        });
+        
+        // Now initialize DataTable with the dynamically built columns.
+        let table = $('#class_enrollments-table').DataTable({
+            ajax: {
+                url: urlData, 
+                dataSrc: 'data'
+            },
+            columns: columns,
+            columnDefs: [{ orderable: false, targets: [] }],
+
+            fixedColumns: {
+                start: 5
+            },
+            select: {style: 'single', items: 'cell', toggleable: false},
+            scrollX: true,
+            deferRender: true,
+            stateSave: false,
+            rowId: 'id',
+            order: [[1, 'asc']],  
+            rowGroup: {
+                dataSrc: 'teaching_class',
+                startRender: function(rows, group) {
+                    // Optional: Adjust rendering if needed.
+                    let teachers = rows.data()[0].teachers;
+                    let qualification = rows.data()[0].qualification;
+                    return $('<tr/>').append(`
+                        <th colspan="${staticColumns.length}" style="position: sticky; left: 0px; background-color: rgb(230, 230, 230);"
+                        class="dtfc-fixed-start dtfc-fixed-left">
+                        <div class="d-flex">
+                            <i class="fa-solid fa-chalkboard mx-1"></i>
+                            ${group}
+                            <i class="fa-solid fa-chalkboard-user ms-3 me-1"></i>
+                            ${teachers}
+                            </div>
+                            <div>
+                            <i class="fa-solid fa-award mx-1"></i>
+                            ${qualification}
+                            </div>
+                        </th>
+                         <th colspan="${dynamicColumns.length}}" style="background-color: rgb(230, 230, 230);">
+                        </th>
+
+                    `);
+                }
+            }
+        });
+    });
+});
+</script>

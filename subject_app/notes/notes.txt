@@ -1,0 +1,72 @@
+
+UK QUALIFICATIONS
+    -A levels
+        - OCR
+        - Eduqas
+        - AQA
+        - WJEC
+        - CCEA
+        - Edexcel
+    
+    -GCSEs
+        - OCR
+        - Eduqas
+        - AQA
+        - WJEC
+        - CCEA
+        - Edexcel
+
+    -EPQ
+        - OCR
+        - Eduqas
+        - AQA
+        - WJEC
+        - CCEA
+        - Edexcel
+    -Small AAQ 
+        - Pearson Level 3 AAQ  BTEC National in
+        - OCR [Level 3] AAQ Cambridge Advanced National in
+        - IBO Level 3 AAQ SL/HL in
+        - WJEC Level 3 AAQ in
+    - AGQ Level 3 [MESSY]
+        - OCR Level 3 Cambridge Technical       Certificate, Diploma 
+        - AQA Level 3 Applied                    Certificate (180)
+        - Pearson BTEC Level 3 National         Certificate
+        - WJEC Level 3 Applied                  Certificate
+
+    - AGQ Level 2 [MESSY]
+        - BTEC Firsts
+        - OCR Level 2 Cambridge Technical
+            
+
+        
+
+
+
+
+British International
+    - IGCSE
+    - O levels
+    - International A levels
+    - International BTEC Level 3
+    - International BTEC Level 2
+    - Project qualifications
+        - Cambridge IPQ 
+        - OxfordAQA EPQ
+        - Oxford IGCSEPlus
+
+    Advanced
+        - International A levels
+        - International BTEC
+
+
+
+    Advanced
+
+    Applied
+
+        International BTEC
+
+        Cambridge IPQ
+        Edexcel EPQ    
+

@@ -1,0 +1,26 @@
+<!-- Delete Qualification Exam Result Modal -->
+<div class="modal fade" id="qualification-exam-result-delete-modal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Delete exam result?</h5>
+                <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+                    <i class="fa-solid fa-x"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                This action cannot be undone.
+            </div>
+            
+            <div class="modal-footer">
+                <form id="qualification-exam-result-delete" method="POST" 
+                    action="{% url 'delete-qualification-exam-result' %}">
+                    {% csrf_token %}
+                <input class="form-control restricted" id="delete-qer-id" value="" name="delete-qer-id">
+                <button type="button" class="btn btn-light" data-bs-dismiss="modal">Cancel</button>
+                <button type="submit" class="btn btn-primary">Delete</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

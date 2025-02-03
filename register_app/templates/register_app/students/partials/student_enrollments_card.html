@@ -1,0 +1,121 @@
+<div class="card">
+    <div class="card-header">
+        <div class="ubar py-0">
+            <div class="col-9 d-flex align-items-center">
+                <span class="title mx-2">Enrollment periods</span>
+                <h4 class="h4  my-0">|</h4>
+                <span class="mx-2 my-0">Enrolled in {{student.enrollments.count}} 
+                    academic period{{ student.enrollments.count|pluralize }}
+                </span>
+            </div>
+            <div class="col-3 text-end">
+
+            {% if student.can_enroll %}
+                <button class="btn u-link" type="button"
+                    data-bs-toggle="modal"  
+                    data-bs-target="#form-modal"
+                    hx-get="{{ student.url_enrollment_form }}" 
+                    hx-target="#form-container"
+                    >
+                    <i class="fa-solid fa-plus"></i> 
+                    Add enrollment
+                </button>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-2">
+
+        {% if not student.enrollments.count %}
+        <div class="alert alert-warning my-0 py-2">
+            <div class="d-flex align-items-center">
+                <!-- Icon Column -->
+                <div class="me-3">
+                    <i class="fa-solid fa-triangle-exclamation fa-2x"></i>
+                </div>
+                <!-- Message and Close Button -->
+                <div class="d-flex flex-grow-1 align-items-center justify-content-between">
+                    <span>
+                        The student should be enrolled in at least one academic period.
+                        <a href="#" class="alert-link ms-2"
+                        data-bs-toggle="modal"  
+                        data-bs-target="#form-modal"
+                        hx-get="{{ student.url_enrollment_form }}" 
+                        hx-target="#form-container"
+                        >
+                        <i class="fa-solid fa-plus"></i> 
+                        Add enrollment
+                        </a>
+                    </span>
+                    <div class="flex-grow-0">
+                        <button type="button" 
+                            class="btn btn-outline-warning btn-round btn-transparent ms-2" 
+                            style="width: 25px; height: 25px;"
+                            onclick="this.closest('.alert').style.display='none';">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <table class="table table-borderless">
+            <thead>
+                <tr>
+                    <th class="text-nowrap">Academic period</th>
+                    <th class="text-nowrap">Year group</th>
+                    <th class="text-nowrap">Student tags</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for enrollment in student.enrollments.all %}
+                <tr style="vertical-align: middle;">
+                    <td class="fs-5">{{ enrollment.period}}</td>
+                    <td class="text-nowrap">{{ enrollment.yeargroup }}</td>
+                    <td>
+                        {% for tag in student.tags.all %}  
+                        <span class="badge rounded-pill badge-dark-secondary my-1">
+                            <i class="fa-solid fa-thumbtack me-1"></i>
+                            {{ tag }}
+                        </span>
+                        {% endfor %}
+                        {% for tag in enrollment.tags.all %}  
+                        <span class="badge rounded-pill badge-dark-secondary my-1">
+                            {{ tag }}
+                        </span>
+                        {% endfor %}
+                    </td>
+                    <td class="py-0 text-end">
+                        <button class="btn btn-round my-0 btn-light p-0 mx-2" type="button" 
+                            name ="options-button"
+                            data-bs-toggle="dropdown">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
+        
+                        <div class="dropdown-menu">
+                            <button class="dropdown-item" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#form-modal" 
+                                hx-get="{{ enrollment.url_form }}"
+                                hx-target="#form-container">
+                                <i class="fa-regular fa-edit me-2"></i> Edit details
+                            </button>
+                            <button class="dropdown-item" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#delete-modal" 
+                                hx-get="{{ enrollment.url_deleteform }}"
+                                hx-target="#delete-form-container">
+                                <i class="fa-regular fa-trash-can me-2"></i> 
+                                Delete
+                            </button>
+                        </div>  
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        {% endif %}
+    </div>
+</div>
+
+

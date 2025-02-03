@@ -1,0 +1,89 @@
+<form id="add-tags-form" 
+action="{% url 'add-tags' tag_type %}" method="POST">
+  {% csrf_token %}
+
+    <div class="modal-header">
+        <h6 class="modal-title">Add {{tag_type}} tags</h6>
+        <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+            <i class="fa-solid fa-x"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row mb-3 align-items-center">
+            <label class="form-label mx-3" for="{{ form.tags.id_for_label }}">{{form.tags.label}}</label>
+            <div class="col-12">
+                <div>
+                    {{ form.tags }}
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="modal-footer justify-content-end">
+        <div class="d-flex justify-content-center">
+            <button class="mx-1 btn btn-light"  type="button" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="mx-1 btn btn-primary">Add</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+
+        $("#remove-button").selectize({
+            plugins: ["remove_button"],
+            delimiter: ",",
+            persist: false,
+            create: function (input) {
+              return {
+                  value: input,
+                  text: input,
+              };
+            },
+          });
+        // Char counter
+        //$('[maxlength]').maxlength();
+
+
+
+
+
+        // Periods Selectsize
+        var $select = $('#id_tags'); 
+
+        
+        var selectized = $select.selectize({
+            maxItems: 10, 
+            plugins: ["remove_button"],
+            create: true,
+            persist: false,
+            placeholder: 'Select or type to create new tags...',
+            create: function (input) {
+                if (input.length > 30) {
+                    return false; // Prevent the tag from being created
+                }
+                var uppercaseInput = input.toUpperCase(); // Convert input to uppercase
+                return {
+                    value: uppercaseInput,
+                    text: uppercaseInput,
+                };
+            },
+            onItemAdd: function(value, $item) {
+                this.focus(); // Ensure the input retains focus after adding an item
+            },
+            
+        });
+        var selectizeInstance = selectized[0].selectize;
+        selectizeInstance.refreshOptions(false);
+        // Listen for keypress events on the input element inside Selectize
+        selectizeInstance.$control_input.on('keypress', function(event) {
+            if ($(this).val().length >= 30) {
+                event.preventDefault(); // Log the length of the input
+            }
+        });
+        
+        
+    
+
+    });
+</script>

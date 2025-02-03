@@ -1,0 +1,51 @@
+
+<form id="delete-tag-form" 
+        method="POST"                   
+        action="{% url 'tag-delete' %}" 
+        >
+        {% csrf_token %}
+    <div class="p-3">
+    <div class="modal-header mb-3">
+        <h5 class="modal-title">Delete tag?</h5>
+        </div>
+    <div class="modal-body mb-3">
+        This action cannot be undone.
+        <div class="row">
+            <div class="col-6">
+                <div class="form-floating my-3 restricted">
+                    <input class="form-control" id="delete-tag_id" value="{{ tag_id }}" 
+                    name="delete-tag_id">
+                    <label for="delete-tag_id">Tag ID</label>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-floating my-3 restricted">
+                    <input class="form-control" id="delete-tag_type" value="{{ tag_type }}" 
+                    name="delete-tag_type">
+                    <label for="delete-tag_type">Type</label>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="modal-footer">  
+        <div class="col-6">       
+        <button type="button" class="btn btn-light" data-bs-dismiss="dropdown">Cancel</button>
+        </div>
+        <div class="col-6"> 
+        <button type="submit" class="btn btn-primary">Delete</button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(document).on('click', '.btn[data-bs-dismiss="dropdown"]', function () {
+        // Find the closest dropdown-menu and hide the dropdown
+        const $dropdownMenu = $(this).closest('.dropdown-menu');
+        const $dropdownToggle = $dropdownMenu.prev('.dropdown-toggle');
+        if ($dropdownToggle.length) {
+            const dropdownInstance = bootstrap.Dropdown.getInstance($dropdownToggle[0]);
+            dropdownInstance?.hide();
+        }
+    });
+</script>

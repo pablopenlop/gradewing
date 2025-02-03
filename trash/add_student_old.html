@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+
+{% block content %}
+
+<!-- ADD PERIOD FORM MODAL -->
+{% include 'setup_app/partials/add_student_form.html' %}
+
+<!-- Automatically open modal -->
+<script type="text/javascript">
+    $(document).ready(function(){
+        $('#addStudentModal').modal('show');
+    });
+</script>
+
+{% endblock %}

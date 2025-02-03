@@ -1,0 +1,78 @@
+<form id="save-period-form" 
+action="{% url 'school-period-save'%}" method="POST">
+  {% csrf_token %}
+
+    <div class="modal-header">
+        <h5 class="modal-title">
+        {% if  form.instance.pk %} 
+            Edit academic period  
+        {% else %} 
+            Add academic period   
+        {% endif %}
+        </h5>
+        <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+            <i class="fa-solid fa-x"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-6">
+                <div class="form-floating mb-3 restricted">
+                    {{ form.school }}
+                    <label for="{{ form.school.id_for_label }}">School</label>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-floating mb-3 restricted">
+                    {{ form.id }}
+                    <label for="{{ form.id.id_for_label }}">Period</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="form-floating mb-3">
+                    {{ form.name }}
+                    <label for="{{ form.name.id_for_label }}">{{form.name.label}} *</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="form-floating mb-3">
+                    {{ form.start_date }}
+                    <label for="{{ form.start_date.id_for_label }}">{{form.start_date.label}} *</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-12">
+                <div class="form-floating mb-3">
+                    {{ form.end_date }}
+                    <label for="{{ form.end_date.id_for_label }}">{{form.end_date.label}} *</label>
+                </div>
+            </div>
+        </div>
+
+        {% include 'partials/form_error_alert.html' %}   
+    </div>
+
+    <div class="modal-footer justify-content-end">
+        <div class="d-flex justify-content-center">
+            <button class="mx-1 btn btn-light"  type="button" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="mx-1 btn btn-primary">
+            {% if form.instance.pk %} 
+                Save
+            {% else %} 
+                Add
+            {% endif %}
+            </button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(() => {
+        $('[maxlength]').maxlength();
+    });
+</script>

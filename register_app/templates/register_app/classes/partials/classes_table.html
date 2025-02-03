@@ -1,0 +1,167 @@
+
+<table id="classes-table" style="width:100%;"
+class="hover compact">
+    <thead>
+        <tr>
+            <th style="min-width:30px"></th>
+            <th class="text-nowrap">Class name</th>
+            <th>Period</th>
+            <th class="text-nowrap">Year group</th>
+            <th>Taught qualification</th>
+            <th>Teacher(s)</th>
+            <th>Students</th>
+            <th><i class="fa-solid fa-users-line"></i></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody id="classes-table-body">
+        {% for teaching_class in teaching_classes %}
+        <tr>
+            <td></td>
+            
+            <td>{{ teaching_class.name }}</td>
+            <td>{{ teaching_class.period }}</td>
+            <td>{{ teaching_class.yeargroup }}</td>
+            <td>{{ teaching_class.qualification.title }}</td>
+            <td>
+                {% for teacher in teaching_class.teachers.all %}  
+                    <span style="display: block;">
+                        {{ teacher.full_name }}
+                    </span>
+                {% endfor %}
+            </td>
+            <td>
+                {% for class_enrollment in teaching_class.class_enrollments.all %}  
+                    <span class="badge badge-lightblue my-1 me-1">{{ class_enrollment }}</span>
+                {% endfor %}
+            </td>
+            <td>
+                {{ teaching_class.class_enrollments.count }}  
+            </td>
+            <td class="py-0 text-end">
+                <button class="btn btn-round my-0 btn-transparent p-0 mx-2" type="button" 
+                    name ="options-button"
+                    data-bs-toggle="dropdown">
+                        <i class="fa-solid fa-ellipsis-vertical"></i>
+                </button>
+
+                <div class="dropdown-menu">
+                    <button class="dropdown-item" 
+                        data-bs-toggle="modal"  
+                        data-bs-target="#class-form-modal"
+                        hx-get="{% url 'class-form' teaching_class.id %}" 
+                        hx-target="#class-form-container" 
+                        hx-swap="innerHTML">
+                        <i class="fa-regular fa-edit me-2"></i> Edit details
+                    </button>
+                
+                    <button class="dropdown-item" 
+                        data-bs-toggle="modal" 
+                        data-bs-target="#class-delete-modal" 
+                        onclick="document.getElementById('delete-class_id').value = 
+                                {{ teaching_class.id }}">
+                        <i class="fa-regular fa-trash-can me-2"></i> 
+                        Delete
+                    </button>
+                </div>
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<script>
+    $(document).ready(function() {
+        function adjustTableScrollHeight() {
+            const margin = 300
+            let newHeight = Math.max($(window).height()-margin, 400); 
+            return newHeight
+        }
+
+        let table = new DataTable('#classes-table', {
+            order: [1, 'asc'],
+            scrollCollapse: true,
+            scrollY: adjustTableScrollHeight() + 'px',
+            scroller: true,
+            
+            columnDefs: [
+                { visible: false, targets: [6] }, 
+                { orderable: false, targets: [0,6, 7] },
+                {
+                    className: 'dt-control', // Add the control column class
+                    orderable: false,
+                    data: null,
+                    defaultContent: '', // Empty cell content
+                    targets: 0, // This is the first column (zero-indexed)
+                }
+                ],
+            rowGroup: {dataSrc: [2]},
+
+            drawCallback: function() {
+                var api = this.api();
+                var rowCount = api.rows({page: 'current'}).count();
+                
+                for (var i = 0; i < 5 - (rowCount === 0 ? 1 : rowCount); i++) {
+                    $('#classes-table tbody').append(
+                        $("<tr>")
+                            .attr("style", "pointer-events: none")
+                            .append("<td>&nbsp;</td>")
+                            .append("<td></td>")
+                            .append("<td></td>")
+                            .append("<td></td>")
+                            .append("<td></td>")
+                            .append("<td></td>")
+                    );
+                }
+            },
+              
+            layout: {
+                topStart: {
+                    buttons: ['pageLength'],
+                },
+            }, 
+            stateSave: false,            
+        });
+        // datatables.dropdown_filter.js
+        initializeDropdownFilter(table, 2, 'period-select');
+
+        // Add event listener for opening and closing details
+        table.on('click', 'td.dt-control', function (e) {
+            let tr = e.target.closest('tr');
+            let row = table.row(tr);
+        
+            if (row.child.isShown()) {
+                row.child.hide();
+            }
+            else {
+                row.child(format(row.data())).show();
+            }
+        });
+
+        // Format function for row details
+        function format(rowData) {
+            return '<table cellpadding="5" cellspacing="0" border="0" style="padding-left:50px;">' +
+                '<tr>' +
+                    '<td><b>Students</b></td>' +
+                    '<td>' + rowData[6] + '</td>' +
+                '</tr>' +
+            '</table>';
+        }
+
+        $('#hamburger-btn').on('click', function () {
+            setTimeout(function() {
+                table.draw();  
+            }, 300); 
+        });
+
+
+
+      
+});
+
+   
+
+</script>
+
+
+

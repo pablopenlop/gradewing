@@ -1,0 +1,183 @@
+<form id="checkpointfield-form" 
+    action="{% url 'checkpoint-field-save'%}" 
+    method="POST">
+  {% csrf_token %}
+    <div class="modal-header">
+        <h5 class="modal-title">
+            {% if form.instance.pk %} 
+                Edit {{kind_label.lower}} field
+            {% else %} 
+                Add {{kind_label.lower}} field  
+            {% endif %}
+        </h5>
+        <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+            <i class="fa-solid fa-x"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-4">
+                <div class="form-floating mb-3 restricted">
+                    {{ form.checkpoint }}
+                    <label for="{{ form.checkpoint.id_for_label }}">CP</label>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-floating mb-3 restricted">
+                    {{ form.id }}
+                    <label for="{{ form.id.id_for_label }}">CPF ID</label>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-floating mb-3 restricted">
+                    {{ form.kind }}
+                    <label for="{{ form.kind.id_for_label }}">{{form.kind.label}}</label>
+                </div>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-6">
+                <div class="form-floating mb-3">
+                    {{ form.name }}
+                    <label for="{{ form.name.id_for_label }}">{{form.name.label}}</label>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-floating mb-3">
+                    <input readonly type="text" id="id_kind_display" class="form-control"  value="{{ kind_label }}">
+                    <label for="id_kind_display">Field type 
+                        <i class="fa-solid fa-lock ms-1"></i>
+                    </label>
+                    <div class="form-helptext mx-3 my-1" id="{{ form.kind.auto_id }}_helptext">
+                        {{ form.kind.help_text|safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        {% if form.kind.value == "comment" %}
+        <div class="row">
+            <div class="col-6">
+                <div class="form-floating mb-3">
+                    {{ form.minlength }}
+                    <label for="{{ form.minlength.id_for_label }}">{{form.minlength.label}} 
+                    </label>
+                    <div class="form-helptext mx-3 my-1" id="{{ form.minlength.auto_id }}_helptext">
+                        {{ form.minlength.help_text|safe }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-6">
+                <div class="form-floating mb-3">
+                    {{ form.maxlength }}
+                    <label for="{{ form.maxmark.id_for_label }}">{{form.maxlength.label}}
+                    </label>
+                    <div class="form-helptext mx-3 my-1" id="{{ form.maxlength.auto_id }}_helptext">
+                        {{ form.maxlength.help_text|safe }}
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+
+        {% if form.kind.value in "percentage mark" %}
+        <div class="row">
+            <div class="col-4">
+                <div class="form-floating mb-3">
+                    {{ form.minmark }}
+                    <label for="{{ form.minmark.id_for_label }}">{{form.minmark.label}} 
+                        {% if form.kind.value == "percentage" %}
+                        <i class="fa-solid fa-lock ms-1"></i>
+                        {% endif %}
+                    </label>
+                    <div class="form-helptext mx-3 my-1" id="{{ form.minmark.auto_id }}_helptext">
+                        {{ form.minmark.help_text|safe }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-floating mb-3">
+                    {{ form.maxmark }}
+                    <label for="{{ form.maxmark.id_for_label }}">{{form.maxmark.label}} 
+                        {% if form.kind.value == "percentage" %}
+                        <i class="fa-solid fa-lock ms-1"></i>
+                        {% endif %}
+                    </label>
+                    <div class="form-helptext mx-3 my-1" id="{{ form.maxmark.auto_id }}_helptext">
+                        {{ form.maxmark.help_text|safe }}
+                    </div>
+                </div>
+            </div>
+            <div class="col-4">
+                <div class="form-floating mb-3">
+                    {{ form.stepsize }}
+                    <label for="{{ form.stepsize.id_for_label }}">{{form.stepsize.label}}</label>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% if form.kind.value == "categorical" %}
+
+        <div class="row">
+            <div class="col-12">
+                <div class="form-floating mb-3" id="id_categories_form">
+                    {{ form.categories }}
+                    <label for="{{ form.categories.id_for_label }}">{{form.categories.label}} *</label>
+                </div> 
+            </div>
+        </div>  
+
+        <script>
+            $(document).ready(function() {
+                // Yeargroups selectsize
+                var $select = $('#id_categories');  
+                var selectized = $select.selectize({
+                    maxItems: 10, 
+                    placeholder: 'Select or create up to 10 categories...',
+                    create: true,
+                    plugins: ["remove_button"],
+                    onItemAdd: function (value) {
+                    this.focus();
+                    }
+                });
+                $select.addClass('required');
+            
+                var selectizeInstance = selectized[0].selectize;
+                selectizeInstance.refreshOptions(false);
+                selectizeInstance.$control_input.on('keypress', function(event) {
+                    if ($(this).val().length >= 30) {
+                        event.preventDefault(); 
+                    }
+                });
+            });
+        </script>
+        {% endif %}
+
+        {% include 'partials/form_error_alert.html' %}
+    </div>
+
+    <div class="modal-footer justify-content-end">
+        <div class="d-flex justify-content-center">
+            <button class="mx-1 btn btn-light"  type="button" data-bs-dismiss="modal">Cancel</button>
+            <button type="submit" class="mx-1 btn btn-primary"
+            {% if form.errors or not form.instance.pk %}disabled{% endif %}
+            >
+            {% if form.instance.pk %} 
+                Save 
+            {% else %} 
+                Add  
+            {% endif %}
+            </button>
+        </div>
+    </div>
+</form>
+
+<script>
+    $(document).ready(function() {
+        // Char counter
+        $('[maxlength]').maxlength();
+    });
+</script>

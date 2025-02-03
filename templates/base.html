@@ -1,0 +1,314 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- Bootstrap CDN -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/js/bootstrap.bundle.min.js"></script>
+
+    <!-- FontAwesome CDN -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+
+    
+    <!-- jQuery CDN -->
+    <script src="https://code.jquery.com/jquery-3.7.1.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/2.1.8/js/dataTables.min.js"></script>
+    <script src="https://cdn.datatables.net/select/2.0.4/js/dataTables.select.js"></script>
+    <script src="https://cdn.datatables.net/select/2.0.4/js/select.dataTables.js"></script>
+
+    <script src="https://cdn.datatables.net/keytable/2.12.1/js/dataTables.keyTable.js"></script>
+    <script src="https://cdn.datatables.net/keytable/2.12.1/js/keyTable.dataTables.js"></script>
+    
+    <script src="https://cdn.datatables.net/rowgroup/1.5.0/js/dataTables.rowGroup.min.js"></script>
+
+    <script src="https://cdn.datatables.net/buttons/3.2.0/js/dataTables.buttons.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.dataTables.js"></script>
+    <script src="https://cdn.datatables.net/buttons/3.2.0/js/buttons.colVis.min.js"></script>
+
+
+    <script src="https://cdn.datatables.net/rowreorder/1.5.0/js/dataTables.rowReorder.js"></script>
+    <script src="https://cdn.datatables.net/rowreorder/1.5.0/js/rowReorder.dataTables.js"></script>
+
+    <script src="https://cdn.datatables.net/fixedcolumns/5.0.4/js/fixedColumns.dataTables.js"></script>
+    <script src="https://cdn.datatables.net/fixedcolumns/5.0.4/js/dataTables.fixedColumns.js"></script>
+
+    <script src="https://cdn.datatables.net/fixedheader/4.0.1/js/dataTables.fixedHeader.js"></script>
+    <script src="https://cdn.datatables.net/fixedheader/4.0.1/js/fixedHeader.dataTables.js"></script>
+
+
+    <script src="{% static 'datatables/js/datatables.dropdown_filter.js' %}"></script>
+
+
+
+    <!-- Styles -->
+    <link href="{% static 'datatables/css/select.dataTables.css' %}" rel="stylesheet"> 
+    <link href="{% static 'datatables/css/dataTables.dataTables.css' %}" rel="stylesheet"> 
+    <link href="{% static 'datatables/css/keyTable.dataTables.css' %}" rel="stylesheet"> 
+    <link href="{% static 'datatables/css/rowGroup.dataTables.css' %}" rel="stylesheet"> 
+    <link href="{% static 'datatables/css/buttons.dataTables.css' %}" rel="stylesheet"> 
+    <link href="{% static 'datatables/css/rowReorder.dataTables.css' %}" rel="stylesheet"> 
+    <link href="{% static 'datatables/css/fixedColumns.dataTables.css' %}" rel="stylesheet"> 
+    <link href="{% static 'datatables/css/fixedHeader.dataTables.css' %}" rel="stylesheet"> 
+    
+    <link href="{% static 'css/kaiadmin.css' %}" rel="stylesheet">
+    <link href="{% static 'css/colors.css' %}" rel="stylesheet"> 
+
+    <!-- HTMX -->
+    <script src="{% static 'js/htmx/htmx.min.js' %}"></script>
+        <!--
+        <script src="https://unpkg.com/htmx.org@2.0.0" integrity="sha384-wS5l5IKJBvK6sPTKa2WZ1js3d947pvWXbPJ1OmWfEuxLgeHcEbjUUA5i9V5ZkpCw" crossorigin="anonymous"></script>
+        -->
+    
+    <!-- Selectize CDN -->
+{% comment %}     <script
+  src="https://cdnjs.cloudflare.com/ajax/libs/selectize.js/0.15.2/js/selectize.min.js"
+  integrity="sha512-IOebNkvA/HZjMM7MxL0NYeLYEalloZ8ckak+NDtOViP7oiYzG5vn6WVXyrJDiJPhl4yRdmNAG49iuLmhkUdVsQ=="
+  crossorigin="anonymous"
+  referrerpolicy="no-referrer"
+></script> {% endcomment %}
+<script src="{% static 'components/selectsize/selectsize.min.js' %}"></script>
+<link href="{% static 'components/selectsize/selectsize.css' %}" rel="stylesheet"> 
+
+<script src="{% static 'components/maxlength/maxlength.js' %}"></script>
+
+<script src="{% static 'components/yearpicker/yearpicker.js' %}"></script>
+<link href="{% static 'components/yearpicker/yearpicker.css' %}"  rel='stylesheet' />
+
+
+
+
+
+<link rel="stylesheet" type="text/css" href="{% static 'css/styles.css' %}">
+
+
+<script src="{% static 'js/forms/form_control.js' %}"></script>
+
+<!-- Google fonts CDN -->
+<link href="https://fonts.googleapis.com/css2?family=Open+Sans:wght@400;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+
+
+
+{% block extra_js %}
+{% endblock %}
+    
+</head>
+
+<body hx-headers='{"X-CSRFToken": "{{ csrf_token }}"}'>
+
+
+    <div class="sidebar" id="sidebar">
+
+        <a class="d-flex align-items-center  justify-content-center mb-2"  href="{% url 'home' %}">
+            <img src="{% static 'assets/icons/gradewing.png' %}" width="80%;">
+        </a>
+
+
+        <nav class="sidebar-nav">
+            <div class="nav-header">DATA ENTRY</div>
+            <a class="nav-link nav-group has-chevron" data-bs-toggle="collapse" href="#setup-submenu">
+                <i class="fas fa-chevron-right rotatable {% if '/setup/' in request.path %}rotate-down{% endif %}"></i>
+                <div class="mx-2"><i class="fa-solid fa-address-card"></i><span>Setup</span></div>
+            </a>
+            <div class="submenu collapse {% if '/setup/' in request.path %}show{% endif %}" id="setup-submenu">
+
+                <a class="nav-link collapse-item {% if '/setup/school/' in request.path %}active{% endif %}" 
+                    href="{% url 'school' %}">
+                    <i class="fa-solid fa-building-columns"></i> 
+                    <span>School</span>
+                </a>
+
+                <a class="nav-link collapse-item {% if '/setup/students/' in request.path %}active{% endif %}"
+                    href="{% url 'students' %}">
+                    <i class="fa-solid fa-user-graduate"></i>
+                    <span>Students</span>   
+                </a>
+                <a class="nav-link collapse-item {% if '/setup/teachers/' in request.path %}active{% endif %}"
+                    href="{% url 'teachers' %}">
+                    <i class="fa-solid fa-chalkboard-user"></i>
+                    <span>Teachers</span>
+                </a>
+                <a class="nav-link collapse-item {% if '/setup/teaching-classes/' in request.path %}active{% endif %}"
+                href="{% url 'classes' %}">
+                <i class="fa-solid fa-chalkboard"></i>
+                    <span>Classes</span>
+                </a>
+
+                <a class="nav-link collapse-item {% if '/setup/checkpoints/' in request.path %}active{% endif %}"
+                    href="{% url 'checkpoints' %}">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    <span>Checkpoints</span>
+                </a>
+            </div>
+
+            <a class="nav-link nav-group has-chevron" data-bs-toggle="collapse" href="#gradebook-qualifications-submenu">
+                <i class="fas fa-chevron-right rotatable {% if '/gradebook/' in request.path %}rotate-down{% endif %}"></i>
+                <div class="mx-2"><i class="fa-solid fa-book-bookmark"></i><span>Gradebook</span></div>
+            </a>
+            <div class="submenu collapse {% if '/gradebook/' in request.path %}show{% endif %}" id="gradebook-qualifications-submenu">
+                <a class="nav-link collapse-item {% if '/gradebook/checkpoints/' in request.path %}active{% endif %}"
+                href="{% url 'gradebook-checkpoints' %}">
+                <i class="fa-solid fa-heart-pulse"></i>
+                    <span>Checkpoints</span>
+                </a>
+                <a class="nav-link collapse-item {% if '/gradebook/examinations/' in request.path %}active{% endif %}"
+                    href="{% url 'gradebook-examinations' %}">
+                    <i class="fa-solid fa-award"></i>
+                    <span>Examinations</span>
+                </a>
+                
+            </div>
+            {% comment %} <a class="nav-link has-chevron" data-bs-toggle="collapse" href="#general-submenu">
+                <i class="fas fa-chevron-right {% if '/general/' in request.path %}rotate-down{% endif %}"></i>
+                <div class="mx-2"><i class="fa-solid fa-gear"></i><span>General</span></div>
+            </a>
+            <div class="submenu collapse {% if '/general/' in request.path %}show{% endif %}" id="general-submenu">
+                <a class="nav-link collapse-item {% if '/general/school/' in request.path %}active{% endif %}" 
+                    href="{% url 'school' %}">
+                    <i class="fa-solid fa-building-columns"></i> 
+                    <span>School</span>
+                </a>
+            </div>
+
+
+            <a class="nav-link has-chevron" data-bs-toggle="collapse" href="#registry-submenu">
+                <i class="fas fa-chevron-right {% if '/registry/' in request.path %}rotate-down{% endif %}"></i>
+                <div class="mx-2"><i class="fa-solid fa-scroll"></i><span>Registry</span></div>
+                
+            </a>
+            <div class="submenu collapse {% if '/registry/' in request.path %}show{% endif %}" id="registry-submenu">
+                <a class="nav-link collapse-item {% if '/registry/students/' in request.path %}active{% endif %}"
+                    href="{% url 'students' %}">
+                    <i class="fa-solid fa-user-graduate"></i>
+                    <span>Students</span>   
+                </a>
+                <a class="nav-link collapse-item {% if '/registry/teachers/' in request.path %}active{% endif %}"
+                    href="{% url 'teachers' %}">
+                    <i class="fa-solid fa-person-chalkboard"></i>
+                    <span>Teachers</span>
+                </a>
+                <a class="nav-link collapse-item {% if '/registry/courses/' in request.path %}active{% endif %}"
+                href="{% url 'classes' %}">
+                    <i class="fas fa-chalkboard-teacher"></i>
+                    <span>Classes</span>
+                </a>
+                <a class="nav-link collapse-item {% if '/registry/groups/' in request.path %}active{% endif %}"
+                    href="#">
+                    <i class="fa-solid fa-users-line"></i>
+                    <span>Groups</span>
+                </a>
+            </div> {% endcomment %}
+
+            
+
+            {% comment %} <a class="nav-link has-chevron" data-bs-toggle="collapse" href="#setup-gradebook-submenu">
+                <i class="fas fa-chevron-right {% if '/setup/gradebook' in request.path %}rotate-down{% endif %}"></i>
+                <div class="mx-2"><i class="fa-solid fa-book"></i><span>Gradebook</span></div>
+                
+            </a>
+            <div class="submenu collapse {% if '/setup/gradebook/' in request.path %}show{% endif %}" id="setup-gradebook-submenu">
+                <a class="nav-link collapse-item {% if '/setup/gradebook/checkpoints/' in request.path %}active{% endif %}"
+                    href="{% url 'checkpoints' %}">
+                    <i class="fa-solid fa-heart-pulse"></i>
+                    <span>Checkpoints</span>
+                </a>
+                <a class="nav-link collapse-item {% if '/registry/teachers/' in request.path %}active{% endif %}"
+                    href="#">
+                    <!--<img src="{% static 'icons/cb.svg' %}" class="icon-svg">-->
+                    <i class="fa-solid fa-masks-theater"></i>
+                    <span>Mock exams</span>
+                </a>
+            </div> {% endcomment %}
+
+
+            
+
+            <div class="nav-header">DATA ANALYSIS</div>
+
+            
+
+            {% comment %} 
+            <a class="nav-link" href="#"><i class="fas fa-chart-pie"></i> <span>Chart Boxes 1</span></a>
+            <a class="nav-link" href="#"><i class="fas fa-chart-bar"></i> <span>Chart Boxes 2</span></a>
+            <a class="nav-link" href="#"><i class="fas fa-chart-area"></i> <span>Chart Boxes 3</span></a>
+            <a class="nav-link" href="#"><i class="fas fa-user-circle"></i> <span>Profile Boxes</span></a>
+             {% endcomment %}
+            <div class="nav-header">REPOSITORY</div>
+
+            <a class="nav-link nav-header has-chevron" data-bs-toggle="collapse" href="#qualifications-submenu">
+                <i class="fas fa-chevron-right {% if '/setup/qualifications/' in request.path %}rotate-down{% endif %}"></i>
+                <div class="mx-2"><i class="fa-solid fa-award"></i><span>Qualifications</span></div>
+            </a>
+            <div class="submenu collapse {% if '/setup/qualifications/' in request.path %}show{% endif %}" id="qualifications-submenu">
+                <a class="nav-link collapse-item {% if '/qualifications/ib/' in request.path %}active{% endif %}"
+                    href="{% url 'ib-main' %}">
+                    <img src="{% static 'assets/icons/ib.svg' %}" class="icon-svg">
+                    <span>IB</span>
+                </a>
+                <a class="nav-link collapse-item {% if '/qualifications/uk-international/' in request.path %}active{% endif %}"
+                href="{% url 'uki-main' %}">
+                    <img src="{% static 'assets/icons/flag.svg' %}" class="icon-svg">
+                    <span>UK International</span>
+                </a>
+                <a class="nav-link collapse-item {% if '/qualifications/uk-national/' in request.path %}active{% endif %}"
+                href="{% url 'ukn-main' %}">
+                    <img src="{% static 'assets/icons/royal.svg' %}" class="icon-svg">
+                    <span>UK National</span>
+                </a>
+                
+                <a class="nav-link collapse-item" href="{% url 'subjects' %}">
+                    <img src="{% static 'assets/icons/falcon.svg' %}" class="icon-svg">
+                <span>ALL</span>
+                </a>         
+            </div>
+        </nav>
+    </div>
+
+    <div class="top-bar" id="topbar">
+        <div>  
+            <button class="btn btn-dark btn-transparent btn-round mx-2" id="hamburger-btn">
+                <i class="fas fa-bars"></i>
+            </button>
+           
+        </div>
+        <button id="toggle-restricted-btn" class="btn">Toggle Restricted Elements</button>
+        <span class="dropdown">
+            <button href="#" class="btn btn-dark btn-transparent dropdown-toggle"  data-bs-toggle="dropdown">
+                <i class="fa-solid fa-circle-user" style="font-size: 1.2rem;"></i>
+                <span>{{user.username}}</span>
+            </button>
+            <ul class="dropdown-menu">
+                <li>
+                    <a class="dropdown-item">{{user.username}}</a>
+                </li>
+                <li><hr class="dropdown-divider"></li>
+                <a class="dropdown-item" href="{% url 'logout' %}"> <i class="fa-solid fa-arrow-right-from-bracket"></i> Logout</a>
+            </ul>
+        </span>
+    </div>
+    
+    <div class="main-content" id="mainContent">
+
+        
+        <div class="container-fluid p-0">
+
+            <div class="messages fixed-top m-2">
+            {% include 'components/messages.html' %}
+            </div>
+
+        {% block content %}{% endblock %}
+        </div>
+        
+        {% include 'partials/error_modal.html' %}
+    </div>
+
+
+    <!-- Sidebar JS -->
+    <script src="{% static 'js/base.js' %}"></script>
+</body>
+</html>

@@ -1,0 +1,50 @@
+
+{% if not stack %}
+<div class="alert alert-danger my-0 py-2" style="display: none;" id="error-alert">
+    <div class="d-flex align-items-center">
+        <!-- Icon Column -->
+        <div class="me-3">
+            <i class="fa-solid fa-circle-exclamation fa-2x"></i>
+        </div>
+        <!-- Message and Close Button -->
+        <div class="d-flex flex-grow-1 align-items-center justify-content-between">
+            <span>
+                The form contains errors.
+            </span>
+                <div class="flex-grow-0">
+                    <button type="button" 
+                        class="btn btn-outline-danger btn-round btn-transparent ms-2" 
+                        style="width: 25px; height: 25px;"
+                        onclick="this.closest('.alert').style.display='none';">
+                        <i class="fa-solid fa-xmark"></i>
+                    </button>
+                </div>
+            </div>
+    </div>
+</div>
+
+
+{% else %}
+
+    <div class="alert alert-danger my-2 py-2" style="display: none;" id="error-alert">
+        <div class="row flex-column align-items-center">
+            <!-- Icon Row -->
+            <div class="col-12 text-center mb-1">
+                <i class="fa-solid fa-circle-exclamation fa-2x"></i>
+            </div>
+            <!-- Message Row -->
+            <div class="col-12 text-center mb-1">
+                <span>The form contains errors.</span>
+            </div>
+            <!-- Close Button Row -->
+            <div class="col-12 text-center">
+                <button type="button" 
+                    class="btn btn-outline-danger btn-round btn-transparent" 
+                    style="width: 25px; height: 25px;"
+                    onclick="this.closest('.alert').style.display='none';">                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+{% endif %}

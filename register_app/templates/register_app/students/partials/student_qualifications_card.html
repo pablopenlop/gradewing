@@ -1,0 +1,237 @@
+<div class="card">
+    <div class="card-header">
+        <div class="ubar py-0">
+            <div class="col-8 d-flex align-items-center">
+                <span class="title mx-2">Qualifications</span>
+                <h4 class="h4  my-0">|</h4>
+                <span class="mx-2 my-0">Enrolled in {{student.programmes.count}} 
+                    qualification programme{{ student.programmes.count|pluralize }}
+                </span>
+            </div>
+            <div class="col-4 text-end">
+
+            {% if student.can_add_programme %}
+                <button class="btn u-link" type="button"
+                    data-bs-toggle="modal"  
+                    data-bs-target="#form-modal"
+                    hx-get="{{ student.url_programme_form }}" 
+                    hx-target="#form-container">
+                    <i class="fa-solid fa-plus"></i> 
+                    Add qualification programme
+                </button>
+            {% endif %}
+            </div>
+        </div>
+    </div>
+    <div class="card-body mx-2">
+
+        {% if not student.programmes.count %}
+        <div class="alert alert-warning my-0 py-2">
+            <div class="d-flex align-items-center">
+                <div class="me-3">
+                    <i class="fa-solid fa-triangle-exclamation fa-2x"></i>
+                </div>
+                <div class="d-flex flex-grow-1 align-items-center justify-content-between">
+                    <span>
+                        The student should be enrolled in at least one qualification programme.
+                        <a href="#" class="alert-link ms-2"
+                        data-bs-toggle="modal"  
+                        data-bs-target="#form-modal"
+                        hx-get="{{ student.url_programme_form }}" 
+                        hx-target="#form-container">
+                        <i class="fa-solid fa-plus"></i> 
+                        Add programme
+                        </a>
+                    </span>
+                    <div class="flex-grow-0">
+                        <button type="button" 
+                            class="btn btn-outline-warning btn-round btn-transparent ms-2" 
+                            style="width: 25px; height: 25px;"
+                            onclick="this.closest('.alert').style.display='none';">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% else %}
+
+        {% for programme in student.programmes.all %}
+        <table class="table table-borderless"
+            style=" margin-bottom: 0px;">
+                <tr style="vertical-align: middle;">
+                    <td colspace="2" class="text-nowrap fs-5">{{programme}}</td>
+                    <th class="text-nowrap"></th>
+                    <td class="py-0 text-end">
+                        <button class="btn btn-round my-0 btn-light p-0 mx-2" type="button"
+                            data-bs-toggle="dropdown">
+                            <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <button class="dropdown-item" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#form-modal" 
+                                hx-get="{{ programme.url_qualification_form }}"
+                                hx-target="#form-container">
+                                <i class="fa-regular fa-add me-2"></i> Add qualification
+                            </button>
+                            <button class="dropdown-item" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#delete-modal" 
+                                hx-get="{{ programme.url_deleteform }}"
+                                hx-target="#delete-form-container">
+                                <i class="fa-regular fa-trash-can me-2"></i> 
+                                Delete programme
+                            </button>
+                        </div>  
+                    </td>
+                </tr>
+            </table>
+
+
+            {% if not programme.qualifications.count %}
+            <div class="container text-center mb-3" style="width: 90%;">
+                <div class="alert alert-info my-0 py-2">
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <i class="fa-solid fa-circle-info fa-2x"></i>
+                        </div>
+                        <div class="d-flex flex-grow-1 align-items-center justify-content-between">
+                            <span>
+                                This programme should comprise at least one qualification.
+                                <a href="#" class="alert-link ms-2"
+                                data-bs-toggle="modal"  
+                                data-bs-target="#form-modal"
+                                hx-get="{{ programme.url_qualification_form }}" 
+                                hx-target="#form-container"
+                                >
+                                <i class="fa-solid fa-plus"></i> 
+                                Add qualification
+                                </a>
+                            </span>
+                            <div class="flex-grow-0">
+                                <button type="button" 
+                                    class="btn btn-outline-info btn-round btn-transparent ms-2" 
+                                    style="width: 25px; height: 25px;"
+                                    onclick="this.closest('.alert').style.display='none';">
+                                    <i class="fa-solid fa-xmark"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% else %}
+
+
+            <table class="table table-borderless hover" id ="qualifications-table-{{ programme.id }}"
+            style="width: 90%; margin-bottom: 30px;  margin-top: 0px;">
+                <thead>
+                <tr style="vertical-align: middle;">
+                    <th class="text-nowrap">Qualification title</th>
+                    <th></th>
+                    <th class="text-nowrap">Studied in period(s)</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for sq in programme.qualifications.all %}
+                <tr style="vertical-align: middle;">
+                    <td class="">{{sq}}</td>
+                    <td>
+                        {% if sq.qualification.core %}
+    
+                        <button class="btn btn-transparent btn-round" 
+                            type="button" 
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            data-bs-title="Core qualification">
+                            <i class="fa-solid fa-c"></i>
+                        </button>
+                        {% elif sq.super_qualification %}
+                        <button class="btn btn-transparent btn-round" 
+                            type="button" 
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            data-bs-html="true"
+                            data-bs-title="<b>Subqualification</b> <br>
+                            Required by <i>{{sq.super_qualification.qualification.title}}</i>">
+                            <i class="fa-solid fa-s"></i>
+                        </button>
+                        {% endif %}
+                    </td>
+                    <td class="text-nowrap">
+                        {% if sq.is_external %}
+                        <span class="form-label">
+                            <i class="fa-solid fa-calendar-xmark me-2" style="font-size: 1.0rem"></i> 
+                            EXTERNAL/PRIOR 
+                        </span>
+
+                        {% else %}
+                            {% for enrollment in sq.enrollments.all %}
+                                <span class="badge badge-lightblue my-1 mx-1 p-2">
+                                    {{ enrollment.period }}
+                                </span>
+                            {% endfor %}
+                        {% endif %}
+                    </td>
+                    <td class="py-0 text-end">
+                        <button class="btn btn-round my-0 btn-transparent p-0 mx-2" type="button" 
+                            data-bs-toggle="dropdown">
+                                <i class="fa-solid fa-ellipsis-vertical"></i>
+                        </button>
+                        <div class="dropdown-menu">
+                            <button class="dropdown-item" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#form-modal" 
+                                hx-get="{{ sq.url_form }}"
+                                hx-target="#form-container">
+                                <i class="fa-regular fa-edit me-2"></i> Edit qualification
+                            </button>
+                            <button class="dropdown-item" 
+                                data-bs-toggle="modal" 
+                                data-bs-target="#delete-modal" 
+                                hx-get="{{ sq.url_deleteform }}"
+                                hx-target="#delete-form-container">
+                                <i class="fa-regular fa-trash-can me-2"></i> 
+                                Delete qualification
+                            </button>
+                        </div>  
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+       
+
+        <script>
+            $(document).ready(function() {
+                let table = new DataTable('#qualifications-table-{{programme.id}}', {
+                    columnDefs: [
+                        { orderable: false, targets: [1,2] },
+
+                    ],
+                    layout: {
+                        topStart: null,
+                        topEnd: null,
+                        bottomStart: null,
+                        bottomEnd: null,
+                    }, 
+                });
+            });
+        </script>
+        {% endif %}
+        {% endfor %}
+        
+        {% endif %}
+    </div>
+</div>
+
+
+<script>
+    $(document).ready(function() {
+        const tooltipTriggerList = document.querySelectorAll('[data-bs-toggle="tooltip"]');
+        const tooltipList = [...tooltipTriggerList].map(tooltipTriggerEl => new bootstrap.Tooltip(tooltipTriggerEl));
+    });
+</script>
+  

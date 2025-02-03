@@ -1,0 +1,261 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_js %}
+<!-- <script src="{% static 'js/form_control.js' %}"></script>-->
+<script src="{% static 'register_app/js/students/studentsprev.form.js' %}"></script>
+<script src="{% static 'register_app/js/students/studentsprev.form.requests.js' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+
+    <!-- STUDENT FORM HEADER -->
+    <div class="card card-title sticky-top">
+        <div class="container text-center" style="max-width: 800px;">
+    <div class="row align-items-center justify-content-between p-2" >
+        <div class="col-auto d-flex align-items-center">
+            <a class="btn btn-light btn-round me-2" 
+                    href="{% url 'students' %}"
+                    id = "header-back-button">
+            </a>
+            <h5 class="mb-0">Student Form</h5>
+        </div>
+        <div class="col-auto d-flex">
+            <button class="btn u-link restricted" id="reload-period-header"
+                hx-get="{% url 'student-period-header'%}"
+                hx-target="#period-header-container"
+                hx-include="#student-id" 
+                hx-trigger="load, click"
+                hx-swap="innerHTML">
+                    <i class="fa-solid fa-rotate-right"></i> Period header
+            </button>
+            <button class="btn u-link restricted" id="reload-qualification-header"
+                hx-get="{% url 'student-qualification-header'%}"
+                hx-target="#qualification-header-container"
+                hx-include="#student-id" 
+                hx-trigger="load, click"
+                hx-swap="innerHTML">
+                <i class="fa-solid fa-rotate-right"></i> Qual. header
+            </button>
+            <button type="submit" class="btn u-link" 
+                id="delete-student-btn"
+                data-bs-toggle="modal"  
+                data-bs-target="#delete-student-modal">
+                    <b>DELETE STUDENT</b>
+                </button>
+        </div>
+    </div>
+    </div>
+</div>
+
+    <div class="container" id="main-container" style="max-width: 800px">
+
+    <!-- STUDENT DETAILS CARD -->
+    <div class="card mb-4">
+        <div class="card-header">
+            <div class="row justify-content-end">
+                <div class="col-lg d-flex flex-column flex-lg-row justify-content-between align-items-center">
+                    <div class="d-flex align-items-center">
+                        <span class="title mx-2">Student details</span>
+                        <span class="h5 my-0">|</span>
+                        <span class="mx-2" id="details-title-descriptor">
+                            {% if student_id == 0 %}
+                            No student details added yet 
+                            {% else %}
+                            <i>Saved</i>
+                            {% endif %}
+                        </span>
+                    </div>
+                    
+                    <button id="add-details-button" type="button" class="btn u-link"
+                        data-bs-toggle="modal"  
+                        data-bs-target="#details-modal"
+                        hx-get="{% url 'get-student-form' %}" 
+                        hx-target="#student-form-container">
+                        <i class="fa-solid fa-plus"></i> 
+                        Add details 
+                    </button>
+                </div>
+            </div>
+
+            <div class="row">
+                <div class="col-3">
+                    <div class="form-floating mb-3 mt-3 restricted">
+                        <input class="form-control" id="student-id" value="{{student_id}}" name="student-id">
+                        <label for="student-id">Student ID</label>
+                    </div>
+                </div>
+                <div class="col-3">
+                    <button class="btn u-link restricted mt-3" id="reload-details"
+                        style="display: none;"
+                        hx-get="{% url 'student-details-cardset'%}"
+                        hx-target="#student-details-container"
+                        hx-include="#student-id" 
+                        hx-trigger="click"
+                        hx-swap="innerHTML">
+                        <i class="fa-solid fa-rotate-right"></i>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+        <div class="card-body">
+            <div id="student-details-container"></div>
+        </div>
+    </div>
+
+    <!-- STUDENT DETAILS FORM MODAL -->
+    <div class="modal fade" id="details-modal" data-bs-backdrop="static" data-bs-keyboard="false" 
+    tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content p-3" id="student-form-container"></div>
+        </div>
+    </div>
+
+    <!-- STUDENT PERIODS CARD  -->
+    <div class="card mb-4" id="period-cardset">
+        <div class="card-header">
+            <div id="period-header-container">
+                {% include 'register_app/students/partials/student_period_header.html' %}
+            </div>
+        </div>
+        <div class="card-body">
+            <div id="period-cardset-container"></div>
+        </div>
+    </div>
+
+
+    <!-- STUDENT QUALIFICATIONS CARD  -->
+    <div class="card mb-4" id="qualification-cardset">
+        <div class="card-header">
+            <div id="qualification-header-container">
+                {% include 'register_app/students/partials/student_qualification_header.html' %}
+            </div>
+
+        </div>
+        <div class="card-body">
+            <div id="qualification-cardset-container"></div>
+        </div>
+    </div>
+    <div class="d-flex justify-content-end my-0">
+    <a class="btn btn-primary shadow px-4 py-2"
+    href="{% url 'students' %}">
+    DONE
+    </a>
+    </div>
+
+
+
+    <!-- STUDENT PERIOD FORM MODAL -->
+    <div class="modal fade" id="period-modal" data-bs-backdrop="static" data-bs-keyboard="false" 
+        tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content p-3">
+                <div class="modal-header">
+                    <h5 class="modal-title"> Period enrollment</h5>
+                    <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+                        <i class="fa-solid fa-x"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id = "period-form-container">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUALIFICATION SUITE FORM MODAL -->
+    <div class="modal fade" id="qualification-family-modal" data-bs-backdrop="static" data-bs-keyboard="false" 
+    tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content p-3">
+                <div class="modal-header">
+                    <h5 class="modal-title">Qualification family / Programme</h5>
+                    <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+                        <i class="fa-solid fa-x"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id = "qualification-family-form-container">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUALIFICATION FORM MODAL -->
+    <div class="modal fade" id="qualification-modal" data-bs-backdrop="static" data-bs-keyboard="false" 
+    tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content p-3">
+                <div class="modal-header">
+                    <h5 class="modal-title">Qualification</h5>
+                    <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+                        <i class="fa-solid fa-x"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id = "qualification-form-container">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- QUALIFICATION PERIOD FORM MODAL -->
+    <div class="modal fade" id="qualification-period-modal" data-bs-backdrop="static" data-bs-keyboard="false" 
+    tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content p-3">
+                <div class="modal-header">
+                    <h5 class="modal-title">Assign teaching period</h5>
+                    <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+                        <i class="fa-solid fa-x"></i>
+                    </button>
+                </div>
+                <div class="modal-body" id ="qualification-period-form-container">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- STUDENT PERIOD DELETE MODAL -->
+    {% include 'register_app/students/partials/student_period_delete_modal.html' %}
+    <!-- STUDENT QUALIFICATION SUITE DELETE MODAL -->
+    {% include 'register_app/students/partials/student_qualification_family_delete_modal.html' %}
+    <!-- STUDENT QUALIFICATION DELETE MODAL -->
+    {% include 'register_app/students/partials/student_qualification_delete_modal.html' %}
+    <!-- STUDENT DELETE MODAL -->
+    {% include 'register_app/students/partials/student_delete_modal.html' %}
+
+
+
+        <div style="height:300px"></div>
+
+</div>
+
+    <!-- ACTIONS TOAST -->
+    <div class="toast-container position-fixed bottom-0 start-0 p-3">
+        <div id="actions-toast" 
+            class="toast text-bg-dark" 
+            data-bs-delay="1500" role="alert" 
+            aria-live="assertive" 
+            aria-atomic="true"
+            style="width: 200px;">
+            <div class="toast-body text-center" id="toast-body-msg">
+                Saved!
+            </div>
+        </div>
+    </div>
+
+    <div class="toast-container position-fixed bottom-50 start-50 p-3">
+        <div id="center-toast" 
+            class="toast text-bg-dark" 
+            data-bs-delay="1500" role="alert" 
+            aria-live="assertive" 
+            aria-atomic="true"
+            style="width: 200px;">
+            <div class="toast-body text-center" id="center-toast-body-msg">
+                Student Deleted!
+            </div>
+        </div>
+    </div>
+
+    
+{% endblock %}

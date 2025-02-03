@@ -1,0 +1,162 @@
+
+<div id="info-card" class = "card">
+    <div class = "card-header">
+        <div class="d-flex justify-content-between align-items-center">
+            <h5 class="me-2">{{ student.first_name }} {{ student.last_name }}</h5>
+          <span>
+            <button class="btn btn-round my-0 btn-light p-0 mx-2" type="button" 
+                name ="options-button"
+                data-bs-toggle="dropdown">
+                    <i class="fa-solid fa-ellipsis-vertical"></i>
+            </button>
+        
+            <div class="dropdown-menu">
+                <a class="dropdown-item" 
+                    href="{% url 'student-editor' student.id %}">
+                    <i class="fa-regular fa-edit me-2"></i> Edit profile
+                </a>
+                <button class="dropdown-item" 
+                    data-bs-toggle="modal" 
+                    data-bs-target="#delete-modal" 
+                    hx-get="{{ student.url_delete_form }}"
+                    hx-target="#delete-form-container"
+                    >
+                    <i class="fa-regular fa-trash-can me-2"></i> 
+                    Delete
+                </button>
+            </div>
+          </span>
+        </div>
+      </div>
+    <div class = "card-body p-2" style="overflow-y: auto;" id="info-card-body">
+      <div class="container px-1 my-0 py-0" >
+
+
+        <!-- TimeLine -->
+        <div class="row">
+          <div class="col-md-12">
+            <ul class="timeline" style="width: 188%; margin-left: -90%;">
+
+              <li class="timeline-inverted">
+                <div class="timeline-badge dark">
+                    <i class="fa-solid fa-thumbtack fa-1x"></i>
+                </div>
+                <div class="timeline-panel">
+                  <div class="timeline-heading">
+                    <p class="text-muted mb-1">
+                      <i class="fa-solid fa-user-graduate"></i> {{ student.full_name }}
+                      </p>
+                  </div>
+                  <div class="timeline-body">
+                    <div>
+                      <span>
+                          <i class="fa-solid fa-venus-mars me-2"></i> 
+                          {{ student.get_gender_display }}
+                      </span>
+                    </div>
+                    <div>
+                    {% if student.email %}
+                    <span>
+                        <i class="fa-regular fa-envelope me-2"></i> 
+                        {{ student.email }}
+                    </span>
+                    {% endif %}
+                    </div>
+                    <div>
+                      {% for tag in student.tags.all %}  
+                      <span class="badge rounded-pill badge-dark-secondary my-1">
+                          <i class="fa-solid fa-thumbtack me-1"></i>
+                          {{ tag }}
+                      </span>
+                    {% endfor %}
+                    </div>
+                                  
+                  </div>
+                </div>
+              </li>
+
+              {% for enrollment in student.enrollments.all %}
+                  <li class="timeline-inverted">
+                      <div class="timeline-badge primary">
+                          <i class="fa-solid fa-calendar-check"></i>
+                      </div>
+                      <div class="timeline-panel">
+                          <div class="timeline-heading">
+                              <h4 class="timeline-title">{{ enrollment.period }}</h4>
+                              
+                          </div>
+                          <div class="timeline-body">
+                            <p class="text-muted mb-1">
+                              <i class="fa-solid fa-people-roof fs-6 me-2"></i> {{ enrollment.yeargroup }}
+                          </p>
+                            {% for tag in enrollment.tags.all %}  
+                              <span class="badge rounded-pill badge-dark-secondary my-1 me-1">
+                                  {{ tag }}
+                              </span>
+                            {% endfor %}
+                          </div>
+                          <div class="timeline-body">
+                              {% for programme, qualifications in enrollment.get_programmes_with_qualifications.items %}
+                                  <p class="form-label mt-3">
+                                      {{ programme }} 
+                                      ({{ qualifications.count }})
+                                  </p>
+                              
+                                      {% for sq in qualifications %}
+                                          <p>
+                                            <i class="fa-solid fa-award me-1"></i> 
+                                              {{ sq }}
+                                          </p>
+                                      {% endfor %}
+                              {% endfor %}
+                          </div>
+                      </div>
+                  </li>
+              {% endfor %}
+              {% if student.external_qualifications %}
+              <li class="timeline-inverted">
+                <div class="timeline-badge secondary">
+                    <i class="fa-solid fa-calendar-xmark fa-1x"></i>
+                </div>
+                <div class="timeline-panel">
+                  <div class="timeline-heading">
+                    <h4 class="timeline-title">PRIOR / EXTERNAL</h4>
+                  </div>
+                  <div class="timeline-body">
+                    {% for programme, qualifications in student.get_programmes_with_external_qualifications.items %}
+                      <p class="form-label mt-3">
+                          {{ programme }} 
+                          ({{ qualifications.count }})
+                      </p>
+                  
+                          {% for sq in qualifications %}
+                              <p>
+                                <i class="fa-solid fa-award me-1"></i> 
+                                  {{ sq }}
+                              </p>
+                          {% endfor %}
+                    {% endfor %}
+                  </div>
+                </div>
+              </li>
+              {% endif %}
+            </ul>
+          </div>
+        </div>
+      <div>
+  </div>
+</div>
+</div>
+
+
+
+
+<script>
+    function adjustContainerHeight() {
+        const margin = 300
+        let newHeight = Math.max($(window).height()-margin, 400); 
+        $('#info-card-body').css('max-height', newHeight + 'px');
+    }
+        adjustContainerHeight();
+
+</script>

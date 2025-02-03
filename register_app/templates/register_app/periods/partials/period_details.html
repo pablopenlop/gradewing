@@ -1,0 +1,16 @@
+<div class="card text-center">
+    <div class="card-body">
+      <h5 class="card-title">{{period.name}}</h5>
+      <p class="card-text">{{period.period}}</p>
+      <p class="card-text">
+        {% for student in period.students.all %}
+            {{student.student.catalog_name}}
+        {% endfor %}
+    </p>
+  
+    </div>
+    <div class="card-footer text-body-secondary">
+      {{period.id}}
+    </div>
+  </div>
+

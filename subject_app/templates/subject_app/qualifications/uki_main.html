@@ -1,0 +1,80 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_js %}
+    <script src="{% static 'subject_app/js/qualifications/qualifications.main.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+<!-- NAV TABS BAR -->
+<div class="sticky-top mx-0">
+    <div class="col-12 mt-1">
+        <ul class="nav nav-tabs mx-0">
+            <li class="nav-item mx-3" 
+            style="visibility: hidden; width: 20px;">
+            </li>
+            <li class="nav-item mx-1">
+                <button class="nav-link active" 
+                    name="family-nav-tabs" 
+                    hx-get="{% url 'family-main-content' 'uki.ial' %}"
+                    hx-target="#family-main-content" 
+                    hx-trigger="load, click"
+                    hx-swap="innerHTML">
+                    IAS & IAL
+                </button>
+            </li>
+            <li class="nav-item mx-1">
+                <button class="nav-link" 
+                    name="family-nav-tabs" 
+                    hx-get="{% url 'family-main-content' 'uki.btec.il3' %}"
+                    hx-target="#family-main-content" 
+                    hx-swap="innerHTML">
+                    BTEC IL3
+                </button>
+            </li>
+            <li class="nav-item mx-1">
+                <button class="nav-link" 
+                    name="family-nav-tabs" 
+                    hx-get="{% url 'family-main-content' 'uki.ipq' %}"
+                    hx-target="#family-main-content" 
+                    hx-swap="innerHTML">
+                    IPQ
+                </button>
+            </li>
+            <li class="nav-item mx-1">
+                <button class="nav-link" 
+                    name="family-nav-tabs" 
+                    hx-get="{% url 'family-main-content' 'uki.igcse' %}"
+                    hx-target="#family-main-content" 
+                    hx-swap="innerHTML">
+                    IGCSEs
+                </button>
+            </li>
+            <li class="nav-item mx-1">
+                <button class="nav-link" 
+                    name="suite-nav-tabs" 
+                    hx-get="{% url 'family-main-content' 'uki.olevel' %}"
+                    hx-target="#family-main-content" 
+                    hx-swap="innerHTML">
+                    O Levels
+                </button>
+            </li>
+            <li class="nav-item mx-1">
+                <button class="nav-link" 
+                    name="family-nav-tabs" 
+                    hx-get="{% url 'family-main-content' 'uki.btec.il2' %}"
+                    hx-target="#family-main-content" 
+                    hx-swap="innerHTML">
+                    BTEC IL2
+                </button>
+            </li>
+        </ul>
+    </div>
+    </div>
+    <!-- MAIN CONTENT -->
+    <div id="family-main-content" style="visibility: hidden;">
+    </div>
+
+{% endblock %}
+

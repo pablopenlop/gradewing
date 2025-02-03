@@ -1,0 +1,272 @@
+
+{% extends "base.html" %}
+{% load static %}
+{% load custom_tags %}
+
+{% block extra_js %}
+<script src="{% static 'register_app/js/formset_handler.js' %}"></script>
+<script src="{% static 'js/form_control.js' %}"></script>
+<script type="text/javascript">
+    $(document).ready(function() {
+        var maxcount = {{ period_formset.extra|safe }};
+        var maxCountAllowed = {{ periods_allowed|safe }};
+        var relatedName = "periods";
+        var formName = "period_form";
+        handleFormset(maxcount, maxCountAllowed, relatedName, formName);
+
+        var maxcount = {{ subject_formset.extra|safe }};
+        var maxCountAllowed = {{ subjects_allowed|safe }};
+        var relatedName = "subjects";
+        var formName = "subject_form";
+        handleFormset(maxcount, maxCountAllowed, relatedName, formName);
+
+
+        $('[id^="id_subjects-"][id$="-subject"]').each(function() {
+        $(this).selectize({
+            sortField: 'text',
+        });
+        });
+        
+    });
+        
+    </script>
+</script>
+
+{% endblock %}
+
+
+{% block content %}
+<div class="container" style="max-width: 800px">
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% add_student_header %}
+
+        <div class="row">
+            <div class="col-md-3">
+                <div class="form-floating mb-3">
+                    {{ form.first_name }}
+                    {% if form.first_name.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.first_name.errors.as_text|striptags }}
+                        </div>
+                    {% endif %}
+                    <label for="{{ form.first_name.id_for_label }}">First Name</label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating mb-3">
+                    {{ form.last_name }}
+                    {% if form.last_name.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.last_name.errors.as_text|striptags }}
+                        </div>
+                    {% endif %}
+                    <label for="{{ form.last_name.id_for_label }}">Last Name</label>
+                </div>
+            </div>
+            <div class="col-md-5">
+                <div class="form-floating mb-3">
+                    {{ form.email }}
+                    {% if form.email.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.email.errors.as_text|striptags }}
+                        </div>
+                    {% endif %}
+                    <label for="{{ form.email.id_for_label }}">Email address</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-3">
+            <div class="col-md-4">
+                <div class="form-check form-check-inline mb-3">
+                    {{ form.send }}
+                    {% if form.send.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.send.errors.as_text|striptags }}
+                        </div>
+                    {% endif %}
+                    <label class="form-check-label" for="{{ form.send.id_for_label }}">Special Education Needs or Disabilitiy (SEND)</label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-check form-check-inline mb-3">
+                    {{ form.eal }}
+                    {% if form.eal.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.eal.errors.as_text|striptags }}
+                        </div>
+                    {% endif %}
+                    <label class="form-check-label" for="{{ form.eal.id_for_label }}">English as a Second Language (EAL)</label>
+                </div>
+            </div>
+            <div class="col-md-4">
+                <div class="form-floating mb-3">
+                    {{ form.gender }}
+                    {% if form.gender.errors %}
+                        <div class="invalid-feedback d-block">
+                            {{ form.gender.errors.as_text|striptags }}
+                        </div>
+                    {% endif %}
+                    <label for="{{ form.gender.id_for_label }}">Gender</label>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-end">
+            <div class="col-lg d-flex flex-column flex-lg-row justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <span class="title mx-2">Academic Periods</span><span class="title">|</span>
+                    <span class="mx-2">Enrolling in 
+                        <span id="period_form-count">1</span> of 
+                        <span>{{ periods_allowed }}</span> 
+                        eligible academic periods
+                    </span>
+                </div>
+                <a href="#" class="u-link mt-0 mt-lg-2" id="add-period_form">
+                    <i class="fa-solid fa-plus"></i> 
+                    Add new period
+                </a>
+            </div>
+        </div>
+        
+        <div class="mb-3">
+            {{ period_formset.management_form }}
+            {% if period_formset.non_form_errors %}
+            <div class="invalid-feedback d-block">
+                {{ period_formset.non_form_errors.as_text|striptags }}
+            </div>
+            {% endif %}
+            {% for period_form in period_formset %}
+                <!-- HIDDEN DELETE FIELD -->
+                <div style="display: none;">
+                    {{ period_form.DELETE }}
+                </div> 
+                    
+                <div class="row align-items-center mx-0" 
+                name="period_form-card" id="period_form-card-{{forloop.counter}}"
+                style="display: none;">
+                    <div class="col-md-4 p-1">
+                        <div class="form-floating">
+                            {{ period_form.period }}
+                            {% if period_form.period.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ period_form.period.errors.as_text|striptags }}
+                                </div>
+                            {% endif %}
+                            <label for="{{ period_form.period.id_for_label }}">
+                                Academic Period
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-3 p-1">
+                        <div class="form-floating">
+                            {{ period_form.yeargroup }}
+                            {% if period_form.yeargroup.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ period_form.yeargroup.errors.as_text|striptags }}
+                                </div>
+                            {% endif %}
+                            <label for="{{ period_form.yeargroup.id_for_label }}">Year Group</label>
+                        </div>
+                    </div>
+                    <div class="col-md-4 p-1">
+                        <div class="form-floating">
+                            {{ period_form.programme }}
+                            {% if period_form.programme.errors %}
+                                <div class="invalid-feedback d-block">
+                                    {{ period_form.programme.errors.as_text|striptags }}
+                                </div>
+                            {% endif %}
+                            <label for="{{ period_form.programme.id_for_label }}">Educational Programme</label>
+                        </div>
+                    </div>
+                    <div class="col-md-1">
+                        <button type="button" class="btn btn-light btn-round"
+                        name="delete-period_form" 
+                        id="delete-period_form-{{forloop.counter}}">
+                            <i class="fa-solid fa-trash"></i>
+                        </button>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+
+
+
+        <!-- SUBJECT FORMSET -->
+        <div class="row justify-content-end">
+            <div class="col-lg d-flex flex-column flex-lg-row justify-content-between align-items-center">
+                <div class="d-flex align-items-center">
+                    <span class="title mx-2">Subject qualifications</span><span class="title">|</span>
+                    <span class="mx-2">Enrolling in 
+                        <span id="subject_form-count">1</span> of 
+                        <span>{{ subjects_allowed }}</span> 
+                        eligible academic qualifications
+                    </span>
+                </div>
+                <a href="#" class="u-link mt-0 mt-lg-2" id="add-subject_form">
+                    <i class="fa-solid fa-plus"></i> 
+                    Add new qualification
+                </a>
+            </div>
+        </div>
+
+        <div class="mb-3">
+            {{ subject_formset.management_form }}
+            {% if subject_formset.non_form_errors %}
+                <div class="invalid-feedback d-block">
+                    {{ subject_formset.non_form_errors.as_text|striptags }}
+                </div>
+            {% endif %}
+        </div>
+        {% for subject_form in subject_formset %}
+            <!-- HIDDEN DELETE FIELD -->
+            <div style="display: none;" class="form-check">
+                {{ subject_form.DELETE }}
+            </div> 
+                        
+            <div class="row align-items-center mx-0" 
+                name="subject_form-card" id="subject_form-card-{{forloop.counter}}"
+                style="display: none;">
+                <div class="col-md-7 p-1">
+                    <div>
+                        {{ subject_form.subject }}
+                        {% if subject_form.subject.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ subject_form.subject.errors.as_text|striptags }}
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+
+                <div class="col-md-4">
+                    <div class="form-check form-check-inline  mx-3">
+                        {{ subject_form.external }}
+                        {% if subject_form.external.errors %}
+                            <div class="invalid-feedback d-block">
+                                {{ subject_form.external.errors.as_text|striptags }}
+                            </div>
+                        {% endif %}
+                        <label for="{{ subject_form.external.id_for_label }}">External or prior qualification</label>
+                    </div>
+                </div>
+                
+                
+                <div class="col-md-1">
+                    <button type="button" class="btn btn-light btn-round"
+                    name="delete-subject_form" 
+                    id="delete-subject_form-{{forloop.counter}}">
+                        <i class="fa-solid fa-trash"></i>
+                    </button>
+                </div>
+            </div>
+        {% endfor %}
+    </form>
+</div>
+
+
+
+{% endblock %}

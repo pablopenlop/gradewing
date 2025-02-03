@@ -1,0 +1,156 @@
+
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_js %}
+<script src="{% static 'register_app/js/set_required_select.js' %}"></script>
+<script src="{% static 'register_app/js/students_handler_functions.js' %}"></script>
+<script src="{% static 'register_app/js/students_table_handler.js' %}"></script>
+<script src="{% static 'js/form_control.js' %}"></script>
+<script src="{% static 'register_app/js/students_ajax_requests.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+<!-- 
+<div class="row">
+    <div class="col-12 mb-1">
+        <h6>Students</h6>
+    </div>
+</div>
+<nav aria-label="breadcrumb">
+    <ol class="breadcrumb">
+        <li class="breadcrumb-item"><a href="#">Registry</a></li>
+        <li class="breadcrumb-item active" aria-current="page">Students</li>
+    </ol>
+</nav>
+-->
+<!-- MENU BAR -->
+<form method="GET" class="no-validation">
+<div class="row ubar sticky-top mb-3" id ="menu-bar">
+    
+        <div class="col-8">
+            <span class="title mx-2">Students</span><span class="title">|</span>
+            <span class="mx-2">Showing active students in <b>{{ this_period.name }}</b></span>
+                
+            <span class="dropdown">
+                <button href="#" class="btn u-link dropdown-toggle"  data-bs-toggle="dropdown">View ...</button>
+                <ul class="dropdown-menu">
+                    <li><h6 class="dropdown-header">Academic period</h6></li>
+                    {% for period in periods %}
+                    <li>
+                        <button class="dropdown-item {% if period.id == this_period.id %} disabled {% endif %}" 
+                            value = "{{period.id}}" 
+                            name = "view-period" 
+                            type="submit">
+                        
+                            {% if period.current %} 
+                                <b> {{ period.name }}  </b> 
+                            {% else %} 
+                                {{ period.name }}
+                            {% endif %}
+                        </button>
+                    </li>
+                    {% if period.current %}  {% endif %}
+                    {% endfor %}
+                    <li><hr class="dropdown-divider"></li>
+                    <li>
+                        <button class="dropdown-item " 
+                            value = "" 
+                            name = "view-period" 
+                            type="submit"> All students
+                        </button>
+                    </li>
+                    <li>
+                        <button class="dropdown-item " 
+                            value = "" 
+                            name = "view-period" 
+                            type="submit"> Never active
+                        </button>
+                    </li>
+                </ul>
+            </span>
+            
+        </div>
+        <div class="col-4 text-end">
+            <a href="{% url 'student-form' 0 %}" class="btn u-link">
+                <i class="fa-solid fa-plus"></i>
+                Add new student
+            </a>
+        </div>
+
+</div>
+</form>
+
+
+<!-- OPTIONS BAR -->
+<div class="row ubar ubar-options mb-3 sticky-top" id ="options-bar">
+    <div class="col-md-12">
+            <button class="btn btn-close" id="cancel-selection" style="padding: 0px; margins: 0px; "></button>
+        <span class="fw-bold mx-3">
+            <span id="row-count"></span>
+            <span class="fw-bold" name="row-label"></span> selected
+        </span>
+    
+        <a id="deleteSelected" class="btn u-link mx-3"
+        href="#"
+        data-bs-toggle="modal" data-bs-target="#add-qualification-modal"
+        >
+        Enroll selected students to a qualification
+        
+        </a>
+
+        <span class="dropdown">
+            <a href="#" class="btn u-link dropdown-toggle"  data-bs-toggle="dropdown">More options</a>
+            <ul class="dropdown-menu">
+                <li>
+                    <button class="dropdown-item" 
+                    value = "{{period.id}}" type="submit">Enroll selected students to an academic period
+                    </button>
+                </li>
+                <li>
+                    <button class="dropdown-item" 
+                    value = "{{period.id}}" type="submit">Remove selected students from this academic period
+                    </button>
+                </li>
+                <li>
+                    <button class="dropdown-item" 
+                    value = "{{period.id}}" data-bs-toggle="modal" data-bs-target="#delete-students-modal">Delete selected students
+                    </button>
+                </li>
+            </ul>
+        </span>
+    </div>
+</div>
+
+<div class="container-fluid" >
+    <div class="row gy-4">
+        <div class="col-xl-7" style="max-height: 800px; overflow-y: auto;">
+            <!-- STUDENT TABLE -->
+            {% include 'register_app/students/partials/students_table.html' %}
+        </div>
+        <div class="col-xl-5">
+            <!-- STUDENT DETAILS -->
+            <div id ="details-container" data-student_id="0" class = "card card-body" style="height: 600px; overflow-y: auto;">
+            </div>
+        </div>
+    </div>
+</div>
+
+
+<!-- DELETE STUDENT MODAL -->
+{% include 'register_app/partials/delete_student_modal.html' %}
+
+
+<!-- ADD QUALIFICATION MODAL -->
+{% include 'register_app/partials/add_qualification_modal.html' %}
+
+{% endblock %}
+
+
+
+
+<!-- SELECTION LIST 
+<div id ="selection-list-container" class="card card-body mb-3" style="display: none; height: 100px; overflow-y: auto;">
+    <ul class = "no-bullets" name="selection-list"></ul>
+</div>
+-->

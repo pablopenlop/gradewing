@@ -1,0 +1,109 @@
+<!-- PERIOD CARDS -->
+    {% for period in periods %}
+        <div class="card card-period mb-2 {% if period.id == active_period_id %} active {% endif %}" 
+            name="period-card" id= "period-card-{{ period.id }}"
+            data-period_id = {{ period.id }}
+                hx-post="{% url 'period-details'  period.id  %}"
+                {% if period.id == active_period_id %}
+                hx-trigger="load, click"
+                {% endif %}
+                hx-target="#details-container"
+                hx-swap="innerHTML">
+            <div class="card-body-flex p-2">
+                <div class="container">
+                    <div class="row justify-content-between gy-2">
+                        <div class="col-xxl-6">
+                            <h5 class="card-title">{{ period.name}}</h5>
+                            <p class="card-text">{{ period.period }}</p>
+                            <p class="card-text">{{ period.id }} {{ period.school }}</p>
+                        </div>
+                
+                        <div class="col-xxl-6 d-flex align-items-center justify-content-start justify-content-xxl-end">
+                            <button class="btn u-link {% if period.current %}  disabled active  {% endif %}"
+                                hx-post="{% url 'set-current-period'  period.id  %}"
+                                hx-target="#periods-container"
+                                hx-swap="innerHTML">
+                                    {% if period.current %}  <b> CURRENT </b>{% else %} Set as Current {% endif %}
+                            </button>
+
+                            <div class="dropdown mx-3">
+                                <button class="btn btn-ellipsis btn-light" type="button" name ="options-button"
+                                id="options_{{ period.id }}" data-bs-toggle="dropdown">
+                                    <i class="fas fa-ellipsis-v"></i>
+                                </button>
+                                <div class="dropdown-menu" aria-labelledby="options_{{ period.id }}">
+                                    <button class="dropdown-item" 
+                                        data-bs-toggle="modal"  
+                                        data-bs-target="#period-modal"
+                                        hx-get="{% url 'period-form' %}" 
+                                        hx-include="#period-id-{{period.id}}"
+                                        hx-target="#period-form-container">
+                                        <i class="fas fa-edit"></i> Edit
+                                    </button>
+                                    {% if not period.current %}
+                                    <button class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#deletePeriodModal" 
+                                    name ="period-delete" data-period_id ="{{ period.id }}">
+                                    <i class="far fa-trash-alt"></i> Delete
+                                    </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <input type="hidden" id="period-id-{{period.id}}" value="{{period.id}}" name="period-id">
+                </div>
+
+                <div class="mx-3">
+                    <span 
+                        name="period-card-chevron" 
+                        {% if not period.id == active_period_id %}
+                        style="visibility: hidden;"
+                        {% endif %}
+                        id="period-card-chevron-{{period.id}}">
+                    <i class="fa-solid fa-chevron-right"></i>
+                </span>
+                </div>
+
+            </div>
+            
+        </div>
+   
+
+       
+    {% endfor %}
+
+{% comment %} 
+    {% for period in periods %}
+    <div class="card mb-2">
+        <div class="card-body">
+            <div >
+                <h5 class="card-title">{{ period.name}} </h5>
+                <p class="card-text">{{ period.period }}</p>
+            </div>
+            <div class="d-flex align-items-center">
+                <div class="btn u-link {% if period.current %}  disabled active  {% endif %}"
+                    hx-post="{% url 'set-current-period'  period.id  %}"
+                    hx-target="#periods-container"
+                    hx-swap="innerHTML"
+                    
+                    >
+                        {% if period.current %}  <b> CURRENT </b>{% else %} Set as Current {% endif %}
+                </div>
+                <div class="dropdown p-3">
+                    <button class="btn btn-ellipsis btn-light" type="button" name ="options-button"
+                    id="options_{{ period.id }}" data-bs-toggle="dropdown">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="options_{{ period.id }}">
+                        <a class="dropdown-item" href="#"><i class="fas fa-edit"></i> Edit</a>
+                        <button class="dropdown-item"  data-bs-toggle="modal" data-bs-target="#deletePeriodModal" 
+                        name ="period-delete" data-id ="{{ period.id }}">
+                        <i class="far fa-trash-alt"></i> Delete
+                        </button>
+                    </div>
+                </div>
+                <i class="fa-solid fa-chevron-right"></i>
+            </div>
+        </div>
+    </div>
+{% endfor %} {% endcomment %}

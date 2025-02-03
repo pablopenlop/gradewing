@@ -1,0 +1,13 @@
+/* https://cdn.datatables.net/fixedheader/4.0.1/css/fixedHeader.dataTables.css */
+table.fixedHeader-floating,
+table.fixedHeader-locked {
+  position: relative !important;
+  background-color: var(--dt-html-background);
+  background-color: var(--dt-html-background);
+}
+
+@media print {
+  table.fixedHeader-floating {
+    display: none;
+  }
+}

@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block extra_js %}
+    <script src="{% static 'register_app/js/teachers/teachers.form.requests.js' %}"></script>
+    <script src="{% static 'datatables/js/datatables.dropdown_filter.js' %}"></script>
+{% endblock %}
+
+{% block content %}
+
+    <!-- HEADER BAR -->
+    <div class="card card-title sticky-top" id ="teachers-headerbar"
+        hx-get="{% url 'teachers-headerbar'%}" 
+        hx-trigger="load, refresh">
+    </div>
+
+    <!-- MAIN CONTENT -->
+    <div class="container-fluid" >
+        <div class="row mt-3 mx-1">
+            <div class="col-12">
+                <!-- TEACHERS TABLE -->
+                <div class="card"  id="teachers-table-card">
+                    <div class="card-body py-1" id="teachers-table-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- TEACHER FORM MODAL -->
+    <div class="modal fade" id="teacher-form-modal" data-bs-backdrop="static" data-bs-keyboard="false" 
+    tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content p-3" id ="teacher-form-container">
+            </div>
+        </div>
+    </div>
+
+    <!-- TEACHER DELETE MODAL -->
+    {% include 'register_app/teachers/partials/teacher_delete_modal.html' %}
+
+{% endblock %}

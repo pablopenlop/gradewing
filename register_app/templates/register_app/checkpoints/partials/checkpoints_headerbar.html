@@ -1,0 +1,33 @@
+<!-- SETUP CHECKPOINTS HEADER BAR -->
+<div class="ubar px-3"
+    hx-get="{% url 'checkpoints-table' %}" 
+    hx-target="#checkpoints-table-container" 
+    hx-trigger="load"
+    hx-swap="innerHTML">
+    <div class="col-9 px-4 py-2 d-flex align-items-center">
+        <span class="title mx-2 my-0">Checkpoints</span>
+        <h4 class="my-0">|</h4>
+        <div class="d-flex align-items-center">
+            <span class="ms-2"style="white-space: nowrap;">
+                Showing checkpoints in academic period:
+            </span>
+            <select id="period-select" class="form-select ms-2">
+                <option value="" selected>All</option>
+                {% for period in periods %}
+                    <option value="{{ period }}">{{ period }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+    <div class="col-3 text-end">
+        <button type="button" class="btn u-link"
+            data-bs-toggle="modal"  
+            data-bs-target="#form-modal"
+            hx-get="{% url 'checkpoint-preform-1'%}" 
+            hx-target="#form-container" 
+            hx-swap="innerHTML">
+            <i class="fa-solid fa-plus"></i>
+            Add checkpoint
+        </button>
+    </div>
+</div>

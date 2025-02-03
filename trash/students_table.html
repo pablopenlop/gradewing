@@ -1,0 +1,66 @@
+<!-- STUDENTS TABLE -->
+
+<table id="table-element" style="width:100%" class="nowrap hover compact order-column">
+    <thead>
+        <tr>
+            <th></th>
+            <th>Name</th>
+            <th>Year Group</th>
+            <th>Programme</th>
+            <th>ID</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for sp in studentperiods %}
+        <tr  name="row-element" id="row-element-{{ sp.student.id }}" data-student_id="{{ sp.student.id }}" data-studentperiod_id="{{ sp.id }}">
+            <td id="row-select-{{ sp.student.id }}" name="row-select">
+            </td>
+           
+            <td class="hoverable" name="row-details" id="row-details-{{ sp.student.id }}"
+            hx-get="{% url 'student-details' sp.student.id %}"
+            data-student_id="{{ sp.student.id }}" 
+            hx-swap="innerHTML" hx-target="#details-container"
+            >
+                <span class="mx-1">{{ sp.student.catalog_name }}</span>
+                <span data-status="active" style="display: none;">{{ sp.student.gender }}</span>
+                {% if sp.student.gender == 'Male' %} ♂ {% else %} ♀ {% endif %}
+                {% if sp.student.send %}
+                    <span data-status="active" style="display: none;">SEND</span>
+                    <i class="fa-solid fa-hand-holding-hand"></i>
+                {% else %}
+                    <span data-status="active" style="display: none;">X</span>
+                {% endif %}
+
+            </td>
+            <td>{{ sp.get_yeargroup_display}}</td>
+            <td>{{ sp.get_programme_display}}</td>
+    
+            <td>{{ sp.student.id }}</td>
+    
+            <td>
+                <input type="hidden" id="student-id-{{student.id}}" value="{{student.id}}" name="student-id">
+                <div class="dropdown">
+                    <button class="btn btn-ellipsis btn-light" type="button" name ="row-options"
+                    id="row-options-{{ sp.student.id }}" data-bs-toggle="dropdown">
+                        <i class="fas fa-ellipsis-v"></i>
+                    </button>
+                    <div class="dropdown-menu" aria-labelledby="options_{{ sp.student.id }}">
+                    <a class="dropdown-item"
+                            href="{% url 'student-form' sp.student.id %}">
+                            <i class="fas fa-edit"></i> Edit student
+                    </a>
+                        <button class="dropdown-item delete" name ="row-options-delete-student"
+                        data-bs-toggle="modal" data-bs-target="#delete-students-modal" 
+                         data-student_id ="{{ sp.student.id }}">
+                         <i class="fa-regular fa-trash-can"></i> Delete student
+                        </button>
+                    </div>
+                </div>
+        
+                
+            </td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
