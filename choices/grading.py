@@ -11,25 +11,25 @@ class MarkType(models.TextChoices):
     POINTS = 'points', 'Points'
 
 
-class GradingScale(ComplexChoices):
+class Gradeset(ComplexChoices):
     class AL(models.TextChoices):
-        SINGLE_ASE = 'ol-A*-E',  'A* A B C D E (U)'
+        SINGLE_ASE = 'ol-A*-E',  'A* A B C D E U'
         SINGLE_AE = 'ol-A-E',  'A B C D E (U)'
     class GCSE_9(models.TextChoices):
-        SINGLE_91 = 'gcse-9-1', '9 8 7 6 5 4 3 2 1 (U)'
+        SINGLE_91 = 'gcse-9-1', '9 8 7 6 5 4 3 2 1 U'
         SINGLE_93 = 'gcse-9-3', '9 8 7 6 5 4 3 (U)'
         SINGLE_94 = 'gcse-9-4', '9 8 7 6 5 4 (U)'
         SINGLE_51 = 'gcse-5-1', '5 4 3 2 1 (U)'
         SINGLE_41 = 'gcse-4-1', '4 3 2 1 (U)'
-        DOUBLE_91 = 'gcse-99-11','9-9 9-8 8-8 8-7 7-7 7-6 6-6 6-5 5-5 5-4 4-4 4-3 3-3 3-2 2-2 2-1 1-1 (U)'
-        DOUBLE_51 = 'gcse-55-11','5-5 5-4 ...  1-1 (U)'
-        DOUBLE_93 = 'gcse-99-33','5-5 5-4 ... 1-1 (U)'
-        DOUBLE_943 = 'gcse-99-43','9-9 9-8 ... 4-3 (U)'
-        DOUBLE_PAIRED_91 = 'gcse-9p-1p', '9-9 8-8 ... 1-1 (U)'
-        DOUBLE_PAIRED_51 = 'gcse-5p-1p', '5-5 4-4 ... 1-1 (U)'
-        DOUBLE_PAIRED_41 = 'gcse-4p-1p', '4-4 3-3 ... 1-1 (U)'
-        DOUBLE_PAIRED_93 = 'gcse-9p-3p', '9-9 8-8 ... 3-3 (U)'
-        DOUBLE_PAIRED_94 = 'gcse-9p-4p', '9-9 8-8 ... 4-4 (U)'
+        DOUBLE_91 = 'gcse-99-11','9-9 9-8 8-8 8-7 7-7 7-6 6-6 6-5 5-5 5-4 4-4 4-3 3-3 3-2 2-2 2-1 1-1 U'
+        DOUBLE_51 = 'gcse-55-11','5-5 5-4 ...  1-1 U'
+        DOUBLE_93 = 'gcse-99-33','5-5 5-4 ... 1-1 U'
+        DOUBLE_943 = 'gcse-99-43','9-9 9-8 ... 4-3 U'
+        DOUBLE_PAIRED_91 = 'gcse-9p-1p', '9-9 8-8 ... 1-1 U'
+        DOUBLE_PAIRED_51 = 'gcse-5p-1p', '5-5 4-4 ... 1-1 U'
+        DOUBLE_PAIRED_41 = 'gcse-4p-1p', '4-4 3-3 ... 1-1 U'
+        DOUBLE_PAIRED_93 = 'gcse-9p-3p', '9-9 8-8 ... 3-3 U'
+        DOUBLE_PAIRED_94 = 'gcse-9p-4p', '9-9 8-8 ... 4-4 U'
     class GCSE_A(models.TextChoices):
         SINGLE_ASG = 'gcse-A*-G', 'A* A B C D E F G (U)'
         SINGLE_AG = 'gcse-A-G', 'A B C D E F G (U)'
@@ -53,12 +53,16 @@ class GradingScale(ComplexChoices):
         SINGLE_2D1 = 'vtq2.L2D-L1', 'L2-D L2-M L2-P L1 (U)'
         SINGLE_2DS1 = 'vtq2.L2D*-L1', 'L2-D* L2-D L2-M L2-P L1 (U)'
 
-
-    @staticmethod
-    def grade_tuples(grade_choice) -> list[tuple[str, str]]:
+    @classmethod
+    def grade_tuples(cls, grade_choice) -> list[tuple[str, str]]:
+        if not isinstance(grade_choice, models.TextChoices):
+            grade_choice= cls.choices_from_values(grade_choice)[0]
+            
         label = grade_choice.label
-        if grade_choice == GradingScale.NONE.NAP:
+        if grade_choice == Gradeset.NONE.NAP:
             return [(label, label)]
+        
+        
         grade_list = label.split()
         grade_tuples = [(grade, grade) for grade in grade_list]
         

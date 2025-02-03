@@ -37,6 +37,11 @@ urlpatterns = [
         checkpoint_views.checkpoint_space_data, 
         name='gradebook-checkpoint-space-data'
     ),
+    path(
+        'checkpoints/<int:checkpoint_entry_id>/form/',
+        checkpoint_views.checkpoint_entry_form, 
+        name='gradebook-checkpoint-entry-form'
+    ),
    
     
     
@@ -102,10 +107,11 @@ urlpatterns = [
         examination_views.linear_qualification_exam_result_form, 
         name='linear-qualification-exam-result-form'
     ),
-     path(
+    path(
         'examinations/linear-qualification-exam-result/save/', 
         examination_views.save_linear_qualification_exam_result, 
         name='save-linear-qualification-exam-result'
     ),
+    
 
 ]

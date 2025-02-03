@@ -10,7 +10,8 @@ from gradebook_app.models import CheckpointEntry
 from subject_app.models import Component
 from django.db.models import Prefetch
 from choices.checkpoints import CheckpointScope
-
+from gradebook_app.forms import GradeEntryForm
+from choices.grading import Gradeset
 @login_required
 def checkpoints(request):
     context = {'url_headerbar': reverse('gradebook-checkpoints-headerbar')}
@@ -115,10 +116,22 @@ def checkpoint_space_data(request, checkpoint_id):
                 entry_data[entry_key] = {
                     'id': entry.id, 
                     'value': "dummy value",
-                    'url_form': '/dummy-url/'}
+                    'url_form': reverse('gradebook-checkpoint-entry-form', args=[entry.id])}
             
             data.append(entry_data)
 
     return JsonResponse({"data": data})
 
 
+@login_required
+def checkpoint_entry_form(request, checkpoint_entry_id):
+    entry = CheckpointEntry.objects.get(id=checkpoint_entry_id)
+    form = GradeEntryForm(
+        instance=entry, #gradeset=grading
+    )
+    return render(
+        request, 
+        'gradebook_app/checkpoints/partials/checkpoint_grade_entry_form.html',
+        {'form': form}
+    )
+    

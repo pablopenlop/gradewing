@@ -13,6 +13,7 @@ class ComplexChoices(ABC):
 
     @classmethod
     def choices(cls):
+        """ Returns a list of Enums (models.TextChoices)"""
         def extract_choices(inner_class):
             choices_list = []
             for name, obj in vars(inner_class).items():
@@ -59,6 +60,7 @@ class ComplexChoices(ABC):
 
     @classmethod
     def choices_from_values(cls, codes: Union[str, list[str]]) -> list:
+        """ Returns a list of Enums (models.TextChoices)"""
         result = []
 
         # Get all subclasses of TextChoices, including statically defined ones

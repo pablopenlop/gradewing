@@ -1,6 +1,6 @@
 from django import forms
-from gradebook_app.models import QualificationExamResult, ComponentExamResult
-from choices import GS
+from gradebook_app.models import QualificationExamResult, ComponentExamResult, CheckpointEntry
+from choices.grading import Gradeset
 from django.core.validators import MinValueValidator, MaxValueValidator
 class QualificationExamResultForm(forms.ModelForm):
     id = forms.IntegerField(
@@ -64,8 +64,8 @@ class QualificationExamResultForm(forms.ModelForm):
 
         if qualification:
             self.fields['series'].choices = qualification.get_form_series()
-            grading = GS.choices_from_values(qualification.grading)[0]
-            self.fields['grade'].choices = GS.grade_tuples(grading)
+            grading = Gradeset.choices_from_values(qualification.grading)[0]
+            self.fields['grade'].choices = Gradeset.grade_tuples(grading)
             self.fields['mark'].widget.attrs.update({'max': qualification.mark})
             self.fields['mark'].widget.attrs.update({'min': 0})
             #self.fields['mark_adjusted'].widget.attrs.update({'max': qualification.mark_adjusted})
@@ -153,11 +153,57 @@ class ComponentExamResultForm(forms.ModelForm):
             
             self.fields['series'].choices = component.get_form_series()
             print("aaa, ", component.grading)
-            grading = GS.choices_from_values(component.grading)
+            grading = Gradeset.choices_from_values(component.grading)
             print(grading)
-            grading = GS.choices_from_values(component.grading)[0]
+            grading = Gradeset.choices_from_values(component.grading)[0]
             
-            self.fields['grade'].choices = GS.grade_tuples(grading)
+            self.fields['grade'].choices = Gradeset.grade_tuples(grading)
             self.fields['mark'].widget.attrs.update({'max': component.mark})
             self.fields['mark'].widget.attrs.update({'min': 0})
             self.fields['mark_adjusted'].widget.attrs.update({'max': component.mark_adjusted})
+            
+            
+class CheckpointEntryForm(forms.ModelForm):
+    id = forms.IntegerField(
+         widget=forms.NumberInput(attrs={
+            'class': 'form-control',
+            'autocomplete': 'off',
+            'readonly': 'readonly',
+        }), 
+        required=True
+    )
+
+
+    class Meta:
+        model = CheckpointEntry
+        fields = ['id']
+        
+class GradeEntryForm(CheckpointEntryForm):
+    grade = forms.ChoiceField(
+        choices=[], 
+        widget=forms.Select(attrs={
+        'class': 'form-select',
+        }),
+        required=True,
+    )
+   
+    class Meta(CheckpointEntryForm.Meta):
+        fields = CheckpointEntryForm.Meta.fields + ['grade'] 
+        
+    def __init__(self, *args, component=None, **kwargs):
+        #gradeset = kwargs.pop('gradeset', None)
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            gradeset = self.instance.class_enrollment.enrollment_qualification.student_qualification.qualification.grading
+            self.fields['grade'].label = self.instance.checkpoint_field.name
+            self.fields['grade'].choices=Gradeset.grade_tuples(gradeset)
+    
+
+
+class MarkEntryForm(CheckpointEntryForm):
+    class Meta(CheckpointEntryForm.Meta):
+        fields = CheckpointEntryForm.Meta.fields + ['mark']  
+        
+class CategoryEntryForm(CheckpointEntryForm):
+    class Meta(CheckpointEntryForm.Meta):
+        fields = CheckpointEntryForm.Meta.fields + ['category']  

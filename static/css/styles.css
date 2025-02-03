@@ -491,6 +491,11 @@ input, select {
     --bs-primary-disabled-color: rgb(90, 92, 95);
 }
 
+.form-floating > label {
+    font-size: 0.9rem; /* Adjust label font size */
+}
+
+
 /* Ensure Bootstrap primary buttons use the overridden variables */
 .btn-primary {
     background-color: var(--bs-primary) !important;

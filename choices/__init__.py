@@ -1,7 +1,7 @@
 from .qualification_family import QualificationFamily as QF
 from .qualification_tree import QualificationTree as QT
 from .qualification_kind import QualificationKind as QK
-from .grading import GradingScale as GS
+from .grading import Gradeset as GS
 from .grading import MarkType as MT
 from .qualification_tree import Board
 from .qualification_fields import Tier, Month
