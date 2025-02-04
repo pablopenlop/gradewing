@@ -14,7 +14,8 @@ $(document).on('click', '#hamburger-btn', function () {
     setTimeout(function () {
         $('table.dataTable').each(function () {
             if ($.fn.DataTable.isDataTable(this)) {
-                $(this).DataTable().draw();
+                //$(this).DataTable().draw(false);
+                $(this).DataTable().columns.adjust();
             }
         });
     }, 300);

@@ -9,6 +9,7 @@ from choices import Ser
 from django.db.models import UniqueConstraint
 from django.core.exceptions import ValidationError
 from choices.qualification_states import ExamResultState
+from choices.checkpoints import CheckpointFieldKind
 
 class QualificationExamResult(models.Model):
     id = models.AutoField(primary_key=True)
@@ -232,4 +233,16 @@ class CheckpointEntry(models.Model):
         null=True,
     )
     
+    def value(self):
+        match self.checkpoint_field.kind:
+            case CheckpointFieldKind.GRADE:
+                return self.grade
+            case CheckpointFieldKind.MARK:
+                return self.mark
+            case CheckpointFieldKind.PERCENTAGE:
+                return self.mark
+            case CheckpointFieldKind.COMMENT:
+                return self.comment
+            case CheckpointFieldKind.CATEGORICAL:
+                return self.category
         

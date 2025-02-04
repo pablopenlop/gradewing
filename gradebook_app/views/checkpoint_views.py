@@ -3,15 +3,13 @@ from django.http import JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.http import require_POST
 from django.urls import reverse
-from register_app.models import Checkpoint, Enrollment
-from register_app.models import StudentQualification, TeachingClass
-from gradebook_app.forms import QualificationExamResultForm, ComponentExamResultForm
+from register_app.models import Checkpoint
 from gradebook_app.models import CheckpointEntry
-from subject_app.models import Component
 from django.db.models import Prefetch
-from choices.checkpoints import CheckpointScope
-from gradebook_app.forms import GradeEntryForm
+from choices.checkpoints import CheckpointFieldKind
+from gradebook_app.forms import GradeEntryForm, CategoricalEntryForm
 from choices.grading import Gradeset
+
 @login_required
 def checkpoints(request):
     context = {'url_headerbar': reverse('gradebook-checkpoints-headerbar')}
@@ -108,14 +106,11 @@ def checkpoint_space_data(request, checkpoint_id):
             )
 
             # Dynamically add each entry's value to the dictionary.
-            # Here, we assume that each entry has a unique field name (or similar attribute)
-            # that you want to use as the key.
             for entry in entries:
-                # Use the checkpoint field's name as the key (adjust as needed)
                 entry_key = entry.checkpoint_field.name  
                 entry_data[entry_key] = {
                     'id': entry.id, 
-                    'value': "dummy value",
+                    'value': entry.value(),
                     'url_form': reverse('gradebook-checkpoint-entry-form', args=[entry.id])}
             
             data.append(entry_data)
@@ -126,12 +121,36 @@ def checkpoint_space_data(request, checkpoint_id):
 @login_required
 def checkpoint_entry_form(request, checkpoint_entry_id):
     entry = CheckpointEntry.objects.get(id=checkpoint_entry_id)
-    form = GradeEntryForm(
-        instance=entry, #gradeset=grading
-    )
+    
+    match entry.checkpoint_field.kind:
+        case CheckpointFieldKind.GRADE:
+            form = GradeEntryForm(instance=entry)
+            template = "checkpoint_grade_entry_form.html"
+        case CheckpointFieldKind.CATEGORICAL:
+            form = CategoricalEntryForm(instance=entry)
+            template = "checkpoint_categorical_entry_form.html"
+    form.action=reverse('gradebook-checkpoint-entry-save')
+    form.form_id='checkpoint-entry-form'
     return render(
         request, 
-        'gradebook_app/checkpoints/partials/checkpoint_grade_entry_form.html',
+        f'gradebook_app/checkpoints/partials/{template}',
         {'form': form}
     )
+
+@require_POST
+@login_required
+def save_checkpoint_entry(request):
+    entry_id = request.POST.get('id')
+    entry = CheckpointEntry.objects.get(id=entry_id)
+    match entry.checkpoint_field.kind:
+        case CheckpointFieldKind.GRADE:
+            form = GradeEntryForm(request.POST, instance=entry)
+        case CheckpointFieldKind.CATEGORICAL:
+            form = CategoricalEntryForm(request.POST, instance=entry)
     
+    if form.is_valid():
+        ce=form.save(commit=True)
+        print("SAVED", ce.value())
+        return JsonResponse({'success': True, 'data': ce.value()})
+    else:
+        return JsonResponse({'success': False})

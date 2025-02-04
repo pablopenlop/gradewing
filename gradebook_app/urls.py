@@ -42,7 +42,11 @@ urlpatterns = [
         checkpoint_views.checkpoint_entry_form, 
         name='gradebook-checkpoint-entry-form'
     ),
-   
+   path(
+        'checkpoints/entry/save/',
+        checkpoint_views.save_checkpoint_entry, 
+        name='gradebook-checkpoint-entry-save'
+    ),
     
     
     

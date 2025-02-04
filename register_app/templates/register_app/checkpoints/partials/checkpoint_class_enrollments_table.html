@@ -13,10 +13,7 @@ class="hover compact">
 
 <script>
     $(document).ready(function() {
-        function adjustTableScrollHeight() {
-            const margin = 320;
-            return Math.max($(window).height() - margin, 340) + 'px';
-        }
+    
         let table = new DataTable('#class_enrollments-table-{{ cpyg_id }}', {
             ajax: {
                 url: '{{ url_data }}', 
@@ -58,8 +55,6 @@ class="hover compact">
             rowId: 'id',
             order: [[0, 'asc']],  
             orderFixed: [1, 'asc'],
-            //scrollCollapse: true,
-            //scrollY: adjustTableScrollHeight(),
             rowGroup: {
                 dataSrc: 'teaching_class',
                 startRender: function(rows, group) {
@@ -96,21 +91,6 @@ class="hover compact">
                             </th>`);
                 }
             },
-            {% comment %} drawCallback: function() {
-                var api = this.api();
-                var rowCount = api.rows({page: 'current'}).count();
-                
-                for (var i = 0; i < 10 - (rowCount === 0 ? 1 : rowCount); i++) {
-                    $('#class_enrollments-table-{{ cpyg_id }} tbody').append(
-                        $("<tr>")
-                            .attr("style", "pointer-events: none")
-                            .append("<td>&nbsp; </td>")
-                            .append("<td></td>")
-                            .append("<td></td>")
-                            .append("<td></td>")
-                    );
-                }
-            }, {% endcomment %}
         });
 
         // Handle individual assign/unassign

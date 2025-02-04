@@ -204,6 +204,22 @@ class MarkEntryForm(CheckpointEntryForm):
     class Meta(CheckpointEntryForm.Meta):
         fields = CheckpointEntryForm.Meta.fields + ['mark']  
         
-class CategoryEntryForm(CheckpointEntryForm):
+class CategoricalEntryForm(CheckpointEntryForm):
+    category = forms.ChoiceField(
+        choices=[], 
+        widget=forms.Select(attrs={
+        'class': 'form-select',
+        }),
+        required=True,
+    )
     class Meta(CheckpointEntryForm.Meta):
         fields = CheckpointEntryForm.Meta.fields + ['category']  
+        
+    def __init__(self, *args, component=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            categories = self.instance.checkpoint_field.categories
+            self.fields['category'].label = self.instance.checkpoint_field.name
+            self.fields['category'].choices=[ c for c in zip(categories, categories)]
+    
+        
