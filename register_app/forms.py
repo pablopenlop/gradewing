@@ -278,7 +278,8 @@ class StudentQualificationForm(forms.ModelForm):
                 qfam = QF.choices_from_values(programme.name)[0]
                 qnames = QF.get_qualification_name_choices(qfam, values_only=True)
                 available_qualifications = Qualification.objects.filter(name__in=qnames)
-                existing_qualifications = programme.qualifications.values_list('qualification_id', flat=True)
+                #existing_qualifications = programme.qualifications.values_list('qualification_id', flat=True)
+                existing_qualifications = programme.student.qualifications().values_list('qualification_id', flat=True)
                 available_qualifications = available_qualifications.exclude(id__in=existing_qualifications)
                 self.fields['qualification'].queryset = available_qualifications
         
@@ -754,6 +755,7 @@ class CheckpointPreForm2(forms.ModelForm):
     
     
 class CheckpointFieldForm(forms.ModelForm):
+
     CHOICES = [
         ("General descriptors", [
             ("Excellent", "Excellent"),
@@ -841,10 +843,12 @@ class CheckpointFieldForm(forms.ModelForm):
             'maxmark': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'placeholder': '',
+                'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57) || event.keyCode === 13"
             }),
             'minmark': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'placeholder': '',
+                'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57) || event.keyCode === 13"
             }),
             'stepsize': forms.Select(attrs={
                 'class': 'form-select',
@@ -853,10 +857,12 @@ class CheckpointFieldForm(forms.ModelForm):
             'maxlength': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'placeholder': '',
+                'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57) || event.keyCode === 13"
             }),
             'minlength': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'placeholder': '',
+                'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57) || event.keyCode === 13"
             }),
         }
     
@@ -894,7 +900,6 @@ class CheckpointFieldForm(forms.ModelForm):
             if not self.instance.pk:
                 self.fields['minmark'].initial = 0
                 self.fields['maxmark'].initial = 100
-                self.fields['stepsize'].initial = 1.0
             
         elif kind == CheckpointFieldKind.GRADE:
             self.fields['kind'].help_text = """
@@ -920,7 +925,7 @@ class CheckpointFieldForm(forms.ModelForm):
             maxmark = cleaned_data.get("maxmark")
             if minmark >= maxmark:
                 self.add_error("maxmark", "The maximum mark must exceed the minimum mark by at least 1 mark.")
-            if stepsize > maxmark-minmark:
+            if float(stepsize) > maxmark-minmark:
                 self.add_error("stepsize", "The selected mark step size is too large.")
             
         elif kind == CheckpointFieldKind.COMMENT:    

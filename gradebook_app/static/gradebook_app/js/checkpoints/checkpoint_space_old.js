@@ -17,11 +17,11 @@ $(document).ready(function() {
     let table;
     let selectedCell = null;
 
-    // Fetch JSON data once and use it for both dynamic columns and DataTable
+    // Fetch JSON data to determine dynamic columns, then initialize DataTable
     $.getJSON(urlData, function(response) {
         const data = response.data || [];
         dynamicColumns = determineDynamicColumns(data, staticKeys);
-        initDataTable(data); // Pass the data directly to DataTable
+        initDataTable();
     });
 
     // Function to compute dynamic columns based on the first row of data
@@ -59,10 +59,10 @@ $(document).ready(function() {
         });
     }
 
-    // Initialize the DataTable with the fetched data
-    function initDataTable(fetchedData) {
+    // Initialize the DataTable with the combined (static + dynamic) columns
+    function initDataTable() {
         table = $('#checkpoint_space-table').DataTable({
-            data: fetchedData, // Use fetched data instead of making another AJAX call
+            ajax: { url: urlData, dataSrc: 'data' },
             columns: staticColumns.concat(dynamicColumns),
             columnDefs: [{ orderable: false, targets: [] }],
             fixedColumns: { start: 5 },
@@ -83,6 +83,7 @@ $(document).ready(function() {
                             <div class="d-flex align-items-center">
                                 <i class="fa-solid fa-chalkboard mx-2 fs-6"></i> ${group}
                                 <i class="fa-solid fa-chalkboard-user ms-3 me-2 fs-6"></i> ${teachers}
+                       
                                 <i class="fa-solid fa-award ms-3 me-2 fs-6"></i> ${qualification}
                             </div>
                         </th>

@@ -76,9 +76,9 @@ class="hover compact">
 
         let table = new DataTable('#teachers-table', {
             order: [0, 'asc'],
-            scrollCollapse: true,
-            scrollY: adjustTableScrollHeight() + 'px',
-            scroller: true,
+            //scrollCollapse: true,
+            //scrollY: adjustTableScrollHeight() + 'px',
+            //scroller: true,
 
             columnDefs: [
                 { visible: false, targets: [] }, 
@@ -97,6 +97,7 @@ class="hover compact">
                             .append("<td></td>")
                             .append("<td></td>")
                             .append("<td></td>")
+                            .append("<td></td>")
                     );
                 }
             },
@@ -106,7 +107,7 @@ class="hover compact">
                     buttons: ['pageLength'],
                 },
             }, 
-            stateSave: true,            
+            stateSave: false,            
         });
         // datatables.dropdown_filter.js
         initializeDropdownFilter(table, 2, 'period-select');

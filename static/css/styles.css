@@ -103,11 +103,11 @@ input, select {
 }
 
 .form-helptext {
-    font-family: 12px !important;
-    font-size: 12px !important;
+    font-family: 13px !important;
+    font-size: 13px !important;
     color: var(--bs-secondary-color);
     margin-bottom: 0.25rem;
-    font-style: italic;
+    font-style: normal;
 }
 
 

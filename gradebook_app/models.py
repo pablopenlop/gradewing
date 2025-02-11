@@ -238,11 +238,16 @@ class CheckpointEntry(models.Model):
             case CheckpointFieldKind.GRADE:
                 return self.grade
             case CheckpointFieldKind.MARK:
-                return self.mark
+                return f"{self.mark_formatted} / {self.checkpoint_field.maxmark}" if self.mark is not None else None
             case CheckpointFieldKind.PERCENTAGE:
-                return self.mark
+                return f"{self.mark_formatted} %" if self.mark is not None else None
             case CheckpointFieldKind.COMMENT:
                 return self.comment
             case CheckpointFieldKind.CATEGORICAL:
                 return self.category
+
+    @property   
+    def mark_formatted(self):        
+        return int(self.mark) if self.mark.is_integer() else self.mark
+            
         

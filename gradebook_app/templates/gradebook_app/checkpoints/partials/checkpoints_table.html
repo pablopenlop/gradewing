@@ -34,14 +34,14 @@
                 { 
                     data: null,  // Use `null` because we are customizing the rendering
                     render: function(data, type, row) {
-                        return `<h6>${row.name}</h6> ${row.scope}`;
+                        return `<div class="fw-bold">${row.name}</div> ${row.scope}`;
                     }
                 },
                 { data: 'state' },
                 { 
                     data: null,  // Use `null` because we are customizing the rendering
                     render: function(data, type, row) {
-                        return `<h6>${row.date}</h6> ${row.period}`;
+                        return `<div>${row.date}</div> ${row.period}`;
                     }
                 },
                 { data: 'yeargroups' },
@@ -49,12 +49,12 @@
                     data: null, 
                     render: function(data, type, row) {
                         return `
-                        <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                        <span class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
                             <div class="progress-bar bg-secondary" style="width: 70%"></div>
-                        </div>
-                        <div >
+                        </span>
+                        <span >
                             70 %
-                        </div>
+                        </span>
                         `;
                     }
                 },
@@ -79,8 +79,8 @@
             deferRender: true,
             stateSave: false,
             order: [[2, 'desc']],
-            scrollCollapse: true,
-            scrollY: adjustTableScrollHeight() + 'px',
+            //scrollCollapse: true,
+            //scrollY: adjustTableScrollHeight() + 'px',
             rowGroup: {
                 dataSrc: ['period']
             },

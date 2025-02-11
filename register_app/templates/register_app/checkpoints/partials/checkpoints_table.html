@@ -26,7 +26,6 @@ class="hover compact">
             <td>   
                 {% for yeargroup in checkpoint.yeargroups.all %}
                 <span style="display: block;">
-                    {% comment %} <i class="fa-solid fa-users-line"></i>  {% endcomment %}
                     {{ yeargroup }}
                 </span>
                 {% endfor %}
@@ -68,9 +67,9 @@ class="hover compact">
 
         let table = new DataTable('#checkpoints-table', {
             order: [4, 'asc'],
-            scrollCollapse: true,
-            scrollY: adjustTableScrollHeight() + 'px',
-            scroller: true,
+            //scrollCollapse: true,
+            //scrollY: adjustTableScrollHeight() + 'px',
+            //scroller: true,
             
             columnDefs: [
                 { visible: false, targets: []}, 
@@ -94,6 +93,7 @@ class="hover compact">
                         $("<tr>")
                             .attr("style", "pointer-events: none")
                             .append("<td>&nbsp;</td>")
+                            .append("<td></td>")
                             .append("<td></td>")
                             .append("<td></td>")
                             .append("<td></td>")

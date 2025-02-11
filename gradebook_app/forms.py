@@ -27,16 +27,19 @@ class QualificationExamResultForm(forms.ModelForm):
                 'class': 'form-control',
                 'autocomplete': 'off',
                 'placeholder': '',
+                'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57) || event.keyCode === 13"
             }),
             'mark': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'autocomplete': 'off',
                 'placeholder': '',
+                'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57) || event.keyCode === 13"
             }),
             'mark_secondary': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'autocomplete': 'off',
                 'placeholder': '',
+                'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57) || event.keyCode === 13"
             }),
             'is_final': forms.CheckboxInput(attrs={
                 'class': 'form-check-input check-input-lg',
@@ -109,16 +112,19 @@ class ComponentExamResultForm(forms.ModelForm):
                 'class': 'form-control',
                 'autocomplete': 'off',
                 'placeholder': '',
+                'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57) || event.keyCode === 13"
             }),
             'mark': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'autocomplete': 'off',
                 'placeholder': '',
+                'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57) || event.keyCode === 13"
             }),
             'mark_adjusted': forms.NumberInput(attrs={
                 'class': 'form-control',
                 'autocomplete': 'off',
                 'placeholder': '',
+                'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57) || event.keyCode === 13"
             }),
             'is_final': forms.CheckboxInput(attrs={
                 'class': 'form-check-input  check-input-lg',
@@ -191,19 +197,19 @@ class GradeEntryForm(CheckpointEntryForm):
         fields = CheckpointEntryForm.Meta.fields + ['grade'] 
         
     def __init__(self, *args, component=None, **kwargs):
-        #gradeset = kwargs.pop('gradeset', None)
         super().__init__(*args, **kwargs)
-        if self.instance and self.instance.pk:
-            gradeset = self.instance.class_enrollment.enrollment_qualification.student_qualification.qualification.grading
-            self.fields['grade'].label = self.instance.checkpoint_field.name
-            self.fields['grade'].choices=Gradeset.grade_tuples(gradeset)
-    
+
+        if not self.instance or not self.instance.pk:
+            return  # Exit early if there's no valid instance
+
+        eq = self.instance.enrollment_qualification or self.instance.class_enrollment.enrollment_qualification 
+        gradeset = eq.student_qualification.qualification.grading
+        self.fields['grade'].choices = Gradeset.grade_tuples(gradeset)
+
+        # Set grade field label
+        self.fields['grade'].label = self.instance.checkpoint_field.name
 
 
-class MarkEntryForm(CheckpointEntryForm):
-    class Meta(CheckpointEntryForm.Meta):
-        fields = CheckpointEntryForm.Meta.fields + ['mark']  
-        
 class CategoricalEntryForm(CheckpointEntryForm):
     category = forms.ChoiceField(
         choices=[], 
@@ -221,5 +227,39 @@ class CategoricalEntryForm(CheckpointEntryForm):
             categories = self.instance.checkpoint_field.categories
             self.fields['category'].label = self.instance.checkpoint_field.name
             self.fields['category'].choices=[ c for c in zip(categories, categories)]
+            
+
+class MarkEntryForm(CheckpointEntryForm):
+    mark = forms.FloatField(
+        widget=forms.NumberInput(attrs={
+        'class': 'form-control',
+        'autocomplete': 'off',
+        'placeholder': '',
+        }),
+        required=True,
+    )
+    class Meta(CheckpointEntryForm.Meta):
+        fields = CheckpointEntryForm.Meta.fields + ['mark']  
+    
+        
+    def __init__(self, *args, component=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if self.instance and self.instance.pk:
+            self.fields['mark'].label = self.instance.checkpoint_field.name
+            rules = self.instance.checkpoint_field.rules()
+            help_text = "Assign a " + rules[:1].lower() + rules[1:]
+            self.fields['mark'].help_text = help_text
+            self.fields['mark'].widget.attrs.update({'min': self.instance.checkpoint_field.minmark})
+            self.fields['mark'].widget.attrs.update({'max': self.instance.checkpoint_field.maxmark})
+            self.fields['mark'].widget.attrs.update({'step': self.instance.checkpoint_field.stepsize})
+            
+            if float(self.instance.checkpoint_field.stepsize)>0.99:
+                self.fields['mark'].widget.attrs.update({
+                    'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57) || event.keyCode === 13"
+                })
+                if self.instance.mark is not None:
+                    self.initial['mark'] = int(self.instance.mark)  
+    
+
     
         

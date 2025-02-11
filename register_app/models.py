@@ -300,7 +300,7 @@ class StudentQualification(models.Model):
     objects = StudentQualificationManager()
     class Meta:
         constraints = [
-            models.UniqueConstraint(fields=['programme', 'qualification',], name='unique_student_qualification')
+            models.UniqueConstraint(fields=['programme', 'qualification'], name='unique_student_qualification')
         ]
 
     def __str__(self):
@@ -557,13 +557,13 @@ class CheckpointYearGroup(models.Model):
         
 class CheckpointField(models.Model):
     STEP_CHOICES = [
-        (0.01, "0.01"),
-        (0.05, "0.05"),
-        (0.1, "0.1"),
-        (0.5, "0.5"),
-        (1.0, "1"),
-        (5.0, "5"),
-        (10.0, "10"),
+        ('0.01', "0.01"),
+        ('0.05', "0.05"),
+        ('0.1', "0.1"),
+        ('0.5', "0.5"),
+        ('1', "1"),
+        ('5', "5"),
+        ('10', "10"),
     ]
     id = models.AutoField(primary_key=True)
     checkpoint = models.ForeignKey(
@@ -599,7 +599,8 @@ class CheckpointField(models.Model):
             MinValueValidator(1),  
         ],
     )
-    stepsize = models.FloatField(
+    stepsize = models.CharField(
+        max_length=4,
         null=True,
         blank=True,
         verbose_name="Mark step size",
@@ -648,11 +649,11 @@ class CheckpointField(models.Model):
         elif self.kind== CheckpointFieldKind.GRADE:
             return "n/a"
         elif self.kind== CheckpointFieldKind.MARK:
-            return f"{self.minmark}–{self.maxmark} marks (step size: {self.stepsize})"
+            return f"Mark between {self.minmark} and {self.maxmark}, rounded to the nearest {self.stepsize}"
         elif self.kind== CheckpointFieldKind.CATEGORICAL:
             return ', '.join(self.categories)
         elif self.kind== CheckpointFieldKind.PERCENTAGE:
-            return f"{self.minmark}–{self.maxmark} % (step size: {self.stepsize} %)"
+            return f"Percentage mark between {self.minmark} and {self.maxmark}, rounded to the nearest {self.stepsize}"
         elif self.kind== CheckpointFieldKind.MOCK:
             return "n/a"
         

@@ -597,7 +597,7 @@ QUALIFICATIONS = [
                 "weighting": "67%",
                 "mark": 10,
                 "code": "*/1",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_AE, 
             },
             {
                 "name": "Theory Of Knowledge Exhibition",
@@ -606,7 +606,7 @@ QUALIFICATIONS = [
                 "weighting": "33%",
                 "mark": 10,
                 "code": "*/2",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_AE, 
             },
         ]
     },
@@ -633,7 +633,7 @@ QUALIFICATIONS = [
                 "weighting": "100%",
                 "mark": 34,
                 "code": "*/1",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_AE, 
             },
         ]
     },
@@ -660,8 +660,40 @@ QUALIFICATIONS = [
                 "weighting": "100%",
                 "mark": 36,
                 "code": "*/1",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_AE, 
             },
         ]
-    }   
+    },
+    {
+        "subject": "Core points matrix",
+        "code": "IBDP-CPM",
+        "group": SG.IB.DP.CORE,
+        "name": QT.IB.IBO.DP.CORE,
+        "glh": 0,
+        "first_assessment": 2016,
+        "last_assessment": None,
+        "grading": GS.IB.SINGLE_31, 
+        "series": [Ser.Exam.MAY, Ser.Exam.NOV], 
+        "mark": None,
+        "mark_type": MT.NONE,
+        "modular": False,
+        "core": True,
+        "components": []
+    },
+    {
+        "subject": "Diploma",
+        "code": "IBDP-D",
+        "group": SG.IB.DP.CORE,
+        "name": QT.IB.IBO.DP.CORE,
+        "glh": 0,
+        "first_assessment": 2016,
+        "last_assessment": None,
+        "grading": GS.IB.DIP, 
+        "series": [Ser.Exam.MAY, Ser.Exam.NOV], 
+        "mark": 45,
+        "mark_type": MT.POINTS,
+        "modular": False,
+        "core": True,
+        "components": []
+    }
 ]

@@ -205,8 +205,6 @@ def save_checkpoint_field(request):
     
 
 
-
-
 @require_POST
 @login_required
 def delete_checkpoint_field(request):
@@ -398,7 +396,8 @@ def enrollment_qualifications_data(cpyg_id):
     )
     period_id = cpyg["checkpoint__period_id"]
     yeargroup_id = cpyg["yeargroup_id"]
-
+    print(period_id)
+    print(yeargroup_id)
 
     enrollment_qualifications = EnrollmentQualification.objects.select_related(
         "enrollment__student", 
@@ -580,3 +579,5 @@ def unassign_checkpoints(cpyg_id, target_ids: list)->None:
                 checkpoint_yeargroup_id=cpyg_id, 
                 enrollment_id__in=target_ids
             ).delete()
+
+

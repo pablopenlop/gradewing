@@ -13,21 +13,19 @@
     }
 </style>
 <!-- Your table HTML -->
-<table id="checkpoint_space-table" style="width:100%" class="hover">
-    <thead>
-        <tr id="header-row">
-        </tr>
-    </thead>
-    <tbody></tbody>
+<table id="checkpoint_space-table" class="hover" style="width:100%">
+
+
 </table>
 
 
- <!-- Render dynamic variables -->
 <script>
     window.myAppConfig = {
-        urlData: "{{ url_data }}"
+        urlData: "{{ url_data|escapejs }}",
+        scope: "{{ scope|escapejs }}"
     };
 </script>
-<!-- Include your external JS file -->
-<script src="{% static 'gradebook_app/js/checkpoints/checkpoint_space.js' %}"></script>
+<script src="{% static 'gradebook_app/js/checkpoints/checkpoint_space.main.js' %}"></script>
+
+
 

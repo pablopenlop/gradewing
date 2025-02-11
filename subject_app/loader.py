@@ -1,10 +1,10 @@
 from .models import Qualification, Component
 from dataclasses import dataclass, field
-from typing import Optional, List, Union
+from typing import Optional, List
 from choices import QT, QK, SG, Ser, Tier, MT, GS, Board
 from fractions import Fraction
 import pprint
-
+import re
 def frac_to_percent_str(a, b)->str:
     frac = Fraction(a, b)
     percentage = frac * 100
@@ -67,12 +67,12 @@ class DataLoader:
             for packet in packets:
                 elements = self.flatten_packet(packet)
                 for element in elements:
-                    pprint.pprint(element)
+                    #pprint.pprint(element)
                     subject = QualificationLoad.from_dict(element)
                     self.count = self.count+1
-                    print(subject.to_model())
+                    subject.to_model()
                     for component in subject.components:
-                        print(component.to_model())
+                        component.to_model()
                         pass
                   
 
@@ -170,21 +170,34 @@ class QualificationLoad:
         self.refine_subject()
 
     def refine_subject(self)->None:
-        pass
+        if self.suffix:
+            self.subject = f"{self.subject} { self.suffix}"
+
     # We require a full_name for technicals
     # Also subject with years?
     
     @property
     def get_name(self)->str:
-        # if QK.kind_in_name(self.kind):
         if self.kind == QK.UKI.BTEC3.DIP:
             return f"{self.name.label} {self.kind.label}"
         return self.name.label
+    
+    def pop_level(self):
+        match = re.search(r" (HL|SL)$", self.name.label)
+        return (self.name.label[:match.start()], match.group(1)) if match else (self.name.label, None)
+
+
     @property
     def title(self):
         year = f" ({self.first_assessment}-{self.last_assessment})" if not self.current else ""
+        
+        if self.board == Board.IB:
+            name, lvl =  self.pop_level()
+            subject =f" {self.subject} {lvl}" if lvl else f" {self.subject}"
+            return name + subject + year
+            
         subject =f" in {self.subject}" if bool(self.subject) else ""
-        return f"{self.get_name}{subject}{year}"
+        return self.get_name + subject + year
     
     def str_series(self):
         return ','.join([s.value for s in self.series])
@@ -201,6 +214,7 @@ class QualificationLoad:
         for component in components:
             component = {k: v for k, v in component.items() if k in ComponentLoad.__annotations__}
             qualification.add_component(ComponentLoad(**component, qualification=qualification))
+        
         return qualification
     
     def to_model(self):
@@ -264,6 +278,8 @@ from .qualification_data.ukn.aqa.aqa_ag import QUALIFICATIONS as aqa_ag
 from .qualification_data.ukn.btec.btec_firsts import QUALIFICATIONS as btec_firsts
 def load_subjects():
     dl = DataLoader()
+    dl.load(ib_dp)
+
     dl.load(cie_ial)
     dl.load(edexcel_ial)
     dl.load(oxfordaqa_igcse)

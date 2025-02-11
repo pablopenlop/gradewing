@@ -22,6 +22,8 @@ $(document).on('click', '#hamburger-btn', function () {
 });
 
 
+
+
 function delayLoading(divId) {
     $(divId).css('visibility', 'hidden'); // Hide initially
     setTimeout(function() {
