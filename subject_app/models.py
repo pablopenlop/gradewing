@@ -101,6 +101,7 @@ class Qualification(models.Model):
     )
 
     core = models.BooleanField(default=False)
+    mark_required = models.BooleanField(default=False)
     mark_secondary = models.SmallIntegerField(
         blank=True, 
         null=True,

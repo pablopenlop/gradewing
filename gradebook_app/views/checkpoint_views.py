@@ -6,7 +6,7 @@ from django.urls import reverse
 from register_app.models import Checkpoint
 from gradebook_app.models import CheckpointEntry
 from choices.checkpoints import CheckpointFieldKind, CheckpointScope
-from gradebook_app.forms import GradeEntryForm, CategoricalEntryForm, MarkEntryForm
+from gradebook_app.forms import GradeEntryForm, GradeMarkEntryForm, CategoricalEntryForm, MarkEntryForm
 
 
 @login_required
@@ -112,6 +112,7 @@ def general_benchmark_data(checkpoint_id):
                 entry_data[entry_key] = {
                     'id': entry.id, 
                     'value': entry.value(),
+                    'is_excluded': entry.is_excluded,
                     'url_form': reverse('gradebook-checkpoint-entry-form', args=[entry.id])}
             
             data.append(entry_data)
@@ -140,6 +141,7 @@ def subject_benchmark_data(checkpoint_id):
                 entry_data[entry_key] = {
                     'id': entry.id, 
                     'value': entry.value(),
+                    'is_excluded': entry.is_excluded,
                     'url_form': reverse('gradebook-checkpoint-entry-form', args=[entry.id])}
             
             data.append(entry_data)
@@ -172,6 +174,7 @@ def class_landmark_data(checkpoint_id):
                 entry_data[entry_key] = {
                     'id': entry.id, 
                     'value': entry.value(),
+                    'is_excluded': entry.is_excluded,
                     'url_form': reverse('gradebook-checkpoint-entry-form', args=[entry.id])}
             data.append(entry_data)
     return JsonResponse({"data": data})
@@ -183,8 +186,13 @@ def checkpoint_entry_form(request, checkpoint_entry_id):
     
     match entry.checkpoint_field.kind:
         case CheckpointFieldKind.GRADE:
-            form = GradeEntryForm(instance=entry)
-            template = "checkpoint_grade_entry_form.html"
+            qualification = entry.qualification()
+            if qualification.mark_required:
+                form = GradeMarkEntryForm(instance=entry)
+                template = "checkpoint_grade_mark_entry_form.html"
+            else:
+                form = GradeEntryForm(instance=entry)
+                template = "checkpoint_grade_entry_form.html"    
         case CheckpointFieldKind.CATEGORICAL:
             form = CategoricalEntryForm(instance=entry)
             template = "checkpoint_categorical_entry_form.html"
@@ -203,20 +211,49 @@ def checkpoint_entry_form(request, checkpoint_entry_id):
 @login_required
 def save_checkpoint_entry(request):
     entry_id = request.POST.get('id')
+    action = request.POST.get('action')
+    if action == "clear-entry":
+        return clear_checkpoint_entry(entry_id)
+    elif action == "exclude-entry":
+        return exclude_checkpoint_entry(entry_id)
+    else:
+        return update_checkpoint_entry(request, entry_id)
+    
+
+def update_checkpoint_entry(request, entry_id):
     entry = CheckpointEntry.objects.get(id=entry_id)
     match entry.checkpoint_field.kind:
         case CheckpointFieldKind.GRADE:
-            form = GradeEntryForm(request.POST, instance=entry)
+            qualification = entry.qualification()
+            if qualification.mark_required:
+                form = GradeMarkEntryForm(request.POST, instance=entry)
+            else:
+                form = GradeEntryForm(request.POST, instance=entry)
         case CheckpointFieldKind.CATEGORICAL:
             form = CategoricalEntryForm(request.POST, instance=entry)
         case CheckpointFieldKind.MARK | CheckpointFieldKind.PERCENTAGE:
             form = MarkEntryForm(request.POST, instance=entry)
-
-    
     if form.is_valid():
         ce=form.save(commit=True)
-        print("SAVED", ce.value())
-        return JsonResponse({'success': True, 'data': ce.value()})
+        ce.is_excluded = False
+        ce.save()
+        return JsonResponse({'success': True, 'value': ce.value(), 'is_excluded': False})
     else:
         print(form.errors)
         return JsonResponse({'success': False})
+    
+
+def clear_checkpoint_entry(entry_id):
+    entry = CheckpointEntry.objects.get(id=entry_id)
+    entry.clear()
+    entry.is_excluded = False
+    entry.save()
+    return JsonResponse({'success': True, 'value': None, 'is_excluded': False})
+
+
+def exclude_checkpoint_entry(entry_id):
+    entry = CheckpointEntry.objects.get(id=entry_id)
+    entry.clear()
+    entry.is_excluded = True
+    entry.save()
+    return JsonResponse({'success': True, 'value': None, 'is_excluded': True})

@@ -210,6 +210,49 @@ class GradeEntryForm(CheckpointEntryForm):
         self.fields['grade'].label = self.instance.checkpoint_field.name
 
 
+
+class GradeMarkEntryForm(CheckpointEntryForm):
+    grade = forms.ChoiceField(
+        choices=[], 
+        widget=forms.Select(attrs={
+        'class': 'form-select',
+        }),
+        required=True,
+    )
+    mark = forms.FloatField(
+        widget=forms.NumberInput(attrs={
+        'class': 'form-control',
+        'autocomplete': 'off',
+        'placeholder': '',
+        }),
+        required=True,
+    )
+   
+    class Meta(CheckpointEntryForm.Meta):
+        fields = CheckpointEntryForm.Meta.fields + ['grade', 'mark'] 
+        
+    def __init__(self, *args, component=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.instance or not self.instance.pk:
+            return  
+        qualification = self.instance.qualification()
+        gradeset = qualification.grading
+        self.fields['grade'].choices = Gradeset.grade_tuples(gradeset)
+        self.fields['grade'].label = self.instance.checkpoint_field.name
+        
+        self.fields['mark'].label =f"{qualification.get_mark_type_display()} / {qualification.mark}"
+
+        self.fields['mark'].widget.attrs.update({'min': 0})
+        self.fields['mark'].widget.attrs.update({'max': qualification.mark})
+        self.fields['mark'].widget.attrs.update({'step': 1})
+        
+        self.fields['mark'].widget.attrs.update({
+            'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57) || event.keyCode === 13"
+        })
+        if self.instance.mark is not None:
+            self.initial['mark'] = int(self.instance.mark)  
+        
+        
 class CategoricalEntryForm(CheckpointEntryForm):
     category = forms.ChoiceField(
         choices=[], 

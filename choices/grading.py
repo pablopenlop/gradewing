@@ -41,7 +41,7 @@ class Gradeset(ComplexChoices):
         DOUBLE_PAIRED_CG = 'gcse-CC-GG', 'C-C D-D ... G-G (U)'
         DOUBLE_PAIRED_EXT = 'gcse-A*A*-EE', 'A*-A* A-A ... E-E (U)'
     class IB(models.TextChoices):
-        DIP = 'ib-dp', 'Awarded Not_Awarded'
+        PASS_FAIL = 'ib-bin', 'Pass Fail'
         SINGLE_71 = 'ib-7-1', '7 6 5 4 3 2 1 N'
         SINGLE_AE = 'ib-A-E', 'A B C D E N'
         SINGLE_31 = 'ib-3-1', '3 2 1 0 Fail'

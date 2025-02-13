@@ -159,6 +159,7 @@ class QualificationLoad:
     suffix: Optional[str] = None
     sub_qualification: Optional[str] = None
     core: bool = False
+    mark_required: bool = False
     mark_secondary: Optional[int] = None
     mark_secondary_type: MT = MT.NONE
     
@@ -251,6 +252,7 @@ class QualificationLoad:
                 'current': self.current,
                 'sub_qualification': subqual,
                 'core': self.core,
+                'mark_required': self.mark_required,
                 'mark_secondary': self.mark_secondary,
                 'mark_secondary_type': self.mark_secondary_type,
             }

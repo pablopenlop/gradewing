@@ -111,9 +111,13 @@ $(document).ready(function() {
             title: key,
             className: "text-center",
             render: function(data) {
-                return (!data || data.value === null)
-                    ? '<i class="fa-solid fa-pen-to-square"></i>'
-                    : data.value;
+                if (data.is_excluded) {
+                    return '<i class="fa-solid fa-ban"></i>';
+                } else if (!data || data.value === null) {
+                    return '<i class="fa-solid fa-pen-to-square"></i>';
+                } else {
+                    return data.value;
+                }
             },
             createdCell: function(td, cellData) {
                 $(td).css("min-width", "75px");
@@ -163,9 +167,28 @@ $(document).ready(function() {
     }
 
     // Handle form submission and update the selected cell upon successful AJAX response
+    let action = null;
+    $(document).on('click', '#clear-entry-btn', function() {
+        action = "clear-entry";
+        $('#checkpoint-entry-form').submit();
+    });
+    $(document).on('click', '#exclude-entry-btn', function() {
+        action = "exclude-entry";
+        $('#checkpoint-entry-form').submit();
+    });
+
+
     $(document).on('submit', '#checkpoint-entry-form', function(event) {
         event.preventDefault();
         let form = $(this);
+        if (action) {
+            $('<input>').attr({
+                type: 'hidden',
+                name: 'action',
+                value: action
+            }).appendTo(form);
+            action = null;
+        }
         $.ajax({
             url: form.attr('action'),
             type: 'POST',
@@ -173,7 +196,8 @@ $(document).ready(function() {
             success: function(response) {
                 if (response.success && selectedCell) {
                     let cellData = selectedCell.data();
-                    cellData.value = (response.data === null || response.data === undefined) ? null : response.data;
+                    cellData.value = (response.value === null || response.value === undefined) ? null : response.value;
+                    cellData.is_excluded = (response.is_excluded === null || response.is_excluded === undefined) ? true : response.is_excluded;
                     selectedCell.data(cellData).invalidate();
                     table.columns.adjust();
                     $('#form-modal-small').modal('hide');

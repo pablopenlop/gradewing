@@ -233,6 +233,7 @@ class QualificationTree(ComplexChoices):
                 HL = 'ib.dp.hl', 'IB DP HL'
                 SL = 'ib.dp.sl', 'IB DP SL'
                 CORE = 'ib.dp.core', 'IB DP'
+                AGG = 'ib.dp.agg', 'IB DP'
             class CP(models.TextChoices):
                 _SUITE = 'ib.cp.',  'IB Career-related Programme'
                 CORE = 'ib.cp.core', 'IB CP'
@@ -283,16 +284,16 @@ class QualificationTree(ComplexChoices):
                                         return getattr(l3, '_SUITE', None)
         return None 
     
-board1 = QualificationTree.get_board_from_choice(QualificationTree.UKN.OCR.AL.A2)
-board2 = QualificationTree.get_board_from_choice(QualificationTree.UKN.Edexcel.AL.A2)
-board3 = QualificationTree.get_board_from_choice(QualificationTree.IB.IBO.DP.HL)
-board4 = QualificationTree.get_board_from_choice(QualificationTree.UKI.BTEC.IL2.CERT)
+# board1 = QualificationTree.get_board_from_choice(QualificationTree.UKN.OCR.AL.A2)
+# board2 = QualificationTree.get_board_from_choice(QualificationTree.UKN.Edexcel.AL.A2)
+# board3 = QualificationTree.get_board_from_choice(QualificationTree.IB.IBO.DP.HL)
+# board4 = QualificationTree.get_board_from_choice(QualificationTree.UKI.BTEC.IL2.CERT)
 
-board1 = QualificationTree.get_suite_from_choice(QualificationTree.UKN.OCR.AL.A2)
-board2 = QualificationTree.get_suite_from_choice(QualificationTree.UKN.Edexcel.AL.A2)
-board3 = QualificationTree.get_suite_from_choice(QualificationTree.IB.IBO.DP.HL)
-board4 = QualificationTree.get_suite_from_choice(QualificationTree.UKI.BTEC.IL2.CERT)
-print(board1, board2, board3, board4)  # Output: Board.EDEXCEL
+# board1 = QualificationTree.get_suite_from_choice(QualificationTree.UKN.OCR.AL.A2)
+# board2 = QualificationTree.get_suite_from_choice(QualificationTree.UKN.Edexcel.AL.A2)
+# board3 = QualificationTree.get_suite_from_choice(QualificationTree.IB.IBO.DP.HL)
+# board4 = QualificationTree.get_suite_from_choice(QualificationTree.UKI.BTEC.IL2.CERT)
+# print(board1, board2, board3, board4)  # Output: Board.EDEXCEL
 
 #print(QualificationTree.choices_from_suite_class(QualificationTree.UKI.OxfordAQA.IAL))
 

@@ -64,7 +64,7 @@ class QualificationFamily(ComplexChoices):
     
     
     MANDATORY_QN_MAP = {
-        IB.DP: {QT.IB.IBO.DP.CORE},
+        IB.DP: {QT.IB.IBO.DP.CORE, QT.IB.IBO.DP.AGG},
         IB.CP: {QT.IB.IBO.CP.CORE}
     }
     @classmethod

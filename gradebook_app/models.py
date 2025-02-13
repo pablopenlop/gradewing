@@ -233,9 +233,22 @@ class CheckpointEntry(models.Model):
         null=True,
     )
     
-    def value(self):
+    is_excluded = models.BooleanField(
+        default=False,
+    )
+    
+    
+    def clear(self):
+        self.comment = None
+        self.mark = None
+        self.grade = None
+        self.category = None
+        
+    def value(self):            
         match self.checkpoint_field.kind:
             case CheckpointFieldKind.GRADE:
+                if self.qualification().mark_required:
+                    return f"{self.mark_formatted} / {self.qualification().mark} &nbsp;&nbsp; ({self.grade})"
                 return self.grade
             case CheckpointFieldKind.MARK:
                 return f"{self.mark_formatted} / {self.checkpoint_field.maxmark}" if self.mark is not None else None
@@ -249,5 +262,9 @@ class CheckpointEntry(models.Model):
     @property   
     def mark_formatted(self):        
         return int(self.mark) if self.mark.is_integer() else self.mark
-            
+        
+    def qualification(self):
+        eq = self.enrollment_qualification or self.class_enrollment.enrollment_qualification
+        return eq.student_qualification.qualification if eq else None
+    
         

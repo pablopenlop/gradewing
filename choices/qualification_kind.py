@@ -62,6 +62,7 @@ class QualificationKind(ComplexChoices):
             HL = 'ib.dp.hl', 'DP HL'
             SL = 'ib.dp.sl', 'DP SL'
             CORE = 'ib.dp.core', 'DP Core'
+            AGG = 'ib.dp.agg', 'DP Aggregate'
         class CP(models.TextChoices):
             CORE = 'ib.cp.core', 'CP Core'
 
@@ -184,6 +185,8 @@ class QualificationKind(ComplexChoices):
         QT.IB.IBO.MYP.MYP: IB.MYP.MYP,
         QT.IB.IBO.DP.HL: IB.DP.HL,
         QT.IB.IBO.DP.SL: IB.DP.SL,
+        QT.IB.IBO.DP.AGG: IB.DP.AGG,
         QT.IB.IBO.DP.CORE: IB.DP.CORE,
         QT.IB.IBO.CP.CORE: IB.CP.CORE,
+        
     }

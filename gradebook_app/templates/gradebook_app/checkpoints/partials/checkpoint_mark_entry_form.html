@@ -25,7 +25,6 @@
     
         <div class="row">
             <div class="col-12">
-           
                 <div class="form-floating mb-3">
                     {{ form.mark }}
                     <label for="{{ form.mark.id_for_label }}">{{form.mark.label}}
@@ -34,40 +33,13 @@
                         {{ form.mark.help_text|safe }}
                     </div>
                 </div> 
-     
             </div>
         </div>  
     </div>
 
-        
-    <div class="modal-footer justify-content-between">
-        <div class="dropdown-center">
-            
-            <button class="btn btn-round my-0 btn-light p-0" type="button"
-                data-bs-toggle="dropdown">
-                <i class="fa-solid fa-ellipsis-vertical"></i>
-            </button>
-            <div class="dropdown-menu">
-                <button class="dropdown-item">
-                    <i class="fa-regular fa-trash-can me-2"></i> 
-                    Clear entry 
-                </button>
-            </div> 
-        </div>
-        <div class="d-flex justify-content-center">
-            <button class="mx-1 btn btn-light" 
-                type="button" data-bs-dismiss="modal">Cancel
-            </button>
-            
-            <button type="submit" class="mx-1 btn btn-primary">
-                Save
-            </button>
-        </div>
-    </div>
+    {% include 'gradebook_app/checkpoints/partials/checkpoint_entry_footer.html' %}
+
 </form>
-
-
-
 
 
 <script>
@@ -76,6 +48,7 @@
         var minValue = $inputField.attr("min") ? parseInt($inputField.attr("min"), 10) : 0;
         var maxValue = $inputField.attr("max") ? parseInt($inputField.attr("max"), 10) : 100;
         enforceLimits('#id_mark', minValue, maxValue);
+        $('#save-entry-btn').prop('disabled', true);
     });
 </script>
 
