@@ -158,7 +158,7 @@ class QualificationLoad:
     sbs: bool = False
     suffix: Optional[str] = None
     sub_qualification: Optional[str] = None
-    core: bool = False
+    aggregate: bool = False
     mark_required: bool = False
     mark_secondary: Optional[int] = None
     mark_secondary_type: MT = MT.NONE
@@ -251,7 +251,7 @@ class QualificationLoad:
                 'sbs': self.sbs,
                 'current': self.current,
                 'sub_qualification': subqual,
-                'core': self.core,
+                'aggregate': self.aggregate,
                 'mark_required': self.mark_required,
                 'mark_secondary': self.mark_secondary,
                 'mark_secondary_type': self.mark_secondary_type,

@@ -10,6 +10,8 @@ from django.db.models import UniqueConstraint
 from django.core.exceptions import ValidationError
 from choices.qualification_states import ExamResultState
 from choices.checkpoints import CheckpointFieldKind
+from shared.utils.format_utils import truncate_html, truncate_text
+from django.utils.html import escape
 
 class QualificationExamResult(models.Model):
     id = models.AutoField(primary_key=True)
@@ -223,12 +225,13 @@ class CheckpointEntry(models.Model):
     comment = models.TextField(
         blank=True, 
         null=True,
-        validators=[MaxLengthValidator(2000)]
+        validators=[MaxLengthValidator(2500)]
     )  
     component = models.ForeignKey(
         Component, 
         on_delete=models.CASCADE, 
         related_name='mock_entries',
+        verbose_name='Exam component',
         blank=True, 
         null=True,
     )
@@ -237,7 +240,20 @@ class CheckpointEntry(models.Model):
         default=False,
     )
     
+    is_completed = models.BooleanField(
+        default=False,
+    )
     
+    def save(self, *args, **kwargs):
+        if self.is_always_excluded():
+            self.is_excluded = True
+        super().save(*args, **kwargs)
+    
+    def is_always_excluded(self)->bool:
+        if self.checkpoint_field.kind == CheckpointFieldKind.MOCK:
+            return not self.qualification().components.all().exists() 
+        return False
+        
     def clear(self):
         self.comment = None
         self.mark = None
@@ -248,16 +264,35 @@ class CheckpointEntry(models.Model):
         match self.checkpoint_field.kind:
             case CheckpointFieldKind.GRADE:
                 if self.qualification().mark_required:
-                    return f"{self.mark_formatted} / {self.qualification().mark} &nbsp;&nbsp; ({self.grade})"
+                    return (
+                        f'<div class="text-nowrap">{self.mark_formatted} / {self.qualification().mark} &nbsp; ({self.grade})</div>' 
+                        if self.mark is not None else None
+                    )
                 return self.grade
             case CheckpointFieldKind.MARK:
-                return f"{self.mark_formatted} / {self.checkpoint_field.maxmark}" if self.mark is not None else None
+                return (f'<div class="text-nowrap">{self.mark_formatted} / {self.checkpoint_field.maxmark}</div>' 
+                        if self.mark is not None else None
+                )
             case CheckpointFieldKind.PERCENTAGE:
                 return f"{self.mark_formatted} %" if self.mark is not None else None
             case CheckpointFieldKind.COMMENT:
-                return self.comment
+                text, count = truncate_html(self.comment, max_length=20)
+                print(text)
+                if not text:
+                    return None
+                return (f'<div class="text-nowrap"> {escape(text)}</div>'
+                        f'<div class="text-nowrap">({count} / {self.checkpoint_field.maxlength})</div>')
             case CheckpointFieldKind.CATEGORICAL:
                 return self.category
+            case CheckpointFieldKind.MOCK:
+                if not self.grade:
+                    return None
+                mark_str=f'&nbsp; ({self.mark_formatted} / {self.component.mark})' if self.mark else ''
+                return (
+                    f'<div class="text-nowrap">{self.grade} {mark_str}</div>'
+                    f'<div class="text-nowrap">{truncate_text(self.component.__str__(), max_length=20)}</div>'
+                )
+
 
     @property   
     def mark_formatted(self):        
@@ -266,5 +301,13 @@ class CheckpointEntry(models.Model):
     def qualification(self):
         eq = self.enrollment_qualification or self.class_enrollment.enrollment_qualification
         return eq.student_qualification.qualification if eq else None
-    
-        
+    def bs_hx_targets(self):
+        match self.checkpoint_field.kind:
+            case CheckpointFieldKind.COMMENT:
+                return "#form-modal-large", "#form-container-large"
+            case CheckpointFieldKind.MOCK:
+                return "#form-modal", "#form-container"
+        return "#form-modal-small", "#form-container-small"
+            
+            
+                

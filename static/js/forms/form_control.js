@@ -61,11 +61,22 @@ $(document).ready(function() {
 
 
 function showAlert(form, errorMessage) {
+    const submitButton = form.find('button[type="submit"]:not([name="confirm-btn"])');
+    submitButton.prop('disabled', true);
+
+    
+
     // Update the alert message
     form.find('.alert').find('span').text(errorMessage);
     // Show the alert
     form.find('.alert').show();
     // Disable the submit button
-    var submitButton = form.find('button[type="submit"]');
-    submitButton.prop('disabled', true);
+    /* const confirmationInput = form.find('input[name="confirmation"]');
+    if (confirmationInput.length) {
+        confirmationInput.val('1');
+    } */
+
+    
+    
 }
+

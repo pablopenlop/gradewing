@@ -80,8 +80,12 @@ $(document).ready(function() {
                 type: 'POST', 
                 data: formData, 
                 success: function(response) {
+                    if (response.requires_confirmation) {
+                        showAlert(form, response.message)
+                    } else {
                         $('#form-modal').modal('hide')
                         htmx.trigger('#qualifications-card-container', 'refresh');
+                    }
                 },
                 error: function(xhr, status, error) {
                     $('#form-modal').modal('hide');

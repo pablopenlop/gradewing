@@ -1,0 +1,115 @@
+
+<form id="{{ form.form_id }}" class="no-validation"
+    action="{{ form.action }}"  
+    method="POST">
+    {% csrf_token %}
+ 
+    <div class="modal-header">
+        <h5 class="modal-title">
+            Update entry
+        </h5>
+         
+        <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
+            <i class="fa-solid fa-x"></i>
+        </button>
+    </div>
+    <div class="modal-body">
+        <div class="row">
+            <div class="col-12">
+                <div class="form-floating mb-3 restricted">
+                    {{ form.id }}
+                    <label for="{{ form.id.id_for_label }}">{{form.id.label}}</label>
+                </div>
+            </div>
+        </div>
+    
+        {{form.comment}}
+        <div class="mb-1 mx-3">
+            <span class="fw-bold">{{form.comment.label}}</span> 
+            <span class="fs-6 mx-2">|</span> 
+            <span class="form-helptext" id="{{ form.comment.auto_id }}_helptext">
+                {{ form.comment.help_text|safe }}
+            </span>
+        </div>
+        <div id="comment_editor" style=" min-height: 5em;"> {{form.comment.value}}</div>
+        <p class="mt-1 mx-3" style="text-align: right">
+            Character count: <span id="char-count" class="fw-bold">0</span>
+            &nbsp; (Incl. formatting: <span id="html-count">0</span> / {{ form.max_comment_length }})</p>
+         
+    </div>
+
+    {% include 'gradebook_app/checkpoints/partials/checkpoint_entry_footer.html' %}
+
+</form>
+
+
+
+
+
+
+
+<script>
+    $(document).ready(function() {
+        const toolbarOptions = [
+            ['bold', 'italic', 'underline'], // Text styles
+            ['link'],
+            [{ 'list': 'ordered' }, { 'list': 'bullet' }], // Lists
+            [{ 'script': 'sub' }, { 'script': 'super' }], // Subscript/Superscript
+            ['clean'] // Remove formatting
+        ];
+
+        const quill = new Quill('#comment_editor', {
+            theme: 'snow',
+            modules: {
+                toolbar: toolbarOptions
+            },
+            formats: ['bold', 'italic', 'underline', 'list', 'script', 'align', 'blockquote', 'link']
+            
+        });
+        const comment_input = $('#id_comment');
+        const formId = "{{ form.form_id|safe }}";  
+        const submitButton = $("#" + formId + " button[name='save-entry']");
+
+        const min = parseInt(comment_input.attr('min'), 10);
+        const max = parseInt(comment_input.attr('max'), 10);
+ 
+        quill.root.innerHTML = comment_input.val();
+
+
+
+        // Function to update character count
+        function updateCharacterCount() {
+            const text = quill.getText().trim(); // Get text without extra spaces
+            const charCount = text.length;
+            const htmlContent = quill.root.innerHTML;
+            const htmlCharCount = htmlContent.length;
+            $("#char-count").text(charCount);
+            $("#html-count").text(htmlCharCount);
+
+            // Enable/Disable the submit button based on character count
+            if (charCount >= min && charCount <= max && htmlCharCount <= {{ form.max_comment_length|safe }}){
+                submitButton.prop("disabled", false);
+            } else {
+                submitButton.prop("disabled", true);
+            }
+    
+        }
+
+        // Listen for text changes
+        quill.on('text-change', updateCharacterCount);
+
+        // Initialize count on load
+        updateCharacterCount();
+
+        // Sync Quill content to the hidden input before submitting
+        $("form").on("submit", function() {
+            comment_input.val(quill.root.innerHTML);
+        });
+
+});
+
+
+</script>
+
+
+  

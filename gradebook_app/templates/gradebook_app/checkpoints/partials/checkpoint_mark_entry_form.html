@@ -48,7 +48,12 @@
         var minValue = $inputField.attr("min") ? parseInt($inputField.attr("min"), 10) : 0;
         var maxValue = $inputField.attr("max") ? parseInt($inputField.attr("max"), 10) : 100;
         enforceLimits('#id_mark', minValue, maxValue);
-        $('#save-entry-btn').prop('disabled', true);
+        
+        const formId = "{{ form.form_id|safe }}";  
+        const submitButton = $("#" + formId + " button[name='save-entry']");
+        if ($inputField.val().trim() === "") {
+            submitButton.prop("disabled", true);
+        }
     });
 </script>
 

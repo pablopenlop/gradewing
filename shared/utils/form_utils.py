@@ -1,4 +1,4 @@
-from django.core.validators import MinValueValidator, MaxValueValidator
+from django.core.validators import MinValueValidator, MaxValueValidator, MaxLengthValidator
 
 def limits_from_validators(model_field):
     min_value = max_value = None
@@ -6,6 +6,8 @@ def limits_from_validators(model_field):
         if isinstance(validator, MinValueValidator):
             min_value = validator.limit_value
         elif isinstance(validator, MaxValueValidator):
+            max_value = validator.limit_value
+        elif isinstance(validator, MaxLengthValidator):
             max_value = validator.limit_value
     return min_value, max_value
 

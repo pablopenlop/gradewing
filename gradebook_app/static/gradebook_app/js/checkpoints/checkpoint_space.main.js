@@ -123,9 +123,9 @@ $(document).ready(function() {
                 $(td).css("min-width", "75px");
                 $(td).attr({
                     "data-bs-toggle": "modal",
-                    "data-bs-target": "#form-modal-small",
+                    "data-bs-target": cellData.data_bs_target,
                     "hx-get": cellData.url_form,
-                    "hx-target": "#form-container-small"
+                    "hx-target": cellData.hx_target
                 });
                 htmx.process(td);
             }
@@ -176,11 +176,15 @@ $(document).ready(function() {
         action = "exclude-entry";
         $('#checkpoint-entry-form').submit();
     });
+    $(document).on('click', '#next-entry-btn', function() {
+        action = "next-entry";
+    });
 
 
     $(document).on('submit', '#checkpoint-entry-form', function(event) {
         event.preventDefault();
         let form = $(this);
+
         if (action) {
             $('<input>').attr({
                 type: 'hidden',
@@ -200,13 +204,23 @@ $(document).ready(function() {
                     cellData.is_excluded = (response.is_excluded === null || response.is_excluded === undefined) ? true : response.is_excluded;
                     selectedCell.data(cellData).invalidate();
                     table.columns.adjust();
-                    $('#form-modal-small').modal('hide');
+                    clearFormsAndHideModals();
                 }
             },
             error: function() {
-                $('#form-modal-small').modal('hide');
+                clearFormsAndHideModals()
                 $('#error-modal').modal('show');
+                
             }
         });
     });
+
+    function clearFormsAndHideModals() {
+        $('#form-container-large').empty();
+        $('#form-container-small').empty();
+        $('#form-container').empty();
+        $('#form-modal-small').modal('hide');
+        $('#form-modal').modal('hide');
+        $('#form-modal-large').modal('hide');
+    }
 });

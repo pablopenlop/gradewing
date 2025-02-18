@@ -1,0 +1,22 @@
+<div class="alert alert-warning my-0 py-2" style="display: none;" id="warning-alert">
+    <div class="d-flex align-items-center mb-3">
+        <!-- Icon Column -->
+        <div class="me-3">
+            <i class="fa-solid fa-triangle-exclamation fa-2x"></i>
+        </div>
+        <span>
+        </span>
+    </div>
+    Do you want to proceed?
+    <input type="hidden" name="confirmation" value='0'>
+    <div class="d-flex align-items-center justify-content-end">
+        <button class="mx-1 btn btn-secondary" type="button"
+            onclick="this.closest('.alert').style.display='none';">Cancel
+        </button>
+        <button type="submit" 
+        onclick="document.querySelector('input[name=confirmation]').value = '1';"
+        class="mx-1 btn btn-transparent" name="confirm-btn"> Confirm
+        </button>
+    </div>
+
+</div>

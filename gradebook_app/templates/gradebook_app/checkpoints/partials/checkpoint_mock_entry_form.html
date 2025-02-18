@@ -25,16 +25,25 @@
         <div class="row">
             <div class="col-12">
                 <div class="form-floating mb-3">
-                    {{ form.grade }}
-                    <label for="{{ form.grade.id_for_label }}">{{form.grade.label}}
+                    {{ form.component }}
+                    <label for="{{ form.component.id_for_label }}">
+                        {{form.component.label}}
+                        <i class="fa-solid fa-lock ms-1"></i>
+
                     </label>
                 </div> 
-     
             </div>
         </div>  
 
         <div class="row">
-            <div class="col-12">
+            <div class="col-6">
+                <div class="form-floating mb-3">
+                    {{ form.grade }}
+                    <label for="{{ form.grade.id_for_label }}">{{form.grade.label}}
+                    </label>
+                </div> 
+            </div>
+            <div class="col-6">
                 <div class="form-floating mb-3">
                     {{ form.mark }}
                     <label for="{{ form.mark.id_for_label }}">{{form.mark.label}}
@@ -45,13 +54,12 @@
                 </div> 
             </div>
         </div>  
-        
+
     </div>
 
     {% include 'gradebook_app/checkpoints/partials/checkpoint_entry_footer.html' %}
         
 </form>
-
 
 <script>
     $(document).ready(function() {
@@ -59,12 +67,6 @@
         var minValue = $inputField.attr("min") ? parseInt($inputField.attr("min"), 10) : 0;
         var maxValue = $inputField.attr("max") ? parseInt($inputField.attr("max"), 10) : 100;
         enforceLimits('#id_mark', minValue, maxValue);
-        
-        const formId = "{{ form.form_id|safe }}";  
-        const submitButton = $("#" + formId + " button[name='save-entry']");
-        if ($inputField.val().trim() === "") {
-            submitButton.prop("disabled", true);
-        }
-
     });
 </script>
+

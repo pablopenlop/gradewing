@@ -474,7 +474,9 @@ input, select {
 
 
 
-
+.bg-dark-secondary {
+    background-color: rgb(112, 172, 178); 
+}
 
 
 :root {

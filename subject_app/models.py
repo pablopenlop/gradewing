@@ -99,8 +99,7 @@ class Qualification(models.Model):
         related_name='qualifications', 
         null=True,
     )
-
-    core = models.BooleanField(default=False)
+    aggregate = models.BooleanField(default=False)
     mark_required = models.BooleanField(default=False)
     mark_secondary = models.SmallIntegerField(
         blank=True, 
@@ -141,22 +140,10 @@ class Qualification(models.Model):
             return level
         return ""
 
- 
-    
     def get_board(self):
         if self.board == Board.CIE:
             return "Cambridge"
         return self.get_board_display()
-
-    @property
-    def titlee(self):
-        return f"{self.get_board()} {self.get_qualification_display()} {self.name} ({self.first_assessment}) [{self.code}]"
-        
-    @property
-    def titlee_noyear(self):
-        return f"{self.get_board()} {self.get_qualification_display()} {self.name} ({self.code})"
-    
-
 
 class Component(models.Model):
     name = models.CharField(max_length=150)
@@ -166,7 +153,11 @@ class Component(models.Model):
     internal = models.BooleanField(default=False)
     optional = models.BooleanField(default=False)
     series = models.JSONField(blank=True, null=True, default=list)
-    qualification = models.ForeignKey(Qualification, on_delete=models.CASCADE, related_name='components')
+    qualification = models.ForeignKey(
+        Qualification, 
+        on_delete=models.CASCADE, 
+        related_name='components'
+    )
     mark = models.SmallIntegerField(
         blank=True, 
         null=True,

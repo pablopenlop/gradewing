@@ -20,8 +20,17 @@
             <button class="mx-1 btn btn-light" 
                 type="button" data-bs-dismiss="modal">Cancel
             </button>
+            {% if is_preform %}
+            <button name="next-entry" id="next-entry-btn" class="mx-1 btn btn-primary"
+                hx-post="{{ form.action }}"  
+                hx-target="#{{ form.form_id }}" 
+                hx-swap="outerHTML">
+                Next <i class="fa-solid fa-arrow-right ms-2"></i>
+            </button>
+            {% else %}
             <button type="submit" name="save-entry" id="save-entry-btn" class="mx-1 btn btn-primary">
                 Save
             </button>
+            {% endif %}
         </div>
     </div>

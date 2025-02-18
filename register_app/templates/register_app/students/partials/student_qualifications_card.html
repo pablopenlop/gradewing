@@ -138,7 +138,7 @@
                 {% for sq in programme.qualifications.all %}
                 <tr style="vertical-align: middle;">
                     <td class="">{{sq}}</td>
-                    <td>
+                    {% comment %} <td>
                         {% if sq.qualification.core %}
     
                         <button class="btn btn-transparent btn-round" 
@@ -158,6 +158,17 @@
                             Required by <i>{{sq.super_qualification.qualification.title}}</i>">
                             <i class="fa-solid fa-s"></i>
                         </button>
+                        {% endif %}
+                    </td> {% endcomment %}
+                    <td>
+                        {% if sq.has_tag %}
+                        <span class="badge rounded-pill badge-dark-secondary my-1 mx-1"
+                
+                            data-bs-toggle="tooltip" 
+                            data-bs-placement="top" 
+                            data-bs-title="{{sq.tag.description}}">
+                            {{sq.tag.name}}
+                        </span>
                         {% endif %}
                     </td>
                     <td class="text-nowrap">

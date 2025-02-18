@@ -1,3 +1,4 @@
+
 <form id="{{ form.form_id }}" 
     action="{{ form.action }}"  
     method="POST">
@@ -5,8 +6,9 @@
  
     <div class="modal-header">
         <h5 class="modal-title">
-            Add programme   
+            Update entry
         </h5>
+         
         <button class="btn btn-light btn-round" type="button" data-bs-dismiss="modal">
             <i class="fa-solid fa-x"></i>
         </button>
@@ -15,40 +17,38 @@
         <div class="row">
             <div class="col-12">
                 <div class="form-floating mb-3 restricted">
-                    {{ form.student }}
-                    <label for="{{ form.student.id_for_label }}">{{form.student.label}}</label>
+                    {{ form.id }}
+                    <label for="{{ form.id.id_for_label }}">{{form.id.label}}</label>
                 </div>
             </div>
         </div>
+    
         <div class="row">
             <div class="col-12">
                 <div class="form-floating mb-3">
-                    {{ form.name }}
-                    <label for="{{ form.name.id_for_label }}">{{form.name.label}} *</label>
+                    {{ form.component }}
+                    <label for="{{ form.component.id_for_label }}">{{form.component.label}}
+                    </label>
                 </div> 
+     
             </div>
         </div>  
-        
 
     </div>
-    <div class="modal-footer justify-content-end">
-        <div class="d-flex justify-content-center">
-            <button class="mx-1 btn btn-light" 
-                type="button" data-bs-dismiss="modal">Cancel
-            </button>
-            <button type="submit" class="mx-1 btn btn-primary" disabled>
-                Add
-            </button>
-        </div>
-    </div>
+
+    {% include 'gradebook_app/checkpoints/partials/checkpoint_entry_footer.html' %}
+        
 </form>
+
 
 <script>
     $(document).ready(function() {
-        var $select = $('#id_name');
+
+
+        var $select = $('#id_component');
         var required = $select.prop('required');    
         var selectized = $select.selectize({
-            placeholder: 'Select a qualification programme...',
+            placeholder: 'Select a component...',
         });
         if (required === true) {
             $select.addClass('required');

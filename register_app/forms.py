@@ -903,7 +903,11 @@ class CheckpointFieldForm(forms.ModelForm):
             
         elif kind == CheckpointFieldKind.GRADE:
             self.fields['kind'].help_text = """
-            Qualification-matching gradesets are automatically generated.
+            This field includes a grade entry for each subject qualification.
+            """
+        elif kind == CheckpointFieldKind.MOCK:
+            self.fields['kind'].help_text = """
+            This field includes a grade & mark entry from one selected exam component for each subject qualification.
             """
         elif kind == CheckpointFieldKind.COMMENT:
             if not self.instance.pk:

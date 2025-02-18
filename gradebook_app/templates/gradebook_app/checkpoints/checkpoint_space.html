@@ -5,6 +5,13 @@
     <script src="{% static 'datatables/js/datatables.dropdown_filter.js' %}"></script>
     <script src="{% static 'gradebook_app/js/examinations/examinations.form.utils.js' %}"></script>
 
+    <script src="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.js"></script>
+<link href="https://cdn.jsdelivr.net/npm/quill@2.0.3/dist/quill.snow.css" rel="stylesheet">
+
+
+
+
+
 {% endblock %}
 
 {% block content %}
@@ -42,5 +49,7 @@
 
 <!-- FORM MODAL -->
 {% include 'partials/form_modal_small.html' %}
+{% include 'partials/form_modal_large.html' %}
+{% include 'partials/form_modal.html' %}
 
 {% endblock %}

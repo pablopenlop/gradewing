@@ -6,7 +6,11 @@ from django.urls import reverse
 from register_app.models import Checkpoint
 from gradebook_app.models import CheckpointEntry
 from choices.checkpoints import CheckpointFieldKind, CheckpointScope
-from gradebook_app.forms import GradeEntryForm, GradeMarkEntryForm, CategoricalEntryForm, MarkEntryForm
+from gradebook_app.forms import (
+    GradeEntryForm, GradeMarkEntryForm, CategoricalEntryForm, 
+    MarkEntryForm, CommentEntryForm, MockEntryPreForm, MockEntryForm
+)
+from shared.utils.form_utils import limits_from_validators
 
 
 @login_required
@@ -43,6 +47,7 @@ def checkpoints_data(request):
         'yeargroups',
     )
     for checkpoint in checkpoints:
+        checkpoint.progress()
         checkpoints_data.append({
             'id': f"{checkpoint.id}",
             'name': checkpoint.name,
@@ -50,9 +55,8 @@ def checkpoints_data(request):
             'date': checkpoint.date.strftime("%B %-d, %Y"),
             'period': checkpoint.period.__str__(),
             'state': checkpoint.get_state_display(),
-            'yeargroups': [
-                yeargroup.__str__() for yeargroup in checkpoint.yeargroups.all()
-            ],
+            'yeargroups': ", ".join(map(str, checkpoint.yeargroups.all())),
+            'progress': checkpoint.progress(),
             'url': reverse('gradebook-checkpoint-space', args=[checkpoint.id]),
         })
 
@@ -109,10 +113,13 @@ def general_benchmark_data(checkpoint_id):
             )
             for entry in entries:
                 entry_key = entry.checkpoint_field.name  
+                data_bs_target, hx_target = entry.bs_hx_targets()
                 entry_data[entry_key] = {
                     'id': entry.id, 
                     'value': entry.value(),
                     'is_excluded': entry.is_excluded,
+                    'data_bs_target': data_bs_target,
+                    'hx_target': hx_target,
                     'url_form': reverse('gradebook-checkpoint-entry-form', args=[entry.id])}
             
             data.append(entry_data)
@@ -138,11 +145,19 @@ def subject_benchmark_data(checkpoint_id):
             )
             for entry in entries:
                 entry_key = entry.checkpoint_field.name  
+                data_bs_target, hx_target = entry.bs_hx_targets()
+                if entry.is_always_excluded():
+                    url_form = reverse('gradebook-checkpoint-entry-componentless')
+                else:
+                    url_form = reverse('gradebook-checkpoint-entry-form', args=[entry.id])
                 entry_data[entry_key] = {
                     'id': entry.id, 
                     'value': entry.value(),
                     'is_excluded': entry.is_excluded,
-                    'url_form': reverse('gradebook-checkpoint-entry-form', args=[entry.id])}
+                    'data_bs_target': data_bs_target,
+                    'hx_target': hx_target,
+                    'url_form': url_form
+                }
             
             data.append(entry_data)
     return JsonResponse({"data": data})
@@ -171,19 +186,32 @@ def class_landmark_data(checkpoint_id):
             )
             for entry in entries:
                 entry_key = entry.checkpoint_field.name  
+                data_bs_target, hx_target = entry.bs_hx_targets()
                 entry_data[entry_key] = {
                     'id': entry.id, 
                     'value': entry.value(),
+                    'data_bs_target': data_bs_target,
+                    'hx_target': hx_target,
                     'is_excluded': entry.is_excluded,
                     'url_form': reverse('gradebook-checkpoint-entry-form', args=[entry.id])}
             data.append(entry_data)
     return JsonResponse({"data": data})
 
 
+
+@login_required
+def checkpoint_entry_componentless(request):
+    return render(
+        request, 
+        'gradebook_app/checkpoints/partials/checkpoint_mock_entry_componentless.html',
+        {}
+    )
+    
+    
 @login_required
 def checkpoint_entry_form(request, checkpoint_entry_id):
     entry = CheckpointEntry.objects.get(id=checkpoint_entry_id)
-    
+    is_preform = False
     match entry.checkpoint_field.kind:
         case CheckpointFieldKind.GRADE:
             qualification = entry.qualification()
@@ -199,12 +227,27 @@ def checkpoint_entry_form(request, checkpoint_entry_id):
         case CheckpointFieldKind.MARK | CheckpointFieldKind.PERCENTAGE:
             form = MarkEntryForm(instance=entry)
             template = "checkpoint_mark_entry_form.html"
+        case CheckpointFieldKind.MOCK:
+            if entry.component:
+                form = MockEntryForm(instance=entry)
+                template = "checkpoint_mock_entry_form.html"
+            else:
+                form = MockEntryPreForm(instance=entry)
+                template = "checkpoint_mock_entry_preform.html" 
+                is_preform = True
+        case CheckpointFieldKind.COMMENT:
+            form = CommentEntryForm(instance=entry)
+            comment_field = CheckpointEntry._meta.get_field('comment')
+            _, form.max_comment_length = limits_from_validators(comment_field)
+            template = "checkpoint_comment_entry_form.html"
+    
     form.action=reverse('gradebook-checkpoint-entry-save')
     form.form_id='checkpoint-entry-form'
+
     return render(
         request, 
         f'gradebook_app/checkpoints/partials/{template}',
-        {'form': form}
+        {'form': form, 'is_preform': is_preform}
     )
 
 @require_POST
@@ -233,9 +276,21 @@ def update_checkpoint_entry(request, entry_id):
             form = CategoricalEntryForm(request.POST, instance=entry)
         case CheckpointFieldKind.MARK | CheckpointFieldKind.PERCENTAGE:
             form = MarkEntryForm(request.POST, instance=entry)
+        case CheckpointFieldKind.COMMENT:
+            form = CommentEntryForm(request.POST, instance=entry)
+        case CheckpointFieldKind.MOCK:
+            if entry.component:
+                form = MockEntryForm(request.POST, instance=entry)
+            else:
+                form = MockEntryPreForm(request.POST, instance=entry)
+                if form.is_valid():
+                    form.save()
+                    return checkpoint_entry_form(request, entry_id)
+                
     if form.is_valid():
         ce=form.save(commit=True)
         ce.is_excluded = False
+        ce.is_completed = True
         ce.save()
         return JsonResponse({'success': True, 'value': ce.value(), 'is_excluded': False})
     else:
@@ -247,6 +302,8 @@ def clear_checkpoint_entry(entry_id):
     entry = CheckpointEntry.objects.get(id=entry_id)
     entry.clear()
     entry.is_excluded = False
+    entry.component = None
+    entry.is_completed = False
     entry.save()
     return JsonResponse({'success': True, 'value': None, 'is_excluded': False})
 
@@ -255,5 +312,7 @@ def exclude_checkpoint_entry(entry_id):
     entry = CheckpointEntry.objects.get(id=entry_id)
     entry.clear()
     entry.is_excluded = True
+    entry.component = None
+    entry.is_completed = False
     entry.save()
     return JsonResponse({'success': True, 'value': None, 'is_excluded': True})

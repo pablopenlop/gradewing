@@ -2,9 +2,11 @@
     <thead>
         <tr>
             <th class="text-nowrap">Checkpoint</th>
-            <th>State</th>
+            <th>Scope</th>
+            <th>Period</th>
             <th>Date</th>
             <th>Targets</th>
+            <th>State</th>
             <th class="text-start">Progress</th>
             <th class="text-end"></th>
         </tr>
@@ -32,32 +34,31 @@
             },
             columns: [
                 { 
-                    data: null,  // Use `null` because we are customizing the rendering
+                    data: 'name',  // Use `null` because we are customizing the rendering
                     render: function(data, type, row) {
-                        return `<div class="fw-bold">${row.name}</div> ${row.scope}`;
+                        //return `<div class="fw-bold">${row.name}</div> ${row.scope}`;
+                        return `<div class="fw-bold">${data}</div>`;
                     }
                 },
-                { data: 'state' },
-                { 
-                    data: null,  // Use `null` because we are customizing the rendering
-                    render: function(data, type, row) {
-                        return `<div>${row.date}</div> ${row.period}`;
-                    }
-                },
+                { data: 'scope' },
+                { data: 'period' },
+                { data: 'date' },
                 { data: 'yeargroups' },
-                { 
-                    data: null, 
+                { data: 'state' },
+                {
+                    data: 'progress',
                     render: function(data, type, row) {
                         return `
-                        <span class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100">
-                            <div class="progress-bar bg-secondary" style="width: 70%"></div>
-                        </span>
-                        <span >
-                            70 %
-                        </span>
+                        <div class="d-flex align-items-center gap-2"> 
+                            <span class="progress" style="width: 100px; height: 10px" role="progressbar" aria-valuemin="0" aria-valuemax="100">
+                                <div class="progress-bar bg-dark-secondary" style="width: ${data}%;"></div>
+                            </span>
+                            <span>${data}%</span>
+                        </div>
                         `;
                     }
                 },
+                
                 { data: null,
                     render: function(data, type, row) {
                         return `
@@ -84,7 +85,7 @@
             rowGroup: {
                 dataSrc: ['period']
             },
-            columnDefs: [{ orderable: false, targets: [3, 4, 5] } ],
+            columnDefs: [{ orderable: false, targets: [7] } ],
             layout: {
                 topStart: {         
                     buttons: ['pageLength',

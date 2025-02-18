@@ -47,6 +47,11 @@ urlpatterns = [
         checkpoint_views.save_checkpoint_entry, 
         name='gradebook-checkpoint-entry-save'
     ),
+    path(
+        'checkpoints/entry/componentless/',
+        checkpoint_views.checkpoint_entry_componentless, 
+        name='gradebook-checkpoint-entry-componentless'
+    ),
     
     # EXAMINATIONS
     path(

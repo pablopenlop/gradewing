@@ -99,7 +99,6 @@ def students_table(request):
 
 @login_required
 def student_general_form(request, student_id):
-    print(request.resolver_match.url_name)
     school = request.user.userprofile.school
     try:
         student = Student.objects.get(id=student_id)
@@ -302,7 +301,6 @@ def student_qualifications_card(request, student_id):
         kwargs={'student_id': student.id}
     )
     context = {'student': student}
-    print(EnrollmentQualification.objects.all())
     return render(request, 'register_app/students/partials/student_qualifications_card.html', context)
 
 
@@ -325,7 +323,8 @@ def save_student_programme(request):
         programme = form.save(commit=True)
         qf= QF.choices_from_values(programme.name)[0]
         qnames = QF.get_core_qualification_names(qf)
-        quals = Qualification.objects.filter(name__in=qnames, core=True)
+        #quals = Qualification.objects.filter(name__in=qnames, core=True)
+        quals = Qualification.objects.filter(name__in=qnames)
         for qual in quals:
             StudentQualification.objects.create(programme=programme, qualification=qual)
         return JsonResponse({'success': True})
@@ -391,7 +390,22 @@ def save_student_qualification(request):
     sq_id = request.POST.get('id')
     sq = StudentQualification.objects.get(id=sq_id) if sq_id else None
     form = StudentQualificationForm(request.POST, instance=sq)
+    confirmation = int(request.POST.get('confirmation'))
+    
     if form.is_valid():
+        if sq and not confirmation:
+            current_enrollments = set(form.cleaned_data.get('enrollments'))
+            old_enrollments = set(sq.enrollments.all())
+            deleted_enrollments = old_enrollments - current_enrollments  
+            if deleted_enrollments:
+                return JsonResponse({
+                    'requires_confirmation': True, 
+                    'message': '''
+                    One or more enrollment periods have been removed.
+                    This will unassign the student from any related checkpoints and classes. 
+                    '''
+                    })
+            
         current_sq = form.save(commit=True)
         if not sq and current_sq.qualification.sub_qualification:
             sub_qualification = current_sq.qualification.sub_qualification
@@ -409,11 +423,11 @@ def save_student_qualification(request):
 @login_required
 def delete_student_qualification(request):
     delete_id = request.POST.get('delete_id')
-    print("notwdvasdvsdvsdfound")
+
     try:
         StudentQualification.objects.get(id=delete_id).delete()
     except StudentQualification.DoesNotExist:
-        print("notfound")
+
         return JsonResponse(data={}, status=404)
     else:
         return JsonResponse({'success': True})

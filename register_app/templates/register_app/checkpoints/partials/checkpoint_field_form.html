@@ -48,12 +48,21 @@
                     <label for="id_kind_display">Field type 
                         <i class="fa-solid fa-lock ms-1"></i>
                     </label>
-                    <div class="form-helptext mx-3 my-1" id="{{ form.kind.auto_id }}_helptext">
-                        {{ form.kind.help_text|safe }}
-                    </div>
+                    
                 </div>
             </div>
         </div>
+        {% if form.kind.help_text|safe  %}
+        <div class="row">
+            <div class="col-12">
+                <div class="form-helptext mx-3 d-flex align-items-center" id="{{ form.kind.auto_id }}_helptext">
+                    <i class="fa-solid fa-circle-info fs-5 me-3"></i>
+                    <span>{{ form.kind.help_text|safe }}</span>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
 
 
         {% if form.kind.value == "comment" %}

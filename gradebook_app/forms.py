@@ -2,6 +2,8 @@ from django import forms
 from gradebook_app.models import QualificationExamResult, ComponentExamResult, CheckpointEntry
 from choices.grading import Gradeset
 from django.core.validators import MinValueValidator, MaxValueValidator
+from bs4 import BeautifulSoup
+from choices.grading import MarkType
 class QualificationExamResultForm(forms.ModelForm):
     id = forms.IntegerField(
         widget=forms.NumberInput(attrs={
@@ -192,7 +194,7 @@ class GradeEntryForm(CheckpointEntryForm):
         }),
         required=True,
     )
-   
+    
     class Meta(CheckpointEntryForm.Meta):
         fields = CheckpointEntryForm.Meta.fields + ['grade'] 
         
@@ -304,5 +306,117 @@ class MarkEntryForm(CheckpointEntryForm):
                     self.initial['mark'] = int(self.instance.mark)  
     
 
+class CommentEntryForm(CheckpointEntryForm):
+    comment = forms.CharField(
+        widget=forms.HiddenInput(),  # Hidden input to store Quill data
+        required=True,
+    )
+
+    class Meta(CheckpointEntryForm.Meta):
+        fields = CheckpointEntryForm.Meta.fields + ['comment'] 
+        
+    def __init__(self, *args, component=None, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.instance and self.instance.pk:
+            return
+        self.fields['comment'].label = self.instance.checkpoint_field.name
+        rules = self.instance.checkpoint_field.rules()
+        help_text = "Write a " + rules[:1].lower() + rules[1:]
+        self.fields['comment'].help_text = help_text
+        self.fields['comment'].widget.attrs.update({'min': self.instance.checkpoint_field.minlength})
+        self.fields['comment'].widget.attrs.update({'max': self.instance.checkpoint_field.maxlength})
+
+    def clean_comment(self):
+        return self.sanitize_comment()  
     
+    def sanitize_comment(self):
+        soup = BeautifulSoup(self.cleaned_data.get("comment"), "html.parser")
+        # Remove unnecessary <p><br></p>
+        paragraphs = soup.find_all("p")
+        for p in paragraphs:
+            if p.get_text(strip=True) == "":
+                p.decompose()
+        # Remove empty list items or those containing only <br>
+        for li in soup.find_all("li"):
+            if li.get_text(strip=True) == "":
+                li.decompose()
+        return str(soup)
+
+
+class MockEntryPreForm(CheckpointEntryForm):
+
+    class Meta(CheckpointEntryForm.Meta):
+        fields = CheckpointEntryForm.Meta.fields + ['component'] 
+        widgets = {
+            'component': forms.Select(attrs={
+                'class': 'form-control',
+                'required': True,
+                'autocomplete': False,
+                'autofill': False,
+            }),
+         }
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.instance and self.instance.pk:
+            return
+        components = self.instance.qualification().components.all()
+        self.fields['component'].queryset=components
+        self.fields['component'].empty_label = None
+        
+class MockEntryForm(CheckpointEntryForm):
+    component = forms.CharField(
+        widget=forms.TextInput(attrs={
+        'class': 'form-control',
+        'readonly': True
+        }),
+        required=True,
+        label = "Exam component",
+    )
+    
+    grade = forms.ChoiceField(
+        choices=[], 
+        widget=forms.Select(attrs={
+        'class': 'form-select',
+        })
+    )
+
+    class Meta(CheckpointEntryForm.Meta):
+        fields = CheckpointEntryForm.Meta.fields + ['mark', 'grade'] 
+        
+        widgets = {
+            'mark': forms.NumberInput(attrs={
+                'class': 'form-control',
+                'autocomplete': 'off',
+                'placeholder': '',
+                'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57) || event.keyCode === 13"
+            }),
+        }
+        
+        
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        if not self.instance and self.instance.pk:
+            return
+        self.fields['component'].initial = self.instance.component
+        component = self.instance.component
+        gradeset = component.grading
+        self.fields['grade'].choices = Gradeset.grade_tuples(gradeset)
+
+        if component.mark_type == MarkType.NONE:
+            self.fields['mark'].label= "Mark not applicable"
+            self.fields['mark'].widget.attrs.update({'readonly': True})
+            return
+   
+        self.fields['mark'].label =f"{component.get_mark_type_display()} / {component.mark}"
+        self.fields['mark'].widget.attrs.update({'min': 0})
+        self.fields['mark'].widget.attrs.update({'max': component.mark})
+        self.fields['mark'].widget.attrs.update({'step': 1})
+        self.fields['mark'].widget.attrs.update({
+            'onkeypress': "return (event.charCode >= 48 && event.charCode <= 57) || event.keyCode === 13"
+        })
+        if self.instance.mark is not None:
+            self.initial['mark'] = int(self.instance.mark)  
+        
+
         

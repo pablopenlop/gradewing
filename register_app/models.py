@@ -2,7 +2,7 @@ from django.db import models
 from django.db.models import Case, When, Value, IntegerField
 from choices.qualification_family import QualificationFamily
 from choices.yeargroups import YearGroupLevel, YearGroupSystem, YearGroupManager 
-from choices.checkpoints import CheckpointScope, CheckpointFieldKind, CheckpointState
+from choices.checkpoints import CheckpointScope, CheckpointFieldKind, CheckpointState 
 from choices.people import Gender
 from choices import QF
 from subject_app.models import Qualification
@@ -10,7 +10,8 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django_countries.fields import CountryField
 from choices.qualification_states import QualificationState
 from typing import Union
-
+from django.db.models import Count, Q
+from math import floor
 class StudentQualificationManager(models.Manager):
     def ordered_by_qualifications(self):
         return self.get_queryset().annotate(
@@ -203,6 +204,7 @@ class Student(Person):
         }
 
 
+
 class Teacher(Person):
     id = models.AutoField(primary_key=True)
     school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='teachers')
@@ -321,6 +323,23 @@ class StudentQualification(models.Model):
         else:
             return QualificationState.PENDING.value
 
+    def has_tag(self):
+        return bool(self.qualification.aggregate) or bool(self.super_qualification)
+    
+    def tag(self):
+        if self.qualification.aggregate:
+            return {
+                'name': 'AGG', 
+                'description': 'Aggregate qualification'
+            }
+        if self.super_qualification:
+            return {
+                'name': 'SUB', 
+                'description': f'''Subqualification included in
+                {self.super_qualification.qualification.title}
+                '''
+            }
+        return None
 
 class EnrollmentQualification(models.Model):
     id = models.AutoField(primary_key=True)
@@ -330,7 +349,12 @@ class EnrollmentQualification(models.Model):
         verbose_name="Enrollment", 
         related_name="enrollment_qualifications"
     )
-    student_qualification = models.ForeignKey(StudentQualification, on_delete=models.CASCADE, verbose_name="Student qualification", related_name="enrollment_qualifications")
+    student_qualification = models.ForeignKey(
+        StudentQualification, 
+        on_delete=models.CASCADE, 
+        verbose_name="Student qualification", 
+        related_name="enrollment_qualifications"
+    )
     
     class Meta:
         constraints = [
@@ -450,6 +474,22 @@ class Checkpoint(models.Model):
             return True
         return False
 
+    def progress(self):
+
+        from gradebook_app.models import CheckpointEntry
+
+        checkpoint_data = CheckpointEntry.objects.filter(
+            checkpoint_yeargroup__checkpoint=self, is_excluded=False
+        ).aggregate(
+            completed_count=Count('id', filter=Q(is_completed=True)),
+            total_count=Count('id')
+        )
+
+        completed_count = checkpoint_data['completed_count']
+        total_count = checkpoint_data['total_count']
+
+        return floor(completed_count/total_count*100)
+        
 class CheckpointYearGroup(models.Model):
     id = models.AutoField(primary_key=True)
     checkpoint = models.ForeignKey(
@@ -554,7 +594,7 @@ class CheckpointYearGroup(models.Model):
         return messages.get(self.checkpoint.scope)
 
 
-        
+       
 class CheckpointField(models.Model):
     STEP_CHOICES = [
         ('0.01', "0.01"),
@@ -613,7 +653,7 @@ class CheckpointField(models.Model):
         verbose_name="Min. character count",
         validators=[
             MinValueValidator(0),
-            MaxValueValidator(1000)
+            MaxValueValidator(500)
         ]
     )
     maxlength = models.SmallIntegerField(
@@ -622,7 +662,7 @@ class CheckpointField(models.Model):
         verbose_name="Max. character count",
         validators=[
             MinValueValidator(10),
-            MaxValueValidator(2000)
+            MaxValueValidator(1500)
         ]
     )
     categories = models.JSONField(blank=True, null=True, default=list, verbose_name="Categories")
@@ -645,17 +685,18 @@ class CheckpointField(models.Model):
         
     def rules(self):
         if self.kind== CheckpointFieldKind.COMMENT:
-            return f"{self.minlength}–{self.maxlength} characters"
+            return f"Comment between {self.minlength} and {self.maxlength} characters long"
         elif self.kind== CheckpointFieldKind.GRADE:
-            return "n/a"
+            return "Grade from the corresponding subject qualification gradeset"
+        elif self.kind== CheckpointFieldKind.MOCK:
+            return "Mark & grade from the corresponding exam component gradeset"
         elif self.kind== CheckpointFieldKind.MARK:
             return f"Mark between {self.minmark} and {self.maxmark}, rounded to the nearest {self.stepsize}"
         elif self.kind== CheckpointFieldKind.CATEGORICAL:
-            return ', '.join(self.categories)
+            return 'Category from: ' + ', '.join(self.categories)
         elif self.kind== CheckpointFieldKind.PERCENTAGE:
             return f"Percentage mark between {self.minmark} and {self.maxmark}, rounded to the nearest {self.stepsize}"
-        elif self.kind== CheckpointFieldKind.MOCK:
-            return "n/a"
+
         
 
     

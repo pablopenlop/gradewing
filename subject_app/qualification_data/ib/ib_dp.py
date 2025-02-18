@@ -677,7 +677,7 @@ QUALIFICATIONS = [
         "mark": None,
         "mark_type": MT.NONE,
         "modular": False,
-        "core": True,
+        "aggregate": True,
         "components": []
     },
     {
@@ -693,7 +693,7 @@ QUALIFICATIONS = [
         "mark": 45,
         "mark_type": MT.POINTS,
         "modular": False,
-        "core": True,
+        "aggregate": True,
         "mark_required": True,
         "components": []
     },
