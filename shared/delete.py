@@ -2,6 +2,7 @@ from register_app.models import (
     Period, Checkpoint, CheckpointYearGroup, Student, Enrollment, 
     StudentProgramme, StudentQualification, 
 )
+from gradebook_app.models import QualificationExamResult, ComponentExamResult
 from dataclasses import dataclass
 from django.db.models import Model
 from django.urls import reverse
@@ -47,6 +48,18 @@ DELETE_DATA = {
         "form_id": "student-qualification-delete-form",
         "action": lambda: reverse("student-qualification-delete"),
         "title": "Delete qualification?",
+        "body": "",
+    },
+    QualificationExamResult: {
+        "form_id": "qualification-exam-result-delete-form",
+        "action": lambda: reverse("delete-qualification-exam-result"),
+        "title": "Delete qualification exam result?",
+        "body": "",
+    },
+    ComponentExamResult: {
+        "form_id": "component-exam-result-delete-form",
+        "action": lambda: reverse("delete-component-exam-result"),
+        "title": "Delete component exam result?",
         "body": "",
     },
 }

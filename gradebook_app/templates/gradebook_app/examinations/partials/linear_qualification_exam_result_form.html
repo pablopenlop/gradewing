@@ -16,105 +16,105 @@
             <span><b> {{sq.qualification}}</b></span>
         </div>
         <ul class="list-group list-group-flush m-0 p-0">
-                <li class="list-group-item p-0 mb-1">
+            <li class="list-group-item p-0 mb-1">
 
-        <div class="row">
-            <div class="col-6">
-                <div class="form-floating mb-3 restricted">
-                    {{qualification_form.id}}
-                    <label for="{{ qualification_form.id.id_for_label }}">
-                        {{ qualification_form.id.label}}
-                    </label>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-floating mb-3 restricted">
+                            {{qualification_form.id}}
+                            <label for="{{ qualification_form.id.id_for_label }}">
+                                {{ qualification_form.id.label}}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-floating mb-3 restricted">
+                            {{qualification_form.student_qualification}}
+                            <label for="{{ qualification_form.student_qualification.id_for_label }}">
+                                {{ qualification_form.student_qualification.label}}
+                            </label>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            <div class="col-6">
-                <div class="form-floating mb-3 restricted">
-                    {{qualification_form.student_qualification}}
-                    <label for="{{ qualification_form.student_qualification.id_for_label }}">
-                        {{ qualification_form.student_qualification.label}}
-                    </label>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="form-floating mb-3">
+                            {{ qualification_form.series }}
+                            <label for="{{ qualification_form.series.id_for_label }}">
+                                {% if sq.qualification.has_no_examseries %}
+                                    Month of award *
+                                {% else %}
+                                    Examination series *
+                                {% endif  %}
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="form-floating mb-3">
+                            {{ qualification_form.year }}
+                            <label for="{{ qualification_form.year.id_for_label }}">
+                                {% if sq.qualification.has_no_examseries %}
+                                    Year of award *
+                                {% else %}
+                                    Examination year *
+                                {% endif  %}
+                        </label>
+                        </div>
+                    </div>
                 </div>
-            </div>
-        </div>
-        <div class="row">
-            <div class="col-6">
-                <div class="form-floating mb-3">
-                    {{ qualification_form.series }}
-                    <label for="{{ qualification_form.series.id_for_label }}">
-                        {% if sq.qualification.has_no_examseries %}
-                            Month of award *
-                        {% else %}
-                            Examination series *
-                        {% endif  %}
-                    </label>
+                <div class="d-flex justify-content-start align-items-center mb-2">
+                    <div class="title mb-1">Overall</div>
                 </div>
-            </div>
-            <div class="col-6">
-                <div class="form-floating mb-3">
-                    {{ qualification_form.year }}
-                    <label for="{{ qualification_form.year.id_for_label }}">
-                        {% if sq.qualification.has_no_examseries %}
-                            Year of award *
-                        {% else %}
-                            Examination year *
-                        {% endif  %}
-                </label>
-                </div>
-            </div>
-        </div>
-        <div class="d-flex justify-content-start align-items-center mb-2">
-            <div class="title mb-1">Overall</div>
-        </div>
 
-        <div class="row">
-            <div class="{% if sq.qualification.mark_secondary %}col-3{% else %}col-6{% endif %}">
-                <div class="form-floating mb-3">
-                    {{ qualification_form.grade }}
-                    <label for="{{ qualification_form.grade.id_for_label }}">
-                        {{ qualification_form.grade.label }} *
-                    </label>
+                <div class="row">
+                    <div class="{% if sq.qualification.mark_secondary %}col-3{% else %}col-6{% endif %}">
+                        <div class="form-floating mb-3">
+                            {{ qualification_form.grade }}
+                            <label for="{{ qualification_form.grade.id_for_label }}">
+                                {{ qualification_form.grade.label }} *
+                            </label>
+                        </div>
+                    </div>
+                    <div class="{% if sq.qualification.mark_secondary %}col-5{% else %}col-6{% endif %}">
+                        <div class="form-floating mb-3">
+                            {{ qualification_form.mark }}
+                            <label for="{{ qualification_form.mark.id_for_label }}">
+                                {{sq.qualification.get_mark_type_display}} / {{sq.qualification.mark}}
+                            </label>
+                        </div>
+                    </div>
+                    {% if sq.qualification.mark_secondary %}
+                    <div class="col-4">
+                        <div class="form-floating mb-3">
+                            {{ qualification_form.mark_secondary }}
+                            <label for="{{ qualification_form.mark_secondary.id_for_label }}">
+                                {{sq.qualification.get_mark_secondary_type_display}} / {{sq.qualification.mark_secondary}}
+                            </label>
+                        </div>
+                    </div>
+                    {% endif %}
                 </div>
-            </div>
-            <div class="{% if sq.qualification.mark_secondary %}col-5{% else %}col-6{% endif %}">
-                <div class="form-floating mb-3">
-                    {{ qualification_form.mark }}
-                    <label for="{{ qualification_form.mark.id_for_label }}">
-                        {{sq.qualification.get_mark_type_display}} / {{sq.qualification.mark}}
-                    </label>
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <div class="form-check text-muted">
+                            {{ qualification_form.is_final }}
+                            <label class="p-0 my-1 mx-2" for="{{ qualification_form.is_final.id_for_label }}">
+                                Mark result as
+                                <span>
+                                    <b type="button" 
+                                        data-bs-toggle="tooltip" 
+                                        data-bs-html="true"
+                                        data-bs-placement="top"
+                                        data-bs-title="{{ qualification_form.is_final.help_text }}"> 
+                                        Final
+                                    </b>
+                                </span> 
+                            </label>
+                        </div>
+                    </div>
                 </div>
-            </div>
-            {% if sq.qualification.mark_secondary %}
-            <div class="col-4">
-                <div class="form-floating mb-3">
-                    {{ qualification_form.mark_secondary }}
-                    <label for="{{ qualification_form.mark_secondary.id_for_label }}">
-                        {{sq.qualification.get_mark_secondary_type_display}} / {{sq.qualification.mark_secondary}}
-                    </label>
-                </div>
-            </div>
-            {% endif %}
-        </div>
-        <div class="row mb-3">
-            <div class="col-12">
-                <div class="form-check text-muted">
-                    {{ qualification_form.is_final }}
-                    <label class="p-0 my-1 mx-2" for="{{ qualification_form.is_final.id_for_label }}">
-                        Mark result as
-                        <span>
-                            <b type="button" 
-                                data-bs-toggle="tooltip" 
-                                data-bs-html="true"
-                                data-bs-placement="top"
-                                data-bs-title="{{ qualification_form.is_final.help_text }}"> 
-                                Final
-                            </b>
-                        </span> 
-                    </label>
-                </div>
-            </div>
-        </div>
-    </li>
-</ul>
+            </li>
+        </ul>
 
       
 
@@ -122,7 +122,6 @@
         <div class="d-flex justify-content-start align-items-center mb-2">
             <div class="title mb-1">Components</div>
         </div>
-{% comment %}         <div class="title mb-1">Components</div> {% endcomment %}
         <ul class="list-group list-group-flush">
         {% for index, component, form in component_formset %}
             <li class="list-group-item mb-1">
@@ -248,7 +247,7 @@
     </div>
 
     <div class="modal-footer">
-        <div class="row w-100 mb-3">
+        <div class="row w-100 my-0">
             {% include 'partials/form_error_alert.html' %}
         </div>
         <div class="d-flex justify-content-end">

@@ -99,9 +99,9 @@
                     
                         <button class="dropdown-item" 
                             data-bs-toggle="modal" 
-                            data-bs-target="#qualification-exam-result-delete-modal" 
-                            name ="qer-delete-btn" 
-                            value ="{{ qer.id }}" >
+                            data-bs-target="#delete-modal" 
+                            hx-get="{% url 'qualification-exam-result-delete-form' qer.id %}" 
+                            hx-target="#delete-form-container" >
                             <i class="fa-regular fa-trash-can me-2"></i> 
                             Delete entry
                         </button>

@@ -5,8 +5,11 @@ from .models import Qualification, Component, SubjectArea
 from django.http import HttpResponse
 from .loader import load_subjects
 from register_app.loader import load_yeargroups
-from register_app.models import YearGroup
+from register_app.models import YearGroup, Student
+from factories.register_factory import SchoolFactory
+from choices.qualification_tree import Edusystem
 def subjects(request):
+    school = request.user.userprofile.school
     if request.method == 'POST':
         action = request.POST.get('action')
         if action == 'add':
@@ -24,6 +27,18 @@ def subjects(request):
             load_yeargroups()
         elif action == 'yg-delete':
             YearGroup.objects.all().delete()
+        
+        elif action == 'create-students':
+            sf = SchoolFactory(
+                school=school, 
+                edusystem=Edusystem.IB,
+                num_students=800)
+            sf.generate()
+            print('done')
+        elif action == 'delete-students':
+            Student.objects.filter(school=school).all().delete()
+            print('delete')
+            
          
     subjects = Qualification.objects.all()
     papers = Component.objects.all()

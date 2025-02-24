@@ -2,6 +2,7 @@ from .qualification_tree import QualificationTree as QT
 from .choices import ComplexChoices
 from django.db import models
 from .qualification_tree import Edusystem as Edu
+from .yeargroups import YearGroupLevel as YL
 
 class QualificationFamily(ComplexChoices):
     class IB(models.TextChoices):
@@ -75,6 +76,10 @@ class QualificationFamily(ComplexChoices):
     @classmethod
     def get_suite_classes(cls, family):
         return cls.FAM_2_SUITECLASS.get(family, None)
+    
+    @classmethod
+    def compatible_yeargroup_levels(cls, family):
+        return cls.FAM_2_YGLEVEL.get(family, None)
     
     @classmethod
     def get_qualification_name_choices(cls, family, values_only=False):
@@ -161,5 +166,56 @@ class QualificationFamily(ComplexChoices):
             QT.IB.IBO.DP,
 
         }
+    }
+    
+    FAM_2_YGLEVEL = {
+         UKN.AL: {
+            YL.YG0, YL.YG1, 
+        },
+        UKN.GCSE: {
+            YL.YG2, YL.YG3, YL.YG4,
+        },
+        UKN.PQ12: {
+            YL.YG2, YL.YG3, YL.YG4,
+        },
+        UKN.AAQ: {
+            YL.YG0, YL.YG1, 
+        },
+        UKN.VTQ2: {
+            YL.YG2, YL.YG3, YL.YG4,
+        },
+        UKN.AGQ3: {
+            YL.YG0, YL.YG1, 
+        },
+        UKN.EPQ: {
+            YL.YG0, YL.YG1, 
+        },
+        UKI.IAL: {
+            YL.YG0, YL.YG1, 
+        },
+        UKI.IGCSE: {
+            YL.YG2, YL.YG3, YL.YG4,
+        },
+        UKI.OLEVEL: {
+            YL.YG2, YL.YG3, YL.YG4,
+        },
+        UKI.BTECI2: {
+            YL.YG2, YL.YG3, YL.YG4,
+        },
+        UKI.BTECI3: {
+            YL.YG0, YL.YG1, 
+        },
+        UKI.IPQ: {
+            YL.YG0, YL.YG1, 
+        },
+        IB.MYP: {
+            YL.YG2, YL.YG3, YL.YG4, YL.YG5, YL.YG6, 
+        },
+        IB.DP: {
+            YL.YG0, YL.YG1, 
+        },
+         IB.CP: {
+            YL.YG0, YL.YG1, 
+        },
     }
 

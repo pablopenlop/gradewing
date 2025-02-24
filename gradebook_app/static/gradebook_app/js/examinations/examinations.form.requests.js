@@ -1,78 +1,43 @@
 $(document).ready(function() {
-    
-    $(document).on('submit', '#qualification-exam-result-form', function(event) {
-        event.preventDefault(); 
-        var form = $(this)
-        var formData = form.serialize(); 
-        $.ajax({
-            url: form.attr('action'), 
-            type: 'POST', 
-            data: formData, 
-            success: function(response) {
-                if (response.success) {
-                    refreshTableAndInfocard('#examinations-table');
-                    $('#qualification-exam-result-form-modal').modal('hide');
-                } else {
-                    showAlert(form, response.error_message)
-                }
-            },
-            error: function(xhr, status, error) {
-                $('#qualification-exam-result-form-modal').modal('hide');
-                $('#error-modal').modal('show');
-            }
-        });
-    });
-    $(document).on('submit', '#component-exam-result-form', function(event) {
-        event.preventDefault(); 
-        var form = $(this)
-        var formData = form.serialize(); 
-        $.ajax({
-            url: form.attr('action'), 
-            type: 'POST', 
-            data: formData, 
-            success: function(response) {
-                if (response.success) {
-                    refreshTableAndInfocard('#examinations-table');
-                    $('#component-exam-result-form-modal').modal('hide');
-                } else {
-                    showAlert(form, response.error_message)
-                }
-            },
-            error: function(xhr, status, error) {
-                $('#component-exam-result-form-modal').modal('hide');
-                $('#error-modal').modal('show');
-            }
-        });
-    });
 
-    $(document).on('submit', '#linear-qualification-exam-result-form', function(event) {
-        event.preventDefault(); 
-        var form = $(this)
-        var formData = form.serialize(); 
-        $.ajax({
-            url: form.attr('action'), 
-            type: 'POST', 
-            data: formData, 
-            success: function(response) {
-                
-                if (response.success) {
-                    console.log("SUCCESS")
-                    refreshTableAndInfocard('#examinations-table');
+    $(document).on(
+        'submit', 
+        '#linear-qualification-exam-result-form, \
+        #modular-qualification-exam-result-form, \
+        #modular-component-exam-result-form', 
+        function(event) {
+            event.preventDefault(); 
+            var form = $(this)
+            var formData = form.serialize(); 
+            $.ajax({
+                url: form.attr('action'), 
+                type: 'POST', 
+                data: formData, 
+                success: function(response) {
+                    if (response.success) {
+                        $('#linear-qualification-exam-result-form-modal').modal('hide');
+                        $('#modular-qualification-exam-result-form-modal').modal('hide');
+                        $('#modular-component-exam-result-form-modal').modal('hide');
+                        if (response.update_table) {
+                            updateTable(response)
+                        }
+                        refreshInfocard()
+                    } else {
+                        showAlert(form, response.error_message)
+                    }
+                },
+                error: function(xhr, status, error) {
                     $('#linear-qualification-exam-result-form-modal').modal('hide');
-                } else {
-                    showAlert(form, response.error_message)
-
-
+                    $('#modular-qualification-exam-result-form-modal').modal('hide');
+                    $('#error-modal').modal('show');
                 }
-            },
-            error: function(xhr, status, error) {
-                $('#linear-qualification-exam-result-form-modal').modal('hide');
-                $('#error-modal').modal('show');
-            }
-        });
-    });
+            });
+        }
+    );
 
-    $(document).on('submit', '#qualification-exam-result-delete', function(event) {
+    $(document).on('submit', 
+        '#qualification-exam-result-delete-form, #component-exam-result-delete-form', 
+        function(event) {
         event.preventDefault(); 
         var form = $(this)
         var formData = form.serialize(); 
@@ -81,42 +46,39 @@ $(document).ready(function() {
             type: 'POST', 
             data: formData, 
             success: function(response) {
-                    $('#qualification-exam-result-delete-modal').modal('hide');
-                if (response.success) {
-                    refreshTableAndInfocard('#examinations-table');
-                } else {
-                    $('#error-modal').modal('show');
+                $('#delete-modal').modal('hide');
+                if (response.update_table) {
+                    updateTable(response)
                 }
+                refreshInfocard()
             },
             error: function(xhr, status, error) {
-                $('#qualification-exam-result-delete-modal').modal('hide');
+                $('#delete-modal').modal('hide');
                 $('#error-modal').modal('show');
             }
         });
     });
 
-    $(document).on('submit', '#component-exam-result-delete', function(event) {
-        event.preventDefault(); 
-        var form = $(this)
-        var formData = form.serialize(); 
-        $.ajax({
-            url: form.attr('action'), 
-            type: 'POST', 
-            data: formData, 
-            success: function(response) {
-                    $('#component-exam-result-delete-modal').modal('hide');
-                if (response.success) {
-                    refreshTableAndInfocard('#examinations-table');
-                } else {
-                    $('#error-modal').modal('show');
-                }
-            },
-            error: function(xhr, status, error) {
-                $('#component-exam-result-delete-modal').modal('hide');
-                $('#error-modal').modal('show');
-            }
-        });
-    });
+
+    function refreshInfocard(){
+        let table = $('#examinations-table').DataTable();
+        let selectedRow = table.row({ selected: true });
+        if (selectedRow.any()) {  
+            selectedRow.node().click();
+        }
+    }
+
+    function updateTable(response){
+        let table = $('#examinations-table').DataTable();
+        let selectedRow = table.row({ selected: true });
+
+        if (selectedRow.any()) {  
+            let rowData = selectedRow.data();
+            rowData.series_year = response.series_year; 
+            rowData.grade = response.grade; 
+            selectedRow.data(rowData);  
+        }
+    }
 
     
 

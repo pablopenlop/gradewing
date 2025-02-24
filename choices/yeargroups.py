@@ -9,7 +9,7 @@ class YearGroupLevel(models.TextChoices):
     YG2 = 'ygl.3', '3rd to last year'
     YG1 = 'ygl.2', '2nd to last year'
     YG0 = 'ygl.1', 'Final year'
-
+    
 
 class YearGroupSystem(models.TextChoices):
     UK = 'ygs.uk', 'UK'

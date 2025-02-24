@@ -84,7 +84,6 @@ def checkpoint_space_table(request, checkpoint_id):
 @login_required
 def checkpoint_space_data(request, checkpoint_id):
     scope = Checkpoint.objects.get(id=checkpoint_id).scope
-    print(scope)
     match scope:
         case CheckpointScope.SUBJECT_BENCHMARK:
             return subject_benchmark_data(checkpoint_id)
@@ -294,7 +293,6 @@ def update_checkpoint_entry(request, entry_id):
         ce.save()
         return JsonResponse({'success': True, 'value': ce.value(), 'is_excluded': False})
     else:
-        print(form.errors)
         return JsonResponse({'success': False})
     
 

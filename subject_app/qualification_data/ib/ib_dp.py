@@ -27,7 +27,7 @@ QUALIFICATIONS = [
                 "weighting": ("35%", "35%"),
                 "mark": (20, 40),
                 "mark_type": MT.RAW,
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/1",
             },
             {
@@ -37,7 +37,7 @@ QUALIFICATIONS = [
                 "weighting": ("35%", "25%"),
                 "mark": (30, 30),
                 "mark_type": MT.RAW,
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/2",
             },
             {
@@ -47,7 +47,7 @@ QUALIFICATIONS = [
                 "weighting": (None, "20%"),
                 "mark": (None, 20),
                 "mark_type": MT.RAW,
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/3",
             },
             {
@@ -57,7 +57,7 @@ QUALIFICATIONS = [
                 "weighting": ("30%", "20%"),
                 "mark": (40, 40),
                 "mark_type": MT.RAW,
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/4",
             }
         ]
@@ -85,7 +85,7 @@ QUALIFICATIONS = [
                 "weighting": ("35%", "35%"),
                 "mark": (20, 40),
                 "mark_type": MT.RAW,
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/1",
             },
             {
@@ -95,7 +95,7 @@ QUALIFICATIONS = [
                 "weighting": ("35%", "25%"),
                 "mark": (30, 30),
                 "mark_type": MT.RAW,
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/2",
             },
             {
@@ -105,7 +105,7 @@ QUALIFICATIONS = [
                 "weighting": (None, "20%"),
                 "mark": (None,20),
                 "mark_type": MT.RAW,
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/3",
             },
             {
@@ -115,7 +115,7 @@ QUALIFICATIONS = [
                 "weighting": ("30%", "20%"),
                 "mark": (40, 40),
                 "mark_type": MT.RAW,
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/4",
             }
         ]
@@ -142,7 +142,7 @@ QUALIFICATIONS = [
                 "weighting": "30%",
                 "mark": 30,
                 "mark_type": MT.RAW,
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/1",
             },
             {
@@ -152,7 +152,7 @@ QUALIFICATIONS = [
                 "weighting": "30%",
                 "mark": 26,
                 "mark_type": MT.RAW,
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/2",
             },
             {
@@ -162,7 +162,7 @@ QUALIFICATIONS = [
                 "weighting": 40,
                 "mark": 32,
                 "mark_type": MT.RAW,
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/3",
             }
         ]
@@ -188,7 +188,7 @@ QUALIFICATIONS = [
                 "duration": ("1 hour 30 minutes", "2 hours"),
                 "weighting": ("35%", "30%"),
                 "mark": (30, 40),
-                "grading": GS.NONE.NAP, 
+                "grading":GS.IB.SINGLE_71, 
                 "code": "*/1",
             },
             {
@@ -197,7 +197,7 @@ QUALIFICATIONS = [
                 "duration": ("1 hour 30 minutes", "1 hour 30 minutes"),
                 "weighting": ("35%", "30%"),
                 "mark": (32, 32),
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/2",
             },
             {
@@ -206,7 +206,7 @@ QUALIFICATIONS = [
                 "duration": "",
                 "weighting": (None, "20%"),
                 "mark": (None, 25),
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/3",
             },
             {
@@ -215,7 +215,7 @@ QUALIFICATIONS = [
                 "duration": "",
                 "weighting": ("30%", "20%"),
                 "mark": (28, 28),
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/4",
             }
         ]
@@ -241,7 +241,7 @@ QUALIFICATIONS = [
                 "duration": ("1 hour 15 minutes", "1 hour 30 minutes"),
                 "weighting": ("25%", "25%"),
                 "mark": (30, 30),
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/1",
             },
             {
@@ -250,7 +250,7 @@ QUALIFICATIONS = [
                 "duration": ("1 hour 45 minutes", "2 hours"),
                 "weighting": ("25%", "25%"),
                 "mark": (40, 40),
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/2",
             },
             {
@@ -259,7 +259,7 @@ QUALIFICATIONS = [
                 "duration": ("1 hour 45 minutes", "2 hours"),
                 "weighting": ("25%", "25%"),
                 "mark": (25, 25),
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/3",
             },
             {
@@ -268,7 +268,7 @@ QUALIFICATIONS = [
                 "duration": "",
                 "weighting": ("25%", "25%"),
                 "mark": (30, 30),
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/4",
             }
         ]
@@ -295,7 +295,7 @@ QUALIFICATIONS = [
                 "duration": "1 hour",
                 "weighting": "25%",
                 "mark": 30,
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
                 "code": "*/1",
             },
             {
@@ -306,7 +306,7 @@ QUALIFICATIONS = [
                 "mark": 40,
                 "notes": "Duration applies to the entire Paper 2 (reading & listening)",
                 "code": "*/2A",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
             },
             {
                 "name": "Paper 2: Listening",
@@ -316,7 +316,7 @@ QUALIFICATIONS = [
                 "mark": 25,
                 "notes": "Duration applies to the entire Paper 2 (reading & listening)",
                 "code": "*/2B",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
             },
             {
                 "name": "Individual Oral Assessment",
@@ -325,7 +325,7 @@ QUALIFICATIONS = [
                 "weighting": "25%",
                 "mark": 30,
                 "code": "*/3",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
             }
         ]
     },
@@ -413,7 +413,7 @@ QUALIFICATIONS = [
                 "weighting": "44%",
                 "mark": (0, 0),
                 "code": "*/2",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
             },
             {
                 "name": "Scientific investigation",
@@ -422,7 +422,7 @@ QUALIFICATIONS = [
                 "weighting": "20%",
                 "mark": (24, 24),
                 "code": "*/3",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
             }
         ]
     },
@@ -448,7 +448,7 @@ QUALIFICATIONS = [
                 "weighting": "20%",
                 "mark": 20,
                 "code": "*/1",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
             },
             {
                 "name": "Paper 2: Extended Response",
@@ -457,7 +457,7 @@ QUALIFICATIONS = [
                 "weighting": "48%",
                 "mark": 48,
                 "code": "*/2",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
             },
             {
                 "name": "Internal Assessment",
@@ -466,7 +466,7 @@ QUALIFICATIONS = [
                 "weighting": "32%",
                 "mark": 32,
                 "code": "*/3",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
             }
         ]
     },
@@ -491,7 +491,7 @@ QUALIFICATIONS = [
                 "weighting": "30%",
                 "mark": 24,
                 "code": "*/1",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
             },
             {
                 "name": "Paper 2: Essay",
@@ -500,7 +500,7 @@ QUALIFICATIONS = [
                 "weighting": "45%",
                 "mark": 24,
                 "code": "*/2",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
             },
             {
                 "name": "Historical investigation",
@@ -509,7 +509,7 @@ QUALIFICATIONS = [
                 "weighting": "25%",
                 "mark": 25,
                 "code": "*/3",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
             }
         ]
     },
@@ -544,7 +544,7 @@ QUALIFICATIONS = [
                 "weighting": "20%",
                 "mark": 24,
                 "code": "*/1",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
             },
             {
                 "name": "Paper 2: Essay (World history)",
@@ -553,7 +553,7 @@ QUALIFICATIONS = [
                 "weighting": "25%",
                 "mark": 24,
                 "code": "*/2",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
             },
             {
                 "name": "Paper 3: Essay (Regional history)",
@@ -562,7 +562,7 @@ QUALIFICATIONS = [
                 "weighting": 35,
                 "mark": 45,
                 "code": "*/3",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
             },
             {
                 "name": "Historical investigation",
@@ -571,9 +571,42 @@ QUALIFICATIONS = [
                 "weighting": "20%",
                 "mark": 25,
                 "code": "*/4",
-                "grading": GS.NONE.NAP, 
+                "grading": GS.IB.SINGLE_71, 
             }
         ]
+    },
+    {
+        "subject": "Diploma",
+        "code": "IBDP-DP",
+        "group": SG.IB.DP.CORE,
+        "name": QT.IB.IBO.DP.AGG,
+        "glh": 400,
+        "first_assessment": 2016,
+        "last_assessment": None,
+        "grading": GS.IB.PASS_FAIL, 
+        "series": [Ser.Exam.MAY, Ser.Exam.NOV], 
+        "mark": 45,
+        "mark_type": MT.POINTS,
+        "modular": False,
+        "aggregate": True,
+        "mark_required": True,
+        "components": []
+    },
+    {
+        "subject": "Core points matrix",
+        "code": "IBDP-CPM",
+        "group": SG.IB.DP.CORE,
+        "name": QT.IB.IBO.DP.AGG,
+        "glh": 0,
+        "first_assessment": 2016,
+        "last_assessment": None,
+        "grading": GS.IB.SINGLE_31, 
+        "series": [Ser.Exam.MAY, Ser.Exam.NOV], 
+        "mark": None,
+        "mark_type": MT.NONE,
+        "modular": False,
+        "aggregate": True,
+        "components": []
     },
     {
         "subject": "Theory of Knowledge",
@@ -588,7 +621,7 @@ QUALIFICATIONS = [
         "series": [Ser.Exam.MAY, Ser.Exam.NOV], 
         "modular": False,
         "core": True,
-        "code": "TOK",
+        "code": "IBDP-TOK",
         "components": [
             {
                 "name": "Theory Of Knowledge Essay",
@@ -623,8 +656,7 @@ QUALIFICATIONS = [
         "mark": 100,
         "mark_type": MT.SCALED,
         "modular": False,
-        "core": True,
-        "code": "EE",
+        "code": "IBDP-EE",
         "components": [
             {
                 "name": "Extended Essay",
@@ -636,66 +668,6 @@ QUALIFICATIONS = [
                 "grading": GS.IB.SINGLE_AE, 
             },
         ]
-    },
-
-    {
-        "subject": "Reflective project",
-        "code": "100657",
-        "group": SG.IB.CP.CORE,
-        "name": QT.IB.IBO.CP.CORE,
-        "glh": 0,
-        "first_assessment": 2016,
-        "last_assessment": None,
-        "grading": GS.IB.SINGLE_AE, 
-        "series": [Ser.Exam.MAY, Ser.Exam.NOV], 
-        "mark": 100,
-        "mark_type": MT.SCALED,
-        "modular": False,
-        "core": True,
-        "components": [
-            {
-                "name": "Reflective project",
-                "internal": False,
-                "duration": "50 hours",
-                "weighting": "100%",
-                "mark": 36,
-                "code": "*/1",
-                "grading": GS.IB.SINGLE_AE, 
-            },
-        ]
-    },
-    {
-        "subject": "Core points matrix",
-        "code": "IBDP-CPM",
-        "group": SG.IB.DP.CORE,
-        "name": QT.IB.IBO.DP.AGG,
-        "glh": 0,
-        "first_assessment": 2016,
-        "last_assessment": None,
-        "grading": GS.IB.SINGLE_31, 
-        "series": [Ser.Exam.MAY, Ser.Exam.NOV], 
-        "mark": None,
-        "mark_type": MT.NONE,
-        "modular": False,
-        "aggregate": True,
-        "components": []
-    },
-    {
-        "subject": "Diploma",
-        "code": "IBDP-DP",
-        "group": SG.IB.DP.CORE,
-        "name": QT.IB.IBO.DP.AGG,
-        "glh": 400,
-        "first_assessment": 2016,
-        "last_assessment": None,
-        "grading": GS.IB.PASS_FAIL, 
-        "series": [Ser.Exam.MAY, Ser.Exam.NOV], 
-        "mark": 45,
-        "mark_type": MT.POINTS,
-        "modular": False,
-        "aggregate": True,
-        "mark_required": True,
-        "components": []
     },
     {
         "subject": "Creativity, activity, service (CAS)",
@@ -710,8 +682,77 @@ QUALIFICATIONS = [
         "mark": None,
         "mark_type": MT.NONE,
         "modular": False,
-        "core": True,
         "components": []
-    }
+    },
+     {
+        "subject": "Reflective project",
+        "code": "100657",
+        "group": SG.IB.CP.CORE,
+        "name": QT.IB.IBO.CP.CORE,
+        "glh": 0,
+        "first_assessment": 2016,
+        "last_assessment": None,
+        "grading": GS.IB.SINGLE_AE, 
+        "series": [Ser.Exam.MAY, Ser.Exam.NOV], 
+        "mark": 100,
+        "mark_type": MT.SCALED,
+        "modular": False,
+        "components": [
+            {
+                "name": "Reflective project",
+                "internal": False,
+                "duration": "50 hours",
+                "weighting": "100%",
+                "mark": 36,
+                "code": "*/1",
+                "grading": GS.IB.SINGLE_AE, 
+            },
+        ]
+    },
+    {
+        "subject": "Service Learning",
+        "code": "IBCP-SL",
+        "group": SG.IB.CP.CORE,
+        "name": QT.IB.IBO.CP.CORE,
+        "glh": 0,
+        "first_assessment": 2016,
+        "last_assessment": None,
+        "grading": GS.IB.PASS_FAIL, 
+        "series": [Ser.Exam.MAY, Ser.Exam.NOV], 
+        "mark": None,
+        "mark_type": MT.NONE,
+        "modular": False,
+        "components": []
+    },
+    {
+        "subject": "Language Development",
+        "code": "IBCP-LD",
+        "group": SG.IB.CP.CORE,
+        "name": QT.IB.IBO.CP.CORE,
+        "glh": 0,
+        "first_assessment": 2016,
+        "last_assessment": None,
+        "grading": GS.IB.PASS_FAIL, 
+        "series": [Ser.Exam.MAY, Ser.Exam.NOV], 
+        "mark": None,
+        "mark_type": MT.NONE,
+        "modular": False,
+        "components": []
+    },
+    {
+        "subject": "Personal Professional Skills",
+        "code": "IBCP-PPS",
+        "group": SG.IB.CP.CORE,
+        "name": QT.IB.IBO.CP.CORE,
+        "glh": 0,
+        "first_assessment": 2016,
+        "last_assessment": None,
+        "grading": GS.IB.PASS_FAIL, 
+        "series": [Ser.Exam.MAY, Ser.Exam.NOV], 
+        "mark": None,
+        "mark_type": MT.NONE,
+        "modular": False,
+        "components": []
+    },
 ]
 

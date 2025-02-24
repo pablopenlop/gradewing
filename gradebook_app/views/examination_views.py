@@ -9,7 +9,8 @@ from gradebook_app.forms import QualificationExamResultForm, ComponentExamResult
 from gradebook_app.models import QualificationExamResult, ComponentExamResult
 from subject_app.models import Component
 from django.db.models import Prefetch
-
+import time
+from shared.delete import DeleteForm
 
 @login_required
 def examinations(request):
@@ -54,33 +55,53 @@ def examinations_table(request, period_id):
     return render(request, 'gradebook_app/examinations/partials/examinations_table.html', context)
 
 
+
+
 @login_required
 def examinations_data(request, period_id):
+    start_time = time.time()
+
     data = []
     school = request.user.userprofile.school
+
     try:
         period = Period.objects.get(id=period_id)
-    except Period.DoesNotExist:
-        students = school.students.all().prefetch_related(
-            'programmes__qualifications',
-        )
-        for student in students:
-            setattr(student, 'enrollment', None)
-    else:
         students = school.students.filter(periods=period).prefetch_related(
             Prefetch(
                 'enrollments',
                 queryset=Enrollment.objects.filter(period=period),
                 to_attr='enrollment'
             ),
-            'programmes__qualifications'
+            Prefetch(
+                'programmes__qualifications',
+                queryset=StudentQualification.objects.prefetch_related(
+                    Prefetch('exam_entries', to_attr='prefetched_qers')
+                ),
+                to_attr='prefetched_sqs'
+            )
         )
+    except Period.DoesNotExist:
+        students = school.students.all().prefetch_related(
+            Prefetch(
+                'programmes__qualifications',
+                queryset=StudentQualification.objects.prefetch_related(
+                    Prefetch('exam_entries', to_attr='prefetched_qers')
+                ),
+                to_attr='prefetched_sqs'
+            )
+        )
+        for student in students:
+            setattr(student, 'enrollment', None)
+
+    print(f"Elapsed time (before processing): {time.time() - start_time:.6f} seconds")
 
     for student in students:
         enrollment = student.enrollment[0] if student.enrollment else None
+
         for programme in student.programmes.all():
-            for qualification in programme.qualifications.all():
-                rer = qualification.representative_exam_result()
+            for qualification in programme.prefetched_sqs:  
+                rer = qualification.prefetched_qers[0] if qualification.prefetched_qers else None
+
                 data.append({
                     'id': qualification.id,
                     'student': str(student),
@@ -88,11 +109,13 @@ def examinations_data(request, period_id):
                     'qualification': str(qualification),
                     'programme': str(programme),
                     'grade': rer.grade if rer else "",
-                    'year_series': f"{rer.get_series_display()} {rer.year}" if rer else "",
+                    'series_year': rer.series_year() if rer else "",
                     'hx_get': reverse('gradebook-examination-infocard', args=[qualification.id]),
                     'hx_target': '#examinations-infocard-container',
                     'hx_swap': 'innerHTML',
                 })
+
+    print(f"Elapsed time (after processing): {time.time() - start_time:.6f} seconds")
     
     return JsonResponse({'data': data})
 
@@ -137,7 +160,7 @@ def modular_qualification_exam_result_form(request, sq_id, qee_id):
 
 @require_POST
 @login_required
-def save_qualification_exam_result(request):
+def save_modular_qualification_exam_result(request):
     qee_id = request.POST.get('qer-id')
     sq_id = request.POST.get('qer-student_qualification')
     sq = StudentQualification.objects.get(id=sq_id)
@@ -150,7 +173,9 @@ def save_qualification_exam_result(request):
     )
     if qer_form.is_valid():
         qer_form.save(commit=True)
-        return JsonResponse({'success': True})
+        return JsonResponse(
+            {'success': True, 'update_table': True}| sq.representative_exam_result()
+        )
     
     else:
         errors = {field: error[0] for field, error in qer_form.errors.items()}
@@ -159,7 +184,7 @@ def save_qualification_exam_result(request):
     
 
 @login_required
-def component_exam_result_form(request, sq_id, component_id, cee_id):
+def modular_component_exam_result_form(request, sq_id, component_id, cee_id):
     sq = StudentQualification.objects.get(id=sq_id)
     component = Component.objects.get(id=component_id)
     try:
@@ -187,18 +212,20 @@ def component_exam_result_form(request, sq_id, component_id, cee_id):
 @require_POST
 @login_required
 def delete_qualification_exam_result(request):
-    qer_id = request.POST.get('delete-qer-id')
+    qer_id = request.POST.get('delete_id')
     try:
-        QualificationExamResult.objects.get(id=qer_id).delete()
-    except:
-        return JsonResponse({'success': False})
+        qer = QualificationExamResult.objects.get(id=qer_id)
+    except QualificationExamResult.DoesNotExist:
+        return JsonResponse({}, status=404)
     else:
-        return JsonResponse({'success': True})
+        sq = qer.student_qualification
+        qer.delete()
+        return JsonResponse({'update_table': True} | sq.representative_exam_result())
     
 
 @require_POST
 @login_required
-def save_component_exam_result(request):
+def save_modular_component_exam_result(request):
     cer_id = request.POST.get('cer-id')
     sq_id = request.POST.get('cer-student_qualification')
     component_id = request.POST.get('cer-component')
@@ -213,7 +240,7 @@ def save_component_exam_result(request):
     )
     if cer_form.is_valid():
         cer_form.save(commit=True)
-        return JsonResponse({'success': True})
+        return JsonResponse({'success': True, 'update_table': False})
     
     else:
         errors = {field: error[0] for field, error in cer_form.errors.items()}
@@ -223,13 +250,13 @@ def save_component_exam_result(request):
 @require_POST
 @login_required
 def delete_component_exam_result(request):
-    cer_id = request.POST.get('delete-cer-id')
+    cer_id = request.POST.get('delete_id')
     try:
         ComponentExamResult.objects.get(id=cer_id).delete()
     except ComponentExamResult.DoesNotExist:
-        return JsonResponse({'success': False})
+        return JsonResponse({}, status=404)
     else:
-        return JsonResponse({'success': True})
+        return JsonResponse({})
     
 
 
@@ -328,6 +355,20 @@ def save_linear_qualification_exam_result(request):
         lqer.save()
         for lcer in lcer_instances:
             lcer.save()
-        return JsonResponse({'success': True})
+        return JsonResponse(
+            {'success': True, 'update_table': True}| sq.representative_exam_result()
+        )
+
     else:
-        return JsonResponse({'success': False}, status=400)
+        return JsonResponse({'success': False }, status=400)
+    
+    
+@login_required
+def qualification_exam_result_delete_form(request, qer_id):
+    context = {'form': DeleteForm(model=QualificationExamResult, delete_id=qer_id)}
+    return render(request, 'partials/delete_form.html', context)
+
+@login_required
+def component_exam_result_delete_form(request, cer_id):
+    context = {'form': DeleteForm(model=ComponentExamResult, delete_id=cer_id)}
+    return render(request, 'partials/delete_form.html', context)

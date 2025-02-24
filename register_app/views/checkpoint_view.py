@@ -122,7 +122,6 @@ def save_checkpoint(request):
 @login_required
 def delete_checkpoint(request):
     checkpoint_id = request.POST.get('delete_id')
-    print(checkpoint_id)
     try:
         Checkpoint.objects.get(id=checkpoint_id).delete()
     except Checkpoint.DoesNotExist:
@@ -199,7 +198,6 @@ def save_checkpoint_field(request):
             target_ids=cpyg.assigned_target_ids(), 
             checkpoint_field_id=cp_field.id
         )
-    print("ADDED")
     return JsonResponse({'success': True})
     
     
@@ -396,8 +394,6 @@ def enrollment_qualifications_data(cpyg_id):
     )
     period_id = cpyg["checkpoint__period_id"]
     yeargroup_id = cpyg["yeargroup_id"]
-    print(period_id)
-    print(yeargroup_id)
 
     enrollment_qualifications = EnrollmentQualification.objects.select_related(
         "enrollment__student", 
@@ -491,23 +487,15 @@ def assign_checkpoints(cpyg_id, target_ids: list, checkpoint_field_id=None) -> N
     scope = checkpoint_yeargroup.checkpoint.scope
     if checkpoint_field_id:
         checkpoint_fields = [CheckpointField.objects.get(id=checkpoint_field_id)]
-        print(checkpoint_fields)
+
     else:
         checkpoint_fields = checkpoint_yeargroup.checkpoint.checkpoint_fields.all()
 
     if scope==CheckpointScope.CLASS_LANDMARK:
         class_enrollments = ClassEnrollment.objects.filter(id__in=target_ids)
-        print(class_enrollments)
         for class_enrollment in class_enrollments:
             class_enrollment.checkpoint_yeargroups.add(cpyg_id)
             
-                    # Check if the checkpoint_yeargroup was added
-            if class_enrollment.checkpoint_yeargroups.filter(id=cpyg_id).exists():
-                print(f"Successfully added checkpoint_yeargroup {cpyg_id} to class_enrollment {class_enrollment.id}")
-            else:
-                print(f"Failed to add checkpoint_yeargroup {cpyg_id} to class_enrollment {class_enrollment.id}")
-        
-        
             for checkpoint_field in checkpoint_fields:
                 entry, created =CheckpointEntry.objects.get_or_create(
                     checkpoint_yeargroup_id=cpyg_id, 
@@ -517,9 +505,6 @@ def assign_checkpoints(cpyg_id, target_ids: list, checkpoint_field_id=None) -> N
                         "enrollment": class_enrollment.enrollment_qualification.enrollment,
                     }
                 )
-                if created:
-                    print(f"Created CheckpointEntry for checkpoint_field {checkpoint_field.id}")
-
     elif scope==CheckpointScope.SUBJECT_BENCHMARK:
         enrollment_qualifications = EnrollmentQualification.objects.filter(id__in=target_ids)
         for enrollment_qualification in enrollment_qualifications:

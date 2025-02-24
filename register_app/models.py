@@ -97,6 +97,9 @@ class YearGroup(models.Model):
     def index(self):
         return ''.join(filter(str.isdigit,  self.level))
     
+
+        
+    
  
 class Period(models.Model):
     id = models.AutoField(primary_key=True, verbose_name="Period ID")
@@ -137,6 +140,7 @@ class Person(models.Model):
     first_name = models.CharField(max_length=40, verbose_name="First name")
     last_name = models.CharField(max_length=40, db_index=True, verbose_name="Last name") 
     email = models.EmailField(blank=True, max_length=50, verbose_name="Email address")
+    fake = models.BooleanField(default=False)
     gender = models.CharField(
         max_length=10,
         choices=Gender.choices,
@@ -239,6 +243,40 @@ class Enrollment(models.Model):
         }
         return programme_qualifications
     
+    
+    def programmes_with_count(self):
+        """
+        Returns a list of strings where each entry shows a programme and the count 
+        of qualifications associated with this enrollment.
+        """
+        """ programmes = self.student.programmes.annotate(
+            qual_count=Count('qualifications', filter=Q(qualifications__enrollments=self))
+        ) """
+        
+        programmes = StudentProgramme.objects.filter(student_id=self.student_id).annotate(
+            qual_count=Count('qualifications', filter=Q(qualifications__enrollments=self))
+        )
+        return [
+            f"{str(programme)} ({programme.qual_count})" 
+            for programme in programmes if programme.qual_count>0
+        ]
+
+
+    def get_programmes_with_qualifications2e(self):
+        """
+        Returns a dictionary where the key is the programme and the value is 
+        a queryset of qualifications associated with this enrollment and programme.
+        """
+        programmes = set(sq.programme for sq in self.student_qualifications.all())
+        programme_qualifications = {
+            programme: programme.qualifications.filter(enrollments=self)
+            for programme in programmes
+        }
+        return [
+            f"{programme.__str__()} ({qualifications.count()})" for 
+            programme, qualifications in programme_qualifications.items()
+        ]
+    
     def programmes_as_list(self)->list:
         return [
             f"{programme.__str__()} ({qualifications.count()})" for 
@@ -308,10 +346,7 @@ class StudentQualification(models.Model):
     def __str__(self):
         return f"{self.qualification.title}"
     
-    def representative_exam_result(self):
-        fqer = self.exam_entries.filter(is_final=True).first()
-        return fqer if fqer else self.exam_entries.first()
-    
+
     def is_external(self)->bool:
         return not(self.enrollments.exists())
     
@@ -341,6 +376,12 @@ class StudentQualification(models.Model):
             }
         return None
 
+    def representative_exam_result(self):
+        rer = self.exam_entries.first()
+        if not rer:
+            return {'grade': '', 'series_year': ''} 
+        return {'grade': rer.grade, 'series_year': rer.series_year()} 
+        
 class EnrollmentQualification(models.Model):
     id = models.AutoField(primary_key=True)
     enrollment = models.ForeignKey(
@@ -488,7 +529,7 @@ class Checkpoint(models.Model):
         completed_count = checkpoint_data['completed_count']
         total_count = checkpoint_data['total_count']
 
-        return floor(completed_count/total_count*100)
+        return floor(completed_count/total_count*100) if total_count else 0
         
 class CheckpointYearGroup(models.Model):
     id = models.AutoField(primary_key=True)

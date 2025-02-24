@@ -10,11 +10,17 @@ $(document).ready(function() {
         "class_landmark": {
             tableId: "#checkpoint_space-table",
             staticColumns: [
-                { data: 'student', title: 'Student' },
+                { 
+                    data: 'student', 
+                    title: 'Student',
+                    render: function (data) {
+                        return `<b> ${data} </b>`;
+                    }
+                },
                 { data: 'teaching_class', title: 'Teaching class' },
                 { data: 'class_yeargroup', title: 'Year group' },
                 { data: 'teachers', title: 'Teacher' },
-                { data: 'qualification', title: 'Qualification' }
+                { data: 'qualification', title: 'Qualification', className: 'wrap-td min-250' }
             ],
             rowGroupSrc: 'teaching_class',
             rowGroupRender: function(rows, group, staticColumnsLength, dynamicColumnsLength) {
@@ -22,7 +28,7 @@ $(document).ready(function() {
                 let qualification = rows.data()[0].qualification;
                 return $('<tr/>').append(`
                     <th colspan="${staticColumnsLength}" style="position: sticky; left: 0px; background-color: rgb(230,230,230);"
-                        class="dtfc-fixed-start dtfc-fixed-left">
+                        class="AAdtfc-fixed-start AAdtfc-fixed-left">
                         <div class="d-flex align-items-center">
                             <i class="fa-solid fa-chalkboard mx-2 fs-6"></i> ${group}
                             <i class="fa-solid fa-chalkboard-user ms-3 me-2 fs-6"></i> ${teachers}
@@ -36,15 +42,21 @@ $(document).ready(function() {
         "subject_benchmark": {
             tableId: "#checkpoint_space-table",
             staticColumns: [
-                { data: 'student', title: 'Student' },
+                { 
+                    data: 'student', 
+                    title: 'Student',
+                    render: function (data) {
+                        return `<b> ${data} </b>`;
+                    }
+                },
                 { data: 'yeargroup', title: 'Year group' },
-                { data: 'qualification', title: 'Qualification' }
+                { data: 'qualification', title: 'Qualification', className: 'wrap-td min-250' }
             ],
             rowGroupSrc: 'qualification',
             rowGroupRender: function(rows, group, staticColumnsLength, dynamicColumnsLength) {
                 return $('<tr/>').append(`
                     <th colspan="${staticColumnsLength}" style="position: sticky; left: 0px; background-color: rgb(230,230,230);"
-                        class="dtfc-fixed-start dtfc-fixed-left">
+                        class="AAdtfc-fixed-start AAdtfc-fixed-left">
                         <div class="d-flex align-items-center">
                             <i class="fa-solid fa-award mx-2 fs-6"></i> ${group}
                         </div>
@@ -56,24 +68,31 @@ $(document).ready(function() {
         "general_benchmark": {
             tableId: "#checkpoint_space-table",
             staticColumns: [
-                { data: 'student', title: 'Student' },
+                { 
+                    data: 'student', 
+                    title: 'Student',
+                    render: function (data) {
+                        return `<b> ${data} </b>`;
+                    }
+                },
                 { data: 'yeargroup', title: 'Year group' },
                 {
                     data: 'tags',
                     title: 'Tags',
+                    className: 'wrap-td',
                     render: function (data) {
                         return data.map(tag => `<span class="badge rounded-pill badge-dark-secondary my-1 mx-1">
                         ${tag}
                         </span>`).join('');
                     }
                 },
-                { data: 'programme', title: 'Programme' },
+                { data: 'programme', title: 'Programme',  className: 'wrap-td min-150'},
             ],
             rowGroupSrc: 'yeargroup',
             rowGroupRender: function(rows, group, staticColumnsLength, dynamicColumnsLength) {
                 return $('<tr/>').append(`
                     <th colspan="${staticColumnsLength}" style="position: sticky; left: 0px; background-color: rgb(230,230,230);"
-                        class="dtfc-fixed-start dtfc-fixed-left">
+                        class="AAdtfc-fixed-start AAdtfc-fixed-left">
                         <div class="d-flex align-items-center">
                             <i class="fa-solid fa-people-roof mx-2 fs-6"></i> ${group}
                         </div>
@@ -140,7 +159,7 @@ $(document).ready(function() {
                 targets: [1],
                 orderData: [1, 2, 0]
             },],
-            fixedColumns: { start: config.staticColumns.length },
+            fixedColumns: { start: 1},
             select: { style: 'single', items: 'cell', toggleable: false },
             scrollX: true,
             deferRender: true,

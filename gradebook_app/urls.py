@@ -80,14 +80,14 @@ urlpatterns = [
         name='gradebook-examination-infocard'
     ),
     path(
-        'examinations/qualification-entry/form/<int:sq_id>/<int:qee_id>/', 
+        'examinations/modular-qualification-entry/form/<int:sq_id>/<int:qee_id>/', 
         examination_views.modular_qualification_exam_result_form, 
-        name='qualification-exam-result-form'
+        name='modular-qualification-exam-result-form'
     ),
     path(
         'examinations/qualification-exam-result/save/', 
-        examination_views.save_qualification_exam_result, 
-        name='save-qualification-exam-result'
+        examination_views.save_modular_qualification_exam_result, 
+        name='save-modular-qualification-exam-result'
     ),
     path(
         'examinations/qualification-exam-result/delete/', 
@@ -95,13 +95,13 @@ urlpatterns = [
         name='delete-qualification-exam-result'
     ),
     path(
-        'examinations/component-exam-result/form/<int:sq_id>/<int:component_id>/<int:cee_id>/', 
-        examination_views.component_exam_result_form, 
-        name='component-exam-result-form'
+        'examinations/modular-component-exam-result/form/<int:sq_id>/<int:component_id>/<int:cee_id>/', 
+        examination_views.modular_component_exam_result_form, 
+        name='modular-component-exam-result-form'
     ),
     path(
-        'examinations/component-exam-result/save/', 
-        examination_views.save_component_exam_result, 
+        'examinations/modular-component-exam-result/save/', 
+        examination_views.save_modular_component_exam_result, 
         name='save-component-exam-result'
     ),
     path(
@@ -118,6 +118,16 @@ urlpatterns = [
         'examinations/linear-qualification-exam-result/save/', 
         examination_views.save_linear_qualification_exam_result, 
         name='save-linear-qualification-exam-result'
+    ),
+    path(
+        'examinations/qualification-exam-result/delete-form/<int:qer_id>/', 
+        examination_views.qualification_exam_result_delete_form, 
+        name='qualification-exam-result-delete-form'
+    ),
+    path(
+        'examinations/component-exam-result/delete-form/<int:cer_id>/', 
+        examination_views.component_exam_result_delete_form, 
+        name='component-exam-result-delete-form'
     ),
     
 

@@ -14,6 +14,8 @@ from subject_app.models import Qualification
 from itertools import chain
 from choices import QF
 from shared.delete import DeleteForm
+import time
+from django.db.models import Prefetch
 
 
 @login_required
@@ -21,18 +23,148 @@ def students(request):
     context = {'url_headerbar': reverse('students-headerbar')}
     return render(request, 'register_app/students/students.html', context)
 
+
+
+
 @login_required
 def students_json(request):
+    start_time = time.time()
+
+    # Prefetch all necessary related objects
+    students = request.user.userprofile.school.students.prefetch_related(
+        'tags',
+        'enrollments__tags',
+        'enrollments__student_qualifications__qualification',
+        'enrollments__period',
+        'enrollments__yeargroup',
+
+    )
+
+    
     students_data = []
+    
+    for student in students:
+        # Cache the reverse URL and student tags
+        hx_get_url = reverse('student-infocard', args=[student.id])
+        student_tags = [str(tag) for tag in student.tags.all()]
+        
+        # Evaluate enrollments once to avoid extra queries
+        enrollments = list(student.enrollments.all())
+
+        
+        if enrollments:
+            for enrollment in enrollments:
+                enrollment_tags = [tag.name for tag in enrollment.tags.all()]
+                students_data.append({
+                    'id': f"{student.id}-{enrollment.id}",
+                    'name': enrollment.student.catalog_name,
+                    'tags': student_tags + enrollment_tags,
+                    'period': str(enrollment.period),
+                    'yeargroup': str(enrollment.yeargroup),
+                    'programme': ", ".join(enrollment.programmes_with_count()),
+                    'qualifications':  [str(qualification) for qualification in enrollment.student_qualifications.all()],
+                    'hx_get': hx_get_url,
+                    'hx_target': '#student-infocard-container',
+                    'hx_swap': 'innerHTML',
+                })
+        else:
+            students_data.append({
+                'id': f"{student.id}-0",
+                'name': student.catalog_name,
+                'tags': student_tags,
+                'period': "Unenrolled",
+                'yeargroup': "n/a",
+                'programme': [],
+                'qualifications': [],
+                'hx_get': hx_get_url,
+                'hx_target': '#student-infocard-container',
+                'hx_swap': 'innerHTML',
+            })
+    
+    print(f"Elapsed time: {time.time() - start_time:.6f} seconds")
+    return JsonResponse({'data': students_data})
+
+
+@login_required
+def students_json4(request):
+    start_time = time.time()
+    school = request.user.userprofile.school
+
+    
+    
+
+    qualifications_prefetch = Prefetch(
+        'student_qualifications',
+        queryset=StudentQualification.objects.only('id'),
+    )
+
+
+    # Query enrollments for students in this school, including the related student and its tags.
+    enrollments = (
+        Enrollment.objects.filter(student__school=school)
+        .select_related('period', 'yeargroup', 'student')
+        .prefetch_related('tags', 'student_qualifications__qualification', 'student__tags')
+    )
+    
+    enrolled_data = []
+    for enrollment in enrollments:
+        student = enrollment.student
+        # student.tags was prefetched via 'student__tags'
+        student_tags = [str(tag) for tag in student.tags.all()]
+        hx_get_url = reverse('student-infocard', args=[student.id])
+        enrolled_data.append({
+            'id': f"{student.id}-{enrollment.id}",
+            'name': student.catalog_name,
+            'tags': student_tags + [tag.name for tag in enrollment.tags.all()],
+            'period': str(enrollment.period),
+            'yeargroup': str(enrollment.yeargroup),
+            'programme': ", ".join(enrollment.programmes_as_list()),
+            'qualifications': [str(qual) for qual in enrollment.student_qualifications.all()],
+            'hx_get': hx_get_url,
+            'hx_target': '#student-infocard-container',
+            'hx_swap': 'innerHTML',
+        })
+
+    # Query unenrolled students. Prefetch their tags.
+    unenrolled_students = school.students.filter(enrollments__isnull=True).prefetch_related('tags')
+    unenrolled_data = []
+    for student in unenrolled_students:
+        hx_get_url = reverse('student-infocard', args=[student.id])
+        student_tags = [str(tag) for tag in student.tags.all()]
+        unenrolled_data.append({
+            'id': f"{student.id}-0",
+            'name': student.catalog_name,
+            'tags': student_tags,
+            'period': "Unenrolled",
+            'yeargroup': "n/a",
+            'programme': [],
+            'qualifications': [],
+            'hx_get': hx_get_url,
+            'hx_target': '#student-infocard-container',
+            'hx_swap': 'innerHTML',
+        })
+
+    students_data = enrolled_data + unenrolled_data
+    print(f"Elapsed time: {time.time() - start_time:.6f} seconds")
+    return JsonResponse({'data': students_data})
+
+
+
+@login_required
+def students_json3(request):
+    students_data = []
+    start_time = time.time()
     school = request.user.userprofile.school
     students = school.students.prefetch_related(
         'tags',
-        'enrollments',
         'enrollments__tags',
         'enrollments__student_qualifications',
         'enrollments__period',
         'enrollments__yeargroup',
     )
+
+    print(f"Elapsed time: {time.time() - start_time:.6f} seconds")
+
     for student in students:
         if student.enrollments.count():
             for enrollment in student.enrollments.all():
@@ -63,7 +195,7 @@ def students_json(request):
                 'hx_target': '#student-infocard-container',
                 'hx_swap': 'innerHTML',
             })
-                
+    print(f"Elapsed time: {time.time() - start_time:.6f} seconds")            
     return JsonResponse({'data': students_data})
 
 

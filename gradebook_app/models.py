@@ -44,7 +44,7 @@ class QualificationExamResult(models.Model):
     is_final = models.BooleanField(default=True)
 
     class Meta:
-        ordering = ['-year', '-series'] 
+        ordering = ['-is_final','-year', '-series'] 
         constraints = [
             UniqueConstraint(
                 fields =['year', 'series', 'student_qualification'], 
@@ -86,6 +86,8 @@ class QualificationExamResult(models.Model):
         else:
             return ExamResultState.PROVISIONAL.value
     
+    def series_year(self):
+        return f"{self.get_series_display()} {self.year}"
 
 class ComponentExamResult(models.Model):
     id = models.AutoField(primary_key=True)
@@ -131,7 +133,7 @@ class ComponentExamResult(models.Model):
     available = models.BooleanField(default=True) 
     
     class Meta:
-        ordering = ['-year', '-series'] 
+        ordering = ['-is_final', '-year', '-series'] 
         constraints = [
             UniqueConstraint(
                 fields =['year', 'series', 'student_qualification', 'component'], 
@@ -175,6 +177,9 @@ class ComponentExamResult(models.Model):
             return ExamResultState.OVERRIDEN.value
         else:
             return ExamResultState.PROVISIONAL.value
+        
+    def series_year(self):
+        return f"{self.get_series_display()} {self.year}"
         
     
 class CheckpointEntry(models.Model):
@@ -277,7 +282,6 @@ class CheckpointEntry(models.Model):
                 return f"{self.mark_formatted} %" if self.mark is not None else None
             case CheckpointFieldKind.COMMENT:
                 text, count = truncate_html(self.comment, max_length=20)
-                print(text)
                 if not text:
                     return None
                 return (f'<div class="text-nowrap"> {escape(text)}</div>'

@@ -34,24 +34,24 @@
 </div>
 
 <!-- QUALIFICATION EXAM RESULT FORM MODAL -->
-<form id="qualification-exam-result-form" action="{% url 'save-qualification-exam-result' %}" method="POST">
-    <div class="modal fade" id="qualification-exam-result-form-modal" data-bs-backdrop="static"
+<form id="modular-qualification-exam-result-form" action="{% url 'save-modular-qualification-exam-result' %}" method="POST">
+    <div class="modal fade" id="modular-qualification-exam-result-form-modal" data-bs-backdrop="static"
     tabindex="-1">
         {% csrf_token %}
         <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable">
-            <div class="modal-content" id = "qualification-exam-result-form-container">
+            <div class="modal-content" id = "modular-qualification-exam-result-form-container">
             </div>
         </div>
     </div>
 </form>
 
 <!-- COMPONENT EXAM RESULT FORM MODAL -->
-<form id="component-exam-result-form" action="{% url 'save-component-exam-result' %}" method="POST">
-    <div class="modal fade" id="component-exam-result-form-modal" data-bs-backdrop="static"
+<form id="modular-component-exam-result-form" action="{% url 'save-component-exam-result' %}" method="POST">
+    <div class="modal fade" id="modular-component-exam-result-form-modal" data-bs-backdrop="static"
     tabindex="-1">
         {% csrf_token %}
         <div class="modal-dialog modal-fullscreen-sm-down modal-dialog-scrollable">
-            <div class="modal-content" id = "component-exam-result-form-container">
+            <div class="modal-content" id = "modular-component-exam-result-form-container">
             </div>
         </div>
     </div>
@@ -70,9 +70,10 @@
 </form>
 
 
-<!-- QUALIFICATION EXAM RESULT DELETE MODAL -->
-{% include 'gradebook_app/examinations/partials/qualification_exam_result_delete_modal.html' %}
-<!-- QUALIFICATION EXAM RESULT DELETE MODAL -->
-{% include 'gradebook_app/examinations/partials/component_exam_result_delete_modal.html' %}
+
+<!-- DELETE MODAL -->
+{% include 'partials/delete_modal.html' %}
+
+
 
 {% endblock %}

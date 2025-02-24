@@ -60,13 +60,13 @@ class="hover">
                 {
                     data: 'grade',
                     render: function (data) {
-                        return data.length > 0 ? data : '<i class="text-muted">n/a</i>';
+                        return data.length > 0 ? data : '<span class="text-black-50">n/a</span>';
                     }
                 },
                 {
-                    data: 'year_series',
+                    data: 'series_year',
                     render: function (data) {
-                        return data.length > 0 ? data : '<i class="text-muted">n/a</i>';
+                        return data.length > 0 ? data : '<span class="text-black-50">n/a</span>';
                     },
                     createdCell: function (td, cellData, rowData, row, col) {
                         $(td).addClass('text-nowrap');
@@ -110,6 +110,13 @@ class="hover">
                 }
             },
         });
+
+        console.log(table)
+
+
+
+
+
         // MOVE TO SHARED (STUDENTS USES THIS AS WELL)
         table.on('init.dt', function () {
             let selectedRow = table.row({ selected: true });
