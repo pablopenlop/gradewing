@@ -1,4 +1,5 @@
 $(document).ready(function() {
+
     const urlData = window.myAppConfig.urlData;
     const scope = window.myAppConfig.scope; 
 
@@ -105,13 +106,18 @@ $(document).ready(function() {
 
     // Select the correct configuration based on scope
     const config = tableConfigs[scope] || tableConfigs["default"];
-
+    $('#checkpoint-table-card').hide();
     // Fetch data and initialize the table
     $.getJSON(urlData, function(response) {
         const data = response.data || [];
         const dynamicColumns = determineDynamicColumns(data, config.staticColumns);
         table = initDataTable(config, data, dynamicColumns);
         attachEventHandlers(table); 
+        delayLoading('#checkpoint-table-card');
+        setTimeout(function () {
+            table.columns.adjust();
+        }, 250);
+        
     });
 
     function determineDynamicColumns(data, staticColumns) {
@@ -152,7 +158,7 @@ $(document).ready(function() {
     }
 
     function initDataTable(config, fetchedData, dynamicColumns) {
-        return $(config.tableId).DataTable({
+        table= $(config.tableId).DataTable({
             data: fetchedData,
             columns: config.staticColumns.concat(dynamicColumns),
             columnDefs: [{
@@ -172,8 +178,9 @@ $(document).ready(function() {
                 }
             }
             
-
+            
         });
+        return table;
     }
 
     // Attach DataTable events (e.g., cell selection)

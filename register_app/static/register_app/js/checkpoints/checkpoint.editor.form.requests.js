@@ -1,4 +1,7 @@
 $(document).ready(function() {
+
+    const modalElement = document.getElementById('form-modal');
+
     delayLoading('#details-card-container');
     delayLoading('#fields-card-container');
     delayLoading('#targets-card-container');
@@ -34,6 +37,9 @@ $(document).ready(function() {
         event.preventDefault(); 
         var form = $(this)
         var formData = form.serialize(); 
+        disableFormButtons(form);
+        allowEscModal(modalElement, false);
+
         $.ajax({
             url: form.attr('action'), 
             type: 'POST', 
@@ -42,8 +48,12 @@ $(document).ready(function() {
                 if (response.success) {
                     htmx.trigger('#fields-card-container', 'refresh');
                     delayLoading('#fields-card-container');
+                    allowEscModal(modalElement, true);
                     $('#form-modal').modal('hide');
+                    
                 } else {
+                    allowEscModal(modalElement, true);
+                    restoreFormButtons(form);
                     form.find('.alert').find('span').text(response.error_message);
                     form.find('.alert').show();
                     var submitButton = form.find('button[type="submit"]');
@@ -51,15 +61,20 @@ $(document).ready(function() {
                 }
             },
             error: function(xhr, status, error) {
+                allowEscModal(modalElement, true);
                 $('#form-modal').modal('hide');
                 $('#error-modal').modal('show');
+                
             }
         });
+        
     });
 
     $(document).on('submit', '#checkpoint-yeargroup-form', function(event) {
         event.preventDefault(); 
         var form = $(this)
+        disableFormButtons(form);
+        allowEscModal(modalElement, false);
         var formData = form.serialize(); 
         $.ajax({
             url: form.attr('action'), 
@@ -70,13 +85,17 @@ $(document).ready(function() {
                 delayLoading('#fields-card-container');
                 delayLoading('#details-card-container');
                 htmx.trigger('#targets-card-container', 'refresh');
+                allowEscModal(modalElement, true)
                 $('#form-modal').modal('hide');
             },
             error: function(xhr, status, error) {
+                allowEscModal(modalElement, true)
                 $('#form-modal').modal('hide');
                 $('#error-modal').modal('show');
             }
         });
+        
+
     });
 
 
@@ -123,12 +142,45 @@ $(document).ready(function() {
         });
     });
 
-    // function delayLoading(divId) {
-    //     $(divId).css('visibility', 'hidden'); // Hide initially
-    //     setTimeout(function() {
-    //         $(divId).css('visibility', '').hide().fadeIn(300); // Reset visibility and apply fade-in
-    //     }, 200);
-    // }
+    function disableFormButtons(form) {
+        var submitButton = form.find('button[type="submit"]');
+        var cancelButton = form.find('button[type="button"]');
+    
+        // Disable submit button and show spinner
+        submitButton.data('original-html', submitButton.html());
+        submitButton.prop('disabled', true)
+            .css('pointer-events', 'none')
+            .html(`
+                <span class="spinner-border spinner-border-sm" aria-hidden="true"></span>
+                <span role="status">Saving...</span>
+            `);
+        // Disable cancel button
+        cancelButton.prop('disabled', true);
+    }
+
+
+    function allowEscModal(modalElement, state){
+        var modalInstance = bootstrap.Modal.getInstance(modalElement);
+        modalInstance._config.keyboard = state;
+    }
+
+    function restoreFormButtons(form) {
+        var submitButton = form.find('button[type="submit"]');
+        var cancelButton = form.find('button[type="button"]');
+    
+        // Restore original HTML content
+        var originalHtml = submitButton.data('original-html'); 
+        submitButton.prop('disabled', false)
+            .css('pointer-events', '')
+            .html(originalHtml);
+    
+        // Enable cancel button
+        cancelButton.prop('disabled', false);
+    }
+
+
+    
+
 
 });
 

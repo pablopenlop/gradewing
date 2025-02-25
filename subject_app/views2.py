@@ -32,7 +32,7 @@ def subjects(request):
             sf = SchoolFactory(
                 school=school, 
                 edusystem=Edusystem.IB,
-                num_students=800)
+                num_students=400)
             sf.generate()
             print('done')
         elif action == 'delete-students':

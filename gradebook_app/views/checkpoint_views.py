@@ -11,7 +11,8 @@ from gradebook_app.forms import (
     MarkEntryForm, CommentEntryForm, MockEntryPreForm, MockEntryForm
 )
 from shared.utils.form_utils import limits_from_validators
-
+import time
+from django.db import connection
 
 @login_required
 def checkpoints(request):
@@ -126,11 +127,68 @@ def general_benchmark_data(checkpoint_id):
    
 
 def subject_benchmark_data(checkpoint_id):
+    start_time = time.perf_counter()
     checkpoint = Checkpoint.objects.prefetch_related(
-        'checkpoint_yeargroups', 'checkpoint_fields'
+        'checkpoint_yeargroups',
+        'checkpoint_yeargroups__enrollment_qualifications__enrollment', 
+        'checkpoint_yeargroups__enrollment_qualifications__enrollment__yeargroup',
+        'checkpoint_yeargroups__enrollment_qualifications__enrollment__student', 
+        'checkpoint_yeargroups__enrollment_qualifications__student_qualification__qualification', 
+        'checkpoint_yeargroups__enrollment_qualifications__checkpoint_entries', 
+        'checkpoint_yeargroups__enrollment_qualifications__checkpoint_entries__checkpoint_field', 
+        'checkpoint_fields'
+    ).get(id=checkpoint_id)
+
+    data = []
+
+    print(f"Elapsed time (before processing): {time.perf_counter() - start_time:.6f} seconds")
+    #print("Q1", len(connection.queries))
+    for cpyg in checkpoint.checkpoint_yeargroups.all():
+        for eq in cpyg.enrollment_qualifications.all():
+            entry_data = {
+                "student": str(eq.enrollment.student),
+                "yeargroup": str(eq.enrollment.yeargroup),
+                "qualification": str(eq.student_qualification.qualification),
+            }
+            
+            entries = [
+                entry for entry in eq.checkpoint_entries.all()
+                if entry.checkpoint_field in checkpoint.checkpoint_fields.all()
+            ]
+ 
+            entry_data.update({
+                entry.checkpoint_field.name: {
+                    'id': entry.id,
+                    'value': entry.value(),
+                    'is_excluded': entry.is_excluded,
+                    'data_bs_target': entry.bs_hx_targets()[0],
+                    'hx_target': entry.bs_hx_targets()[1],
+                    'url_form': (
+                        reverse('gradebook-checkpoint-entry-componentless')
+                        if entry.is_always_excluded()
+                        else reverse('gradebook-checkpoint-entry-form', args=[entry.id])
+                    ),
+                }
+                for entry in entries
+            })
+            data.append(entry_data)
+
+    elapsed_time = time.perf_counter() - start_time
+    print(f"Elapsed time (after processing): {elapsed_time:.6f} seconds")
+    return JsonResponse({"data": data})
+
+
+def subject_benchmark_data2(checkpoint_id):
+    start_time = time.time()
+    checkpoint = Checkpoint.objects.prefetch_related(
+        'checkpoint_yeargroups',
+        'checkpoint_yeargroups__enrollment_qualifications', 
+        'checkpoint_yeargroups__enrollment_qualifications__checkpoint_entries', 
+        'checkpoint_fields'
         ).get(id=checkpoint_id)
     data = []
-    
+    print(f"Elapsed time (before processing): {time.time() - start_time:.6f} seconds")
+
     for cpyg in checkpoint.checkpoint_yeargroups.all():
         for eq in cpyg.enrollment_qualifications.all():
             entry_data = {
@@ -159,6 +217,7 @@ def subject_benchmark_data(checkpoint_id):
                 }
             
             data.append(entry_data)
+    print(f"Elapsed time (after processing): {time.time() - start_time:.6f} seconds")
     return JsonResponse({"data": data})
             
             

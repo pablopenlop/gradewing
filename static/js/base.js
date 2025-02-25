@@ -14,7 +14,6 @@ $(document).on('click', '#hamburger-btn', function () {
     setTimeout(function () {
         $('table.dataTable').each(function () {
             if ($.fn.DataTable.isDataTable(this)) {
-                //$(this).DataTable().draw(false);
                 $(this).DataTable().columns.adjust();
             }
         });
@@ -80,30 +79,6 @@ $(window).on('resize', function () {
 
 
 
-/* 
-
-// Function to execute after delay
-function expandSidebar() {
-    if (sidebar.classList.contains('collapsed')) {
-        sidebar.classList.remove('collapsed');
-        mainContent.classList.remove('collapsed');
-        topbar.classList.remove('collapsed');
-    }
-}
-
-
-// Mouseover event with delay
-hamburgerBtn.addEventListener('mouseover', function() {
-    if (sidebar.classList.contains('collapsed') & ($(window).width() < 961)) {
-        hoverTimer = setTimeout(expandSidebar, delay);
-    }
-});
-
-// Mouseout event to cancel the action if mouse leaves early
-hamburgerBtn.addEventListener('mouseout', function() {
-    clearTimeout(hoverTimer);
-}); */
-
 
 
 $(document).ready(function() {
@@ -112,25 +87,7 @@ $(document).ready(function() {
         mainContent.classList.add('collapsed');
         topbar.classList.add('collapsed');
     }
-    /* // Placeholder on search bar
-    $('.dt-search .dt-input').attr('placeholder', 'Search...');
 
-    // Select the input element
-    var $input = $('.dt-search .dt-input');
-    $input.css('padding-left', '35px');
-
-    // Create the input group wrapper
-    var $inputGroup = $('<div>', { class: 'input-icon' });
-    $inputGroup.css('max-width', $input.outerWidth());
-
-    
-    // Create the addon (optional: for icon, text, or button)
-    var $iconAddon = $(
-        '<span class="input-icon-addon"><i class="fa-solid fa-search mx-0"></i></span>'
-    );
-    // Add the input and addon to the wrapper
-    $input.wrap($inputGroup); // Wrap the input
-    $input.before($iconAddon); // Insert the addon before the input */
 
 
 
@@ -175,3 +132,48 @@ $(document).ready(function () {
         updateRestrictedDisplay(); 
     });
 });
+
+/* 
+
+// Function to execute after delay
+function expandSidebar() {
+    if (sidebar.classList.contains('collapsed')) {
+        sidebar.classList.remove('collapsed');
+        mainContent.classList.remove('collapsed');
+        topbar.classList.remove('collapsed');
+    }
+}
+
+
+// Mouseover event with delay
+hamburgerBtn.addEventListener('mouseover', function() {
+    if (sidebar.classList.contains('collapsed') & ($(window).width() < 961)) {
+        hoverTimer = setTimeout(expandSidebar, delay);
+    }
+});
+
+// Mouseout event to cancel the action if mouse leaves early
+hamburgerBtn.addEventListener('mouseout', function() {
+    clearTimeout(hoverTimer);
+}); */
+
+
+    /* // Placeholder on search bar
+    $('.dt-search .dt-input').attr('placeholder', 'Search...');
+
+    // Select the input element
+    var $input = $('.dt-search .dt-input');
+    $input.css('padding-left', '35px');
+
+    // Create the input group wrapper
+    var $inputGroup = $('<div>', { class: 'input-icon' });
+    $inputGroup.css('max-width', $input.outerWidth());
+
+    
+    // Create the addon (optional: for icon, text, or button)
+    var $iconAddon = $(
+        '<span class="input-icon-addon"><i class="fa-solid fa-search mx-0"></i></span>'
+    );
+    // Add the input and addon to the wrapper
+    $input.wrap($inputGroup); // Wrap the input
+    $input.before($iconAddon); // Insert the addon before the input */
