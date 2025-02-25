@@ -244,7 +244,7 @@ class Enrollment(models.Model):
         return programme_qualifications
     
     
-    def programmes_with_count(self):
+    def programmes_with_count_old(self):
         """
         Returns a list of strings where each entry shows a programme and the count 
         of qualifications associated with this enrollment.
@@ -261,28 +261,25 @@ class Enrollment(models.Model):
             for programme in programmes if programme.qual_count>0
         ]
 
-
-    def get_programmes_with_qualifications2e(self):
-        """
-        Returns a dictionary where the key is the programme and the value is 
-        a queryset of qualifications associated with this enrollment and programme.
-        """
-        programmes = set(sq.programme for sq in self.student_qualifications.all())
-        programme_qualifications = {
-            programme: programme.qualifications.filter(enrollments=self)
-            for programme in programmes
-        }
-        return [
-            f"{programme.__str__()} ({qualifications.count()})" for 
-            programme, qualifications in programme_qualifications.items()
-        ]
-    
-    def programmes_as_list(self)->list:
+    """     def programmes_as_list(self)->list:
         return [
             f"{programme.__str__()} ({qualifications.count()})" for 
             programme, qualifications in self.get_programmes_with_qualifications().items()
-        ]
-    
+        ] """
+        
+    def programmes_with_count(self):
+        """
+        Returns a list of strings where each entry shows a programme and the count 
+        of qualifications associated with this enrollment, without extra DB queries.
+        """
+        result = []
+        for programme in self.student.programmes.all():
+            qual_count = sum(1 for q in programme.qualifications.all() if self in q.enrollments.all())
+            if qual_count > 0:
+                result.append(f"{str(programme)} ({qual_count})")
+
+        return result
+
     def on_checkpoint(self, checkpoint_id: int) -> bool:
         return self.checkpoint_yeargroups.filter(checkpoint_id=checkpoint_id).exists()
 
