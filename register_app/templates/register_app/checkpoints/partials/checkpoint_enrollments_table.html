@@ -42,11 +42,11 @@ class="hover compact">
                                     ${data ? '<i class="fa-solid fa-toggle-on"></i>' : '<i class="fa-solid fa-toggle-off"></i>'}
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item student-assign" href="#" data-status="on">
+                                    <li><a class="dropdown-item individual-assign" href="#" data-status="on">
                                         <i class="fa-solid fa-toggle-on me-2 fs-6"></i> Assign checkpoint
                                     </a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item student-assign" href="#" data-status="off">
+                                    <li><a class="dropdown-item individual-assign" href="#" data-status="off">
                                         <i class="fa-solid fa-toggle-off me-2 fs-6"></i> Unassign checkpoint
                                         <div class="fst-italic"">Gradebook data will be lost.</div>
                                     </a></li>
@@ -65,42 +65,5 @@ class="hover compact">
             rowId: 'id',
             order: [[0, 'asc']],  
         });
-
-        // Handle individual assign/unassign
-        $(document).on('click', '.student-assign', function(e) {
-            e.preventDefault();
-            let newStatus = $(this).data('status') === 'on';
-            let button = $(this).closest('.dropdown').find('.student-toggle');
-            let cell = button.closest('td');
-            let row = table.row(button.closest('tr'));
-            let rowData = row.data();
-            
-            if (rowData) {
-                rowData.is_active = newStatus;
-        
-                // Update icons 
-                button.html(newStatus ? '<i class="fa-solid fa-toggle-on"></i>' 
-                : '<i class="fa-solid fa-toggle-off"></i>');
-                cell.attr('data-order', newStatus ? 1 : 0); 
-                
-                // Mark row for redraw without full reload
-                row.data(rowData).invalidate(); 
-
-                // Send AJAX POST request
-                $.ajax({
-                    url: rowData.url_update,
-                    type: 'POST',
-                    data: JSON.stringify({ target_id: rowData.id, status: newStatus }), 
-                    contentType: 'application/json',
-                    headers: { 'X-CSRFToken': '{{ csrf_token }}' }, 
-                    success: function(response) {
-                    },
-                    error: function(xhr, status, error) {
-                        $('#error-modal').modal('show');
-                    }
-                });
-            }
-        });
-
     });     
 </script>

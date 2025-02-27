@@ -5,7 +5,7 @@ from .models import Qualification, Component, SubjectArea
 from django.http import HttpResponse
 from .loader import load_subjects
 from register_app.loader import load_yeargroups
-from register_app.models import YearGroup, Student
+from register_app.models import YearGroup, Student, Teacher, Period, TeachingClass
 from factories.register_factory import SchoolFactory
 from choices.qualification_tree import Edusystem
 def subjects(request):
@@ -32,11 +32,17 @@ def subjects(request):
             sf = SchoolFactory(
                 school=school, 
                 edusystem=Edusystem.IB,
-                num_students=400)
+                num_students=100)
             sf.generate()
             print('done')
         elif action == 'delete-students':
-            Student.objects.filter(school=school).all().delete()
+            Student.objects.filter(school=school, fake=True).all().delete()
+            Teacher.objects.filter(school=school, fake=True).all().delete()
+            Period.objects.filter(school=school, fake=True).all().delete()
+            print('delete')
+        elif action == 'delete-teachers':
+            Teacher.objects.filter(school=school, fake=True).all().delete()
+            Period.objects.filter(school=school, fake=True).all().delete()
             print('delete')
             
          

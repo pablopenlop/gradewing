@@ -1,4 +1,11 @@
 
+
+
+
+
+
+
+
 // Toggle chevron rotation on click
 $('.nav-link.has-chevron').on('click', function () {
     $(this).find('.fa-chevron-right').toggleClass('rotate-down');

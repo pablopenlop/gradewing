@@ -75,8 +75,25 @@ function showAlert(form, errorMessage) {
     if (confirmationInput.length) {
         confirmationInput.val('1');
     } */
-
-    
-    
 }
+
+
+// Function to extract CSRF token from the body hx-headers attribute
+function getCsrfToken() {
+    let body = document.querySelector('body');
+    let hxHeaders = body.getAttribute('hx-headers');
+    if (hxHeaders) {
+        try {
+            let headers = JSON.parse(hxHeaders);
+            return headers['X-CSRFToken'];
+        } catch (error) {
+            console.error("Error parsing hx-headers:", error);
+            return '';
+        }
+    }
+    return '';
+}
+
+
+
 

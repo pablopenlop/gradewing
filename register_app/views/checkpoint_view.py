@@ -372,7 +372,7 @@ def class_enrollments_data(cpyg_id):
             "id": ce.id,
             "student": str(ce),
             "teaching_class": str(ce.teaching_class),
-            "teaching_class_id": ce.teaching_class.id,
+            "group_id": ce.teaching_class.id,
             "teachers": ce.teaching_class.get_teachers_display(),
             "qualification": str(ce.teaching_class.qualification),
             "is_active": ce.on_checkpoint(cpyg["checkpoint_id"]),  
@@ -407,7 +407,7 @@ def enrollment_qualifications_data(cpyg_id):
             "id": eq.id,
             "student": str(eq.enrollment.student),
             "qualification": str(eq.student_qualification.qualification),
-            "qualification_id": eq.student_qualification.qualification.id,
+            "group_id": eq.student_qualification.qualification.id,
             "is_active": eq.on_checkpoint(cpyg["checkpoint_id"]),  
             "url_update": reverse(
                 'checkpoint-yeargroup-targets-update', 
@@ -440,7 +440,7 @@ def enrollments_data(cpyg_id):
             "id": enr.id,
             "student": str(enr.student),
             "tags": enr.tags_as_list(),
-            "programme": ", ".join(enr.programmes_as_list()),
+            "programme": ", ".join(enr.programmes_with_count()),
             "is_active": enr.on_checkpoint(cpyg["checkpoint_id"]),  
             "url_update": reverse(
                 'checkpoint-yeargroup-targets-update', 

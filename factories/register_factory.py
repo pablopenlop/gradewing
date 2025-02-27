@@ -1,5 +1,8 @@
 import random
-from register_app.models import School, Student, Enrollment, StudentProgramme, StudentQualification
+from register_app.models import (
+    School, Period, Student, Teacher, Enrollment, StudentProgramme, 
+    StudentQualification, TeachingClass, EnrollmentQualification
+)
 from subject_app.models import Qualification
 from choices.people import Gender
 from faker import Faker
@@ -11,33 +14,76 @@ from django.db.models import Max
 
 
 
+def get_fictional_teacher_names(n: int)->list[str]:
+    fictional_teachers = [
+        "Walter White", "Edna Krabappel", "Seymour Skinner", "Ted Mosby", "Master Roshi",
+        "Bruce Wayne", "Dolores Umbridge", "Severus Snape", "Saul Goodman", "Frodo Baggins",
+        "Barney Stinson", "Albus Dumbledore", "Cersei Lannister", "Kakashi Hatake",
+        "Dexter Morgan", "Darth Vader", "Agatha Trunchbull",
+        "Qui-Gon Jinn", "Master Yoda", "Charles Xavier", "Annalise Keating", "Arthur Shelby"
+    ]
+
+    """Returns a list of n unique teacher names."""
+    if n > len(fictional_teachers):
+        return fictional_teachers
+    
+    return random.sample(fictional_teachers, n)
+
+
+
 fake = Faker()
+
+
+
+
+
 
 @dataclass
 class SchoolFactory:
     school: School
     edusystem: Edusystem
     num_students: int=50
+    num_teachers: int=10
     num_yeargroups: int=4
     
     
     
     def generate(self):
         self.generate_periods()
+        self.generate_teachers()
         self.generate_students()
         self.generate_enrollments()
         self.generate_programmes()
         self.generate_qualifications()
+        self.generate_teaching_classes()
 
     def generate_periods(self):
-        return
+        periods = [
+            Period(
+                name= "2023/24 [Fictive]",
+                start_date="2023-09-01",
+                end_date="2024-06-30",
+                school=self.school,
+                fake=True
+            ),
+            Period(
+                name= "2024/25 [Fictive]",
+                start_date="2024-09-01",
+                end_date="2025-06-30",
+                school=self.school,
+                fake=True
+            ),
+        ]
+        Period.objects.bulk_create(periods)
+        self.period_ids = list(self.school.periods.filter(fake=True).values_list("id", flat=True))
+        
     def generate_students(self):
         students = []
         for _ in range(self.num_students):
             gender = random.choice([Gender.MALE, Gender.FEMALE])
             first_name = fake.first_name_male() if gender == Gender.MALE else fake.first_name_female()
             last_name = fake.last_name()
-            email = f"{first_name}.{last_name}@example.com".lower()
+            email = f"{first_name}.{last_name}@student.com".lower()
             
             students.append(Student(
                 school=self.school,
@@ -51,18 +97,39 @@ class SchoolFactory:
         Student.objects.bulk_create(students)
         self.student_ids = list(self.school.students.filter(fake=True).values_list("id", flat=True))
 
-    
+    def generate_teachers(self):
+        teachers = []
+        teacher_names = get_fictional_teacher_names(self.num_teachers)
+        for teacher_name in teacher_names:
+            name_parts = teacher_name.split()
+            first_name, last_name = name_parts[0], name_parts[1]
+            email = f"{first_name}.{last_name}@teacher.com".lower()
+
+            teachers.append(Teacher(
+                school=self.school,
+                first_name=first_name,
+                last_name=last_name,
+                fake=True,
+                email=email
+            ))
+        
+        teachers = Teacher.objects.bulk_create(teachers)
+        self.teacher_ids = list(self.school.teachers.filter(fake=True).values_list("id", flat=True))
+        
+        for teacher in teachers:
+            teacher.periods.set(self.period_ids)
+        
+        
     def generate_enrollments(self):
         yeargroups = list(self.school.yeargroups.all()[:self.num_yeargroups]) 
-        periods = list(self.school.periods.all()) 
-        previous_period = periods[1] if len(periods) > 1 else None 
-        latest_period = periods[0] 
+        previous_period_id = self.period_ids[1]
+        latest_period_id = self.period_ids[0]
         
         enrollments = [] 
         for student_id in self.student_ids:
             enrollments.append(Enrollment(
                 student_id=student_id,
-                period=previous_period,
+                period_id=previous_period_id,
                 yeargroup=random.choice(yeargroups)
             ))
         Enrollment.objects.bulk_create(enrollments)  
@@ -70,14 +137,14 @@ class SchoolFactory:
         enrollments = []  
         for enrollment in Enrollment.objects.filter(
             student__fake=True, 
-            period=previous_period
+            period=previous_period_id
         ).select_related("yeargroup"):
             pos = yeargroups.index(enrollment.yeargroup)  
             next_pos = pos-1 if pos > 0 else None
             if next_pos is not None:
                 enrollments.append(Enrollment(
                 student=enrollment.student,
-                period=latest_period,
+                period_id=latest_period_id,
                 yeargroup=yeargroups[next_pos]
             ))
         Enrollment.objects.bulk_create(enrollments)  
@@ -116,7 +183,6 @@ class SchoolFactory:
                 student_qualification.enrollments.set(potential_enrollments)
 
                 
-            
             
             
                        
@@ -165,3 +231,36 @@ class SchoolFactory:
             qualifications.append(random.choice(qualification))
         return qualifications
 
+    def generate_teaching_classes(self):
+        qualifications = Qualification.objects.none()  # Start with an empty queryset
+        periods = Period.objects.filter(id__in=self.period_ids)
+
+        for period in periods:
+            qualifications = qualifications.union(period.qualifications().order_by())
+
+            
+        counter = 1
+        for qualification in qualifications:
+            teacher_id = random.choice(self.teacher_ids)
+            for period in periods:
+                for yeargroup in self.school.yeargroups.all():
+                    eqs = EnrollmentQualification.objects.filter(
+                        enrollment__period=period,
+                        enrollment__yeargroup=yeargroup,
+                        student_qualification__qualification__id=qualification.id
+                    )
+                    if eqs:
+                        tc=TeachingClass.objects.create(
+                            period=period, 
+                            qualification=qualification,
+                            name =f"{qualification.subject} {qualification.get_board_display()} TC {counter}",
+                            yeargroup=yeargroup,
+                            )
+                        tc.enrollment_qualifications.set(eqs)
+                        tc.teachers.set([teacher_id])
+                        counter=counter+1
+
+    
+                        
+                
+                

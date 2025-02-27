@@ -108,7 +108,8 @@ class Period(models.Model):
     end_date = models.DateField(verbose_name="End date")
     current = models.BooleanField(default=False)
     school = models.ForeignKey(School, on_delete=models.CASCADE, related_name='periods')
-
+    fake = models.BooleanField(default=False)
+    
     class Meta:
         ordering = ['-start_date'] 
         constraints = [
@@ -132,7 +133,7 @@ class Period(models.Model):
         super(Period, self).save(*args, **kwargs)
     
     def qualifications(self):
-        return Qualification.objects.filter(student_qualifications__enrollments__period_id=self.id)
+        return Qualification.objects.filter(student_qualifications__enrollments__period_id=self.id).distinct()
     
 
 
@@ -225,11 +226,21 @@ class Enrollment(models.Model):
     def __str__(self):
         return self.period.name
     
-    def get_programmes(self):
-        return set(sq.programme for sq in self.student_qualifications.all())
-
     def tags_as_list(self)->list:
         return [tag.__str__() for tag in self.student.tags.all()] + [tag.name for tag in self.tags.all()]  
+    
+    def programmes_with_count(self):
+        """
+        Returns a list of strings where each entry shows a programme and the count 
+        of qualifications associated with this enrollment, without extra DB queries.
+        """
+        result = []
+        for programme in self.student.programmes.all():
+            qual_count = sum(1 for q in programme.qualifications.all() if self in q.enrollments.all())
+            if qual_count > 0:
+                result.append(f"{str(programme)} ({qual_count})")
+
+        return result
       
     def get_programmes_with_qualifications(self):
         """
@@ -243,42 +254,10 @@ class Enrollment(models.Model):
         }
         return programme_qualifications
     
+    def get_programmes(self):
+        return set(sq.programme for sq in self.student_qualifications.all())
+        
     
-    def programmes_with_count_old(self):
-        """
-        Returns a list of strings where each entry shows a programme and the count 
-        of qualifications associated with this enrollment.
-        """
-        """ programmes = self.student.programmes.annotate(
-            qual_count=Count('qualifications', filter=Q(qualifications__enrollments=self))
-        ) """
-        
-        programmes = StudentProgramme.objects.filter(student_id=self.student_id).annotate(
-            qual_count=Count('qualifications', filter=Q(qualifications__enrollments=self))
-        )
-        return [
-            f"{str(programme)} ({programme.qual_count})" 
-            for programme in programmes if programme.qual_count>0
-        ]
-
-    """     def programmes_as_list(self)->list:
-        return [
-            f"{programme.__str__()} ({qualifications.count()})" for 
-            programme, qualifications in self.get_programmes_with_qualifications().items()
-        ] """
-        
-    def programmes_with_count(self):
-        """
-        Returns a list of strings where each entry shows a programme and the count 
-        of qualifications associated with this enrollment, without extra DB queries.
-        """
-        result = []
-        for programme in self.student.programmes.all():
-            qual_count = sum(1 for q in programme.qualifications.all() if self in q.enrollments.all())
-            if qual_count > 0:
-                result.append(f"{str(programme)} ({qual_count})")
-
-        return result
 
     def on_checkpoint(self, checkpoint_id: int) -> bool:
         return self.checkpoint_yeargroups.filter(checkpoint_id=checkpoint_id).exists()

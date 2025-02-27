@@ -209,10 +209,7 @@ def class_landmark_data(checkpoint_id):
     data = []
     print(f"Elapsed time (before processing): {time.time() - start_time:.6f} seconds")
     for cpyg in checkpoint.checkpoint_yeargroups.all():
-        print("Queries0:", len(connection.queries))
         for ce in cpyg.class_enrollments.all():
-            # Base dictionary with fixed fields
-            print("Queries1:", len(connection.queries))
             entry_data = {
                 "student": str(ce),
                 "teaching_class": str(ce.teaching_class),

@@ -28,15 +28,15 @@ class="hover compact">
                     render: function (data) {
                         return `
                             <div class="dropdown">
-                                <button class="btn btn-transparent student-toggle" data-bs-toggle="dropdown">
+                                <button class="btn btn-transparent student-toggle my-0 py-0" data-bs-toggle="dropdown">
                                     ${data ? '<i class="fa-solid fa-toggle-on"></i>' : '<i class="fa-solid fa-toggle-off"></i>'}
                                 </button>
                                 <ul class="dropdown-menu">
-                                    <li><a class="dropdown-item student-assign" href="#" data-status="on">
+                                    <li><a class="dropdown-item individual-assign" href="#" data-status="on">
                                         <i class="fa-solid fa-toggle-on me-2 fs-6"></i> Assign checkpoint
                                     </a></li>
                                     <li><hr class="dropdown-divider"></li>
-                                    <li><a class="dropdown-item student-assign" href="#" data-status="off">
+                                    <li><a class="dropdown-item individual-assign" href="#" data-status="off">
                                         <i class="fa-solid fa-toggle-off me-2 fs-6"></i> Unassign checkpoint
                                         <div class="fst-italic"">Checkpoint data will be lost.</div>
                                     </a></li>
@@ -53,8 +53,7 @@ class="hover compact">
             deferRender: true,
             stateSave: false,
             rowId: 'id',
-            order: [[0, 'asc']],  
-            orderFixed: [1, 'asc'],
+            order: [[1, 'asc']],  
             rowGroup: {
                 dataSrc: 'teaching_class',
                 startRender: function(rows, group) {
@@ -72,15 +71,15 @@ class="hover compact">
                             </th>
                             <th colspan="1" class="text-center">
                                 <div class="dropdown">
-                                    <button class="btn btn-transparent toggle-group" data-bs-toggle="dropdown">
+                                    <button class="btn btn-transparent toggle-group my-0 py-0" data-bs-toggle="dropdown">
                                         <i class="fa-solid fa-ellipsis-vertical"></i>
                                     </button>
                                     <ul class="dropdown-menu">
-                                        <li><button class="dropdown-item group-assign" hx-post="" data-teaching_class="${group}" data-status="on">
+                                        <li><button class="dropdown-item group-assign" hx-post="" data-group="${group}" data-status="on">
                                             <i class="fa-solid fa-toggle-on me-2 fs-6"></i> Assign checkpoint to this class
                                         </button></li>
                                         <li><hr class="dropdown-divider"></li>
-                                        <li><a class="dropdown-item group-assign" href="#" data-teaching_class="${group}" data-status="off">
+                                        <li><a class="dropdown-item group-assign" href="#" data-group="${group}" data-status="off">
                                             <i class="fa-solid fa-toggle-off me-2 fs-6"></i> Unassign checkpoint from this class
                                             <div class="fst-italic"">Checkpoint data will be lost.</div>
                                         </a></li>
@@ -93,90 +92,4 @@ class="hover compact">
             },
         });
 
-        // Handle individual assign/unassign
-        $(document).on('click', '.student-assign', function(e) {
-            e.preventDefault();
-            let newStatus = $(this).data('status') === 'on';
-            let button = $(this).closest('.dropdown').find('.student-toggle');
-            let cell = button.closest('td');
-            let row = table.row(button.closest('tr'));
-            let rowData = row.data();
-            
-            if (rowData) {
-                rowData.is_active = newStatus;
-        
-                // Update icons 
-                button.html(newStatus ? '<i class="fa-solid fa-toggle-on"></i>' 
-                : '<i class="fa-solid fa-toggle-off"></i>');
-                cell.attr('data-order', newStatus ? 1 : 0); 
-                
-                // Mark row for redraw without full reload
-                row.data(rowData).invalidate(); 
-
-                // Send AJAX POST request
-                $.ajax({
-                    url: rowData.url_update,
-                    type: 'POST',
-                    data: JSON.stringify({ target_id: rowData.id, status: newStatus }), 
-                    contentType: 'application/json',
-                    headers: { 'X-CSRFToken': '{{ csrf_token }}' }, 
-                    success: function(response) {
-                    },
-                    error: function(xhr, status, error) {
-                        $('#error-modal').modal('show');
-                    }
-                });
-          
-            }
-        
-        });
-
-        $(document).on('click', '.group-assign', function (e) {
-            e.preventDefault();
-            let className = $(this).data('teaching_class');
-            console.log(className)
-            let newStatus = $(this).data('status') === 'on';
-        
-            // Update icon of matching rows
-            table.rows().every(function () {
-                let rowData = this.data();
-                if (rowData.teaching_class === className) {
-                    rowData.is_active = newStatus; 
-    
-                    let rowNode = this.node();
-                    if (rowNode) {
-                        let cell = $(rowNode).find('td:last');
-                        let button = cell.find('.student-toggle');
-                        button.html(newStatus ? '<i class="fa-solid fa-toggle-on"></i>'
-                        : '<i class="fa-solid fa-toggle-off"></i>');
-                    }
-                    this.data(rowData).invalidate();
-                }
-            });
-        
-            /// Send a single AJAX request
-            let firstRow = table.rows().data().toArray().find(
-                row => row.teaching_class === className);
-
-            if (firstRow) {
-                let teachingClassId = firstRow.teaching_class_id; 
-                let url_update = firstRow.url_update; 
-
-                $.ajax({
-                    url: url_update,
-                    type: 'POST',
-                    data: JSON.stringify({ 
-                        grouped_target_id: teachingClassId,  
-                        status: newStatus
-                    }), 
-                    contentType: 'application/json',
-                    headers: { 'X-CSRFToken': '{{ csrf_token }}' },
-                    success: function (response) {
-                    },
-                    error: function (xhr, status, error) {
-                        $('#error-modal').modal('show');
-                    }
-                });
-            }
-        });
     });     

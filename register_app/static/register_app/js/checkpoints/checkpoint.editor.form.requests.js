@@ -179,6 +179,105 @@ $(document).ready(function() {
     }
 
 
+
+
+
+
+    // Handle individual assign/unassign
+    $(document).on('click', '.individual-assign', function (e) {
+        e.preventDefault();
+        let newStatus = $(this).data('status') === 'on';
+        let button = $(this).closest('.dropdown').find('.student-toggle');
+        let cell = button.closest('td');
+        let table = $(this).closest('table').DataTable(); 
+        
+        let row = table.row(button.closest('tr'));
+        let rowData = row.data();
+        console.log('clicked {{ cpyg_id }}')
+        if (rowData) {
+            rowData.is_active = newStatus;
+    
+            // Update icons 
+            button.html(newStatus ? '<i class="fa-solid fa-toggle-on"></i>' 
+            : '<i class="fa-solid fa-toggle-off"></i>');
+            cell.attr('data-order', newStatus ? 1 : 0); 
+            
+            // Mark row for redraw without full reload
+            row.data(rowData).invalidate(); 
+
+            // Send AJAX POST request
+            $.ajax({
+                url: rowData.url_update,
+                type: 'POST',
+                data: JSON.stringify({ target_id: rowData.id, status: newStatus }), 
+                contentType: 'application/json',
+                headers: { 'X-CSRFToken': getCsrfToken() }, 
+                success: function(response) {
+                    console.log('post {{ cpyg_id }}')
+                },
+                error: function(xhr, status, error) {
+                    $('#error-modal').modal('show');
+                }
+            });
+      
+        }
+    
+    });
+
+    // Handle group assign/unassign
+    $(document).on('click', '.group-assign', function (e) {
+        e.preventDefault();
+        let groupData = $(this).data('group');
+        let newStatus = $(this).data('status') === 'on';
+        console.log('click group')
+        let table = $(this).closest('table').DataTable(); 
+        let tableId = $(table.table().node()).attr('id'); 
+        let dataSrc = table.settings().init().rowGroup.dataSrc;
+        table.rows().every(function () {
+            let rowData = this.data();
+            
+            if (rowData[dataSrc] === groupData) {
+                rowData.is_active = newStatus; 
+
+                let rowNode = this.node();
+                if (rowNode) {
+                    let cell = $(rowNode).find('td:last');
+                    let button = cell.find('.student-toggle');
+                    button.html(newStatus ? '<i class="fa-solid fa-toggle-on"></i>'
+                    : '<i class="fa-solid fa-toggle-off"></i>');
+                }
+                this.data(rowData).invalidate();
+            }
+        });
+    
+        /// Send a single AJAX request
+        let firstRow = table.rows().data().toArray().find(
+            row => row[dataSrc] === groupData);
+
+        if (firstRow) {
+            let groupId = firstRow.group_id; 
+            let url_update = firstRow.url_update; 
+
+            $.ajax({
+                url: url_update,
+                type: 'POST',
+                data: JSON.stringify({ 
+                    grouped_target_id: groupId,  
+                    status: newStatus
+                }), 
+                contentType: 'application/json',
+                headers: { 'X-CSRFToken': getCsrfToken() },
+                success: function (response) {
+                    console.log('group post')
+                },
+                error: function (xhr, status, error) {
+                    $('#error-modal').modal('show');
+                }
+            });
+        }
+    });
+
+
     
 
 

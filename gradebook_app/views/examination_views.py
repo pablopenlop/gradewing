@@ -11,6 +11,7 @@ from subject_app.models import Component
 from django.db.models import Prefetch
 import time
 from shared.delete import DeleteForm
+from django.db import connection
 
 @login_required
 def examinations(request):
@@ -44,7 +45,7 @@ def examinations_headerbar(request):
         'default_option': default_option
     }
     return render(request, 'gradebook_app/examinations/partials/examinations_headerbar.html', context)
-
+    
 
 @login_required
 def examinations_table(request, period_id):
@@ -106,7 +107,7 @@ def examinations_data(request, period_id):
                     'id': qualification.id,
                     'student': str(student),
                     'yeargroup': str(enrollment.yeargroup) if enrollment else "",
-                    'qualification': str(qualification),
+                    'qualification': str(qualification), ################# THIS IS HITTING DB #########################
                     'programme': str(programme),
                     'grade': rer.grade if rer else "",
                     'series_year': rer.series_year() if rer else "",
@@ -114,9 +115,8 @@ def examinations_data(request, period_id):
                     'hx_target': '#examinations-infocard-container',
                     'hx_swap': 'innerHTML',
                 })
-
+    print("Queries:", len(connection.queries))
     print(f"Elapsed time (after processing): {time.time() - start_time:.6f} seconds")
-    
     return JsonResponse({'data': data})
 
 
